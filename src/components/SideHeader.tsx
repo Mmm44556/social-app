@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../../public/logo.png";
+import logo from "@/app/public/icon.png";
 const ICON_SIZE = 20;
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar();

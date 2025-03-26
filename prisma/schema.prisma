@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String // 雜湊後的密碼
+  bio       String? // 個人簡介
+  avatar    String? // 頭像 URL
+  createdAt DateTime @default(now())
+  lastLogin DateTime @default(now())
+
+  // 關聯
+  posts            Post[] // 發布的貼文
+  shares           Share[] // 分享的貼文
+  sentMessages     Message[]      @relation("SentMessages")
+  receivedMessages Message[]      @relation("ReceivedMessages")
+  notifications    Notification[] // 收到的通知
+  followers        Follow[]       @relation("Following")
+  following        Follow[]       @relation("Followers")
+  Like             Like[]
+
+  @@index([email])
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  content   String
+  images    String[] // 圖片 URLs
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 關聯
+  authorId String
+  author   User    @relation(fields: [authorId], references: [id])
+  shares   Share[]
+  likes    Like[]
+
+  @@index([authorId])
+}
+
+model Share {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  // 關聯
+  postId String
+  post   Post   @relation(fields: [postId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([postId])
+  @@index([userId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+
+  // 關聯
+  senderId   String
+  sender     User   @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User   @relation("ReceivedMessages", fields: [receiverId], references: [id])
+
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  type      String // 'LIKE' | 'SHARE' | 'FOLLOW' | 'MESSAGE'
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // 關聯
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Follow {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  // 關聯
+  followerId  String
+  follower    User   @relation("Following", fields: [followerId], references: [id])
+  followingId String
+  following   User   @relation("Followers", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  // 關聯
+  postId String
+  post   Post   @relation(fields: [postId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
