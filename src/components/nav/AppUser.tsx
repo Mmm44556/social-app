@@ -1,5 +1,3 @@
-"use client";
-
 import { BadgeCheck, Bell, CreditCard, LogOut, Sparkles } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -25,29 +23,22 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
+import { syncUser } from "@/app/actions/user.action";
 
-export function AppUser() {
-  const { open } = useSidebar();
-  const { user } = useUser();
-  console.log(user);
+export async function AppUser() {
+  // const user = await currentUser();
+  // if (user) await syncUser();
   return (
     <>
       <SignedIn>
-        <SidebarMenu
-          className={cn(
-            "transition-all duration-300",
-            open ? "px-2" : "items-center px-0"
-          )}
-        >
+        <SidebarMenu className="items-center  px-1">
           <SidebarMenuItem className="w-full">
-            <Avatar className="h-8 !w-full rounded-lg size-8 px-5s ">
-              <AvatarFallback className="rounded-lg bg-transparent justify-start  gap-2">
+            <Avatar className="h-8 !w-full rounded-lg size-8 ">
+              <AvatarFallback className="rounded-lg bg-transparent  cols-s justify-start c gap-2">
                 <UserButton />
-                <span
-                  data-sidebar-open={open}
-                  className="text-xs font-bold truncate "
-                >
-                  {user?.primaryEmailAddress?.emailAddress}
+                <span className="text-xs font-bold truncate ">
+                  {/* {user?.primaryEmailAddress?.emailAddress} */}
                 </span>
               </AvatarFallback>
             </Avatar>

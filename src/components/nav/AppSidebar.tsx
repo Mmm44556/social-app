@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/sidebar";
 import Auth from "../auth/Auth";
 import { AppUser } from "./AppUser";
-
+import { syncUser } from "@/app/actions/user.action";
+import { currentUser } from "@clerk/nextjs/server";
 // Menu items.
 const items = [
   {
@@ -43,17 +44,16 @@ const items = [
   },
 ];
 
-export function AppSidebar() {
+export default async function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
       className="border-r-white dark:border-r-gray-800"
     >
-      <SidebarContent className="dark:bg-black">
+      <SidebarContent className="pt-16 dark:bg-black">
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-3 [&_a]:text-xl [&_li]:hover:bg-gray-900 [&_li]:rounded-md   ">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
@@ -70,7 +70,7 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="dark:bg-black">
         {/* User */}
-        <AppUser />
+        {/* <AppUser /> */}
       </SidebarFooter>
     </Sidebar>
   );

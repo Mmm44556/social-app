@@ -2,11 +2,26 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
+textarea {
+  /* 基本設置 */
 
+  /* 隱藏各瀏覽器的 resize 圖示 */
+  &::-webkit-resizer {
+    display: none;
+  }
+
+  &::-moz-resizer {
+    display: none;
+  }
+
+  &::resizer {
+    display: none;
+  }
+}
 @layer base {
   :root {
-    --theme-color: #9333ea;
-    --theme-color-hover: #7e22ce;
+    --theme-color: #578fca;
+    --theme-color-hover: #6a9ed2;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 262.1 83.3% 57.8%;
@@ -39,6 +54,8 @@
 }
 
 @theme inline {
+  --animate-smaill-rotate: small-rotate 0.3s ease-out infinite alternate;
+  --animate-spin-fly: spin-and-fly 1s ease-in-out infinite forwards;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -140,32 +157,47 @@
   }
 }
 
-/* 動畫定義 */
+/* 自定義動畫 */
 @layer utilities {
-  @keyframes accordion-down {
-    from {
-      height: 0;
+  @keyframes small-rotate {
+    0% {
+      transform: rotate(0deg);
     }
-    to {
-      height: var(--radix-accordion-content-height);
+    50% {
+      transform: rotate(25deg);
     }
-  }
-
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
+    100% {
+      transform: rotate(0deg);
     }
   }
 
-  .animate-accordion-down {
-    animation: accordion-down 0.2s ease-out;
+  @keyframes send-post {
+    0% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
-  .animate-accordion-up {
-    animation: accordion-up 0.2s ease-out;
+  @keyframes spin-and-fly {
+    0% {
+      transform: rotate(0deg);
+      translate: 0 0;
+      opacity: 0.7;
+    }
+    70% {
+      transform: rotate(360deg);
+      translate: 0 0;
+      opacity: 0.5;
+    }
+    100% {
+      transform: rotate(360deg) translate(25px, -25px);
+      opacity: 0;
+    }
   }
 }
 
@@ -187,7 +219,7 @@
     color: hsl(var(--foreground));
   }
   .bg-primary {
-    background-color: #9333ea;
+    background-color: var(--theme-color);
   }
   .text-primary-foreground {
     color: hsl(var(--primary-foreground));

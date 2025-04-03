@@ -9,28 +9,31 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { auth } from "@clerk/nextjs/server";
+import { Heart, MessageCircle, Share2 } from "lucide-react";
+const year = new Date().getFullYear();
 // Mock data for suggested users
 const suggestedUsers = [
   {
     id: "1",
     name: "Emma Watson",
     username: "emmawatson",
-    avatar: "/placeholder.svg?height=40&width=40",
+    avatar: "0",
     bio: "Actress, activist, book lover",
   },
   {
     id: "2",
     name: "John Doe",
     username: "johndoe",
-    avatar: "/placeholder.svg?height=40&width=40",
+    avatar: "0",
     bio: "Software engineer at Tech Co.",
   },
   {
     id: "3",
     name: "Sarah Johnson",
     username: "sarahjohnson",
-    avatar: "/placeholder.svg?height=40&width=40",
+    avatar: "0",
     bio: "Travel photographer | Explorer",
   },
 ];
@@ -182,18 +185,16 @@ const trendingCategories = [
   },
 ];
 
-function AppRightSidebar() {
-  const [sliceCategories, setSliceCategories] = useState({
-    end: 4,
-    categories: trendingCategories.slice(0, 4),
-  });
+async function AppRightSidebar() {
+  const { userId } = await auth();
+  if (!userId) return <div className="col-span-3"></div>;
   return (
-    <div className="hidden lg:block lg:col-span-3">
-      <div className="sticky top-20 space-y-6">
+    <aside className="hidden lg:block lg:col-span-5 ">
+      <div className="space-y-6 sticky top-20">
         {/* Suggested Users */}
         <Card className="border-0 shadow-sm bg-white dark:bg-black dark:border dark:border-white">
           <CardHeader>
-            <h2 className="text-xl font-bold">Suggested for you</h2>
+            <h2 className="text-xl font-bold">People you may know</h2>
           </CardHeader>
           <CardContent className="space-y-4 [&_button]:cursor-pointer">
             {suggestedUsers.map((user) => (
@@ -222,49 +223,39 @@ function AppRightSidebar() {
         </Card>
 
         {/* Trending Categories */}
-        <Card className="border-0 shadow-sm bg-white dark:bg-black dark:border dark:border-white">
+        <Card className="mb-4 rounded-xl shadow-none border p-6">
           <CardHeader>
-            <h2 className="text-xl font-bold">Popular categories</h2>
+            <h2 className="text-xl font-bold">What's news</h2>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2 [&_button]:cursor-pointer">
-              {sliceCategories.categories.map((category) => (
-                <Button
-                  key={category.id}
-                  variant="outline"
-                  className="rounded-full border-theme text-theme hover:bg-theme hover:text-white"
-                >
-                  {category.icon} {category.name}
+          <CardContent className="flex gap-3 px-0">
+            <div className="h-10 w-10 rounded-full bg-muted" />
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold">User Name</span>
+                <span className="text-sm text-muted-foreground">@username</span>
+                <span className="text-sm text-muted-foreground">· 2h</span>
+              </div>
+              <p className="mt-1">
+                This is a sample post in your social media feed. It could
+                contain text, images, or other content.
+              </p>
+              <div className="mt-3 flex">
+                <Button variant="ghost" size="sm">
+                  <Heart className="size-4" />
+                  Like
                 </Button>
-              ))}
-              <Button
-                variant="outline"
-                className="rounded-full cursor-pointer"
-                onClick={() =>
-                  setSliceCategories((prev) => {
-                    if (prev.end >= trendingCategories.length) {
-                      return {
-                        end: 4,
-                        categories: trendingCategories.slice(0, 4),
-                      };
-                    } else {
-                      const newEnd = prev.end + 4;
-                      return {
-                        end: newEnd,
-                        categories: trendingCategories.slice(0, newEnd),
-                      };
-                    }
-                  })
-                }
-              >
-                {sliceCategories.end >= trendingCategories.length
-                  ? "+ More"
-                  : "+ More"}
-              </Button>
+                <Button variant="ghost" size="sm">
+                  <MessageCircle className="size-4" />
+                  Comment
+                </Button>
+                <Button variant="ghost" size="sm">
+                  <Share2 className="size-4" />
+                  Share
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
-
         {/* Footer */}
         <div className="text-xs text-gray-500 dark:text-gray-400 space-y-2">
           <div className="flex flex-wrap gap-x-4 gap-y-1">
@@ -299,7 +290,7 @@ function AppRightSidebar() {
           </p>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }
 
