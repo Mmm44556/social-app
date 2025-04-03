@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@/app/public/icon.png";
-import RotatingText from "@/blocks/TextAnimations/RotatingText/RotatingText";
-const ICON_SIZE = 18;
+
+const ICON_SIZE = 20;
+
 export function SiteHeader() {
   const { setTheme, theme = "light" } = useTheme();
   return (

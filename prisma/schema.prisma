@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique // Clerk 用戶 ID
+  email     String   @unique // 可選，如果你想在自己的數據庫也存儲
+  username  String   @unique // 用戶名稱
+  imageUrl  String? // Clerk 的頭像 URL
+  bio       String? // 個人簡介
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false) // 標記用戶是否已刪除
+
+  // 關聯
+  posts            Post[] // 發布的貼文
+  comments         Comment[] // 發布的留言
+  shares           Share[] // 分享的貼文
+  sentMessages     Message[]      @relation("SentMessages")
+  receivedMessages Message[]      @relation("ReceivedMessages")
+  notifications    Notification[] // 收到的通知
+  followers        Follow[]       @relation("Following")
+  following        Follow[]       @relation("Followers")
+  likes            Like[] // 按讚的貼文
+
+  @@index([clerkId])
+  @@index([email])
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  content   String?
+  images    String[] // 圖片 URLs
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 關聯
+  authorId     String
+  author       User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments     Comment[] // 貼文的留言
+  shares       Share[]
+  likes        Like[]
+  Notification Notification[]
+
+  @@index([authorId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  images    String[] // 留言的圖片 URLs
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false) // 標記留言是否已刪除
+
+  // 關聯
+  postId   String
+  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  // 父留言關聯（用於巢狀留言）
+  parentId String?
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("CommentReplies")
+
+  // 讚數
+  likes        Like[]
+  Notification Notification[]
+
+  @@index([postId])
+  @@index([authorId])
+  @@index([parentId])
+}
+
+model Share {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  // 關聯
+  postId String
+  post   Post   @relation(fields: [postId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([postId])
+  @@index([userId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+
+  // 關聯
+  senderId   String
+  sender     User   @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User   @relation("ReceivedMessages", fields: [receiverId], references: [id])
+
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  type      String // 'LIKE' | 'SHARE' | 'FOLLOW' | 'MESSAGE' | 'COMMENT'
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  commentId String?
+  postId    String?
+  // 關聯
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Follow {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  // 關聯
+  followerId  String
+  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId]) // 確保每個用戶只能追蹤另一個用戶一次
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  // 關聯
+  postId    String?
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@unique([commentId, userId]) // 確保每個用戶對每個評論只能按讚一次
+  @@index([postId])
+  @@index([commentId])
+  @@index([userId])
+}
+
+enum NotificationType {
+  LIKE
+  SHARE
+  FOLLOW
+  MESSAGE
+  COMMENT
+}

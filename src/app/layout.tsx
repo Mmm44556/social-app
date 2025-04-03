@@ -32,12 +32,7 @@ export default async function RootLayout({
             sizes="32x32"
           />
         </head>
-        <body
-          className={cn(
-            inter.className,
-            "!transition-colors bg-gray-100/50 dark:bg-black"
-          )}
-        >
+            <body className={inter.className}>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
