@@ -13,7 +13,7 @@ export function UtilsToggleGroup() {
       <Button
         variant="ghost"
         size="icon"
-        className="group rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out"
+        className="group rounded-full hover:bg-gray-200 "
       >
         <Sparkles className="h-5 w-5 text-theme group-hover:text-[#f6c604]" />
       </Button>

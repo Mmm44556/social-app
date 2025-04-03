@@ -1,25 +1,22 @@
 import type React from "react";
-import "@/style/global.css";
+import "@/styles/global.css";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ClerkProvider } from "@clerk/nextjs";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/nav/AppSidebar";
 import { SiteHeader } from "@/components/SideHeader";
-
+import AppRightSidebar from "@/components/nav/AppRightSidebar";
+import AppLeftSidebar from "@/components/nav/AppLeftSidebar";
+import { cn } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Chatter - Share Your World",
+  title: "Ｎexus - Share Your World",
   description:
     "A modern social platform for sharing content with your friends and family",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -27,20 +24,37 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <body className={inter.className}>
+        <head>
+          <link
+            rel="icon"
+            href="/public/icon.png"
+            type="image/png"
+            sizes="32x32"
+          />
+        </head>
+        <body
+          className={cn(
+            inter.className,
+            "!transition-colors bg-gray-100/50 dark:bg-black"
+          )}
+        >
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >
-            <SidebarProvider className="flex flex-col" defaultOpen={false}>
-              <SiteHeader />
-              <div className="flex flex-1">
-                <AppSidebar />
-                <main className="w-full">{children}</main>
-              </div>
-            </SidebarProvider>
+            {/* Header */}
+            <SiteHeader />
+            <div className="grid grid-cols-1 gap-4 md:auto-cols-fr grid-flow-col  container py-8">
+              {/* Left Sidebar */}
+              <AppLeftSidebar />
+
+              {/* Main Content */}
+              {children}
+              {/* Right Sidebar */}
+              <AppRightSidebar />
+            </div>
           </ThemeProvider>
         </body>
       </html>
