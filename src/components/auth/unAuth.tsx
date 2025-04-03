@@ -14,6 +14,7 @@ import {
 import { Icons } from "@/components/ui/icons";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { SignUp, SignUpButton } from "@clerk/nextjs";
 
 export default function UnAuth() {
   return (
@@ -106,9 +107,9 @@ export default function UnAuth() {
                         </SignIn.Action>
 
                         <Button variant="link" size="sm" asChild>
-                          <Clerk.Link navigate="sign-up">
+                          <SignUpButton mode="modal" oauthFlow="redirect">
                             Don&apos;t have an account? Sign up
-                          </Clerk.Link>
+                          </SignUpButton>
                         </Button>
                       </div>
                     </CardFooter>

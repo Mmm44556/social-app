@@ -51,7 +51,7 @@ const navItems = [
 ];
 
 export default function NavBar({ user }: { user: DB_User }) {
-  console.log(user);
+  // console.log(user);
   return (
     <Card className="p-2 gap-0 rounded-2xl ">
       <CardContent className="grid px-0">

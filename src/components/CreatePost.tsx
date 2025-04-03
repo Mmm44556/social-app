@@ -24,12 +24,12 @@ const utilsItems = [
 ];
 export default function CreatePost() {
   const { user } = useUser();
-  if (!user) return null;
+
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   const [showImage, setShowImage] = useState(false);
-
+  if (!user) return null;
   const handleSubmit = async () => {
     if (content.trim().length === 0 && !imageUrl) return;
     try {

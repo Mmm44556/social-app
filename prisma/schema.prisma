@@ -25,15 +25,16 @@ model User {
   isDeleted Boolean  @default(false) // 標記用戶是否已刪除
 
   // 關聯
-  posts            Post[] // 發布的貼文
-  comments         Comment[] // 發布的留言
-  shares           Share[] // 分享的貼文
-  sentMessages     Message[]      @relation("SentMessages")
-  receivedMessages Message[]      @relation("ReceivedMessages")
-  notifications    Notification[] // 收到的通知
-  followers        Follow[]       @relation("Following")
-  following        Follow[]       @relation("Followers")
-  likes            Like[] // 按讚的貼文
+  posts                 Post[] // 發布的貼文
+  comments              Comment[] // 發布的留言
+  shares                Share[] // 分享的貼文
+  sentMessages          Message[]      @relation("SentMessages")
+  receivedMessages      Message[]      @relation("ReceivedMessages")
+  receivedNotifications Notification[] @relation("NotificationReceiver") // 收到的通知
+  createdNotifications  Notification[] @relation("NotificationCreator") // 建立的通知
+  followers             Follow[]       @relation("following") // users who follow this user
+  following             Follow[]       @relation("follower") // users this user follows
+  likes                 Like[] // 按讚的貼文
 
   @@index([clerkId])
   @@index([email])
@@ -116,18 +117,19 @@ model Message {
 }
 
 model Notification {
-  id        String   @id @default(uuid())
-  type      String // 'LIKE' | 'SHARE' | 'FOLLOW' | 'MESSAGE' | 'COMMENT'
-  content   String
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id        String           @id @default(uuid())
+  type      NotificationType // 'LIKE' | 'SHARE' | 'FOLLOW' | 'MESSAGE' | 'COMMENT'
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
   commentId String?
   postId    String?
+  creatorId String
   // 關聯
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User             @relation("NotificationReceiver", fields: [userId], references: [id])
+  creator   User             @relation("NotificationCreator", fields: [creatorId], references: [id])
+  post      Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment   Comment?         @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -138,9 +140,9 @@ model Follow {
 
   // 關聯
   followerId  String
-  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
   followingId String
-  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+  follower    User   @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User   @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId]) // 確保每個用戶只能追蹤另一個用戶一次
   @@index([followerId])

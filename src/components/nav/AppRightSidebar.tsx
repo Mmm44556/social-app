@@ -12,31 +12,9 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
+import SuggestedUser from "@/components/SuggestedUser";
 const year = new Date().getFullYear();
-// Mock data for suggested users
-const suggestedUsers = [
-  {
-    id: "1",
-    name: "Emma Watson",
-    username: "emmawatson",
-    avatar: "0",
-    bio: "Actress, activist, book lover",
-  },
-  {
-    id: "2",
-    name: "John Doe",
-    username: "johndoe",
-    avatar: "0",
-    bio: "Software engineer at Tech Co.",
-  },
-  {
-    id: "3",
-    name: "Sarah Johnson",
-    username: "sarahjohnson",
-    avatar: "0",
-    bio: "Travel photographer | Explorer",
-  },
-];
+
 // Mock data for trending categories
 const trendingCategories = [
   {
@@ -190,37 +168,9 @@ async function AppRightSidebar() {
   if (!userId) return <div className="col-span-3"></div>;
   return (
     <aside className="hidden lg:block lg:col-span-5 ">
-      <div className="space-y-6 sticky top-20">
+      <div className="space-y-6 sticky top-20 ">
         {/* Suggested Users */}
-        <Card className="border-0 shadow-sm bg-white dark:bg-black dark:border dark:border-white">
-          <CardHeader>
-            <h2 className="text-xl font-bold">People you may know</h2>
-          </CardHeader>
-          <CardContent className="space-y-4 [&_button]:cursor-pointer">
-            {suggestedUsers.map((user) => (
-              <div key={user.id} className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">{user.name}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                    {user.bio}
-                  </div>
-                </div>
-                <Button className="bg-theme hover:bg-theme-hover text-white">
-                  Follow
-                </Button>
-              </div>
-            ))}
-          </CardContent>
-          <CardFooter>
-            <Link href="#" className="text-theme hover:underline">
-              View all suggestions
-            </Link>
-          </CardFooter>
-        </Card>
+        <SuggestedUser />
 
         {/* Trending Categories */}
         <Card className="mb-4 rounded-xl shadow-none border p-6">

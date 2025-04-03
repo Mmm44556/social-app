@@ -6,8 +6,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { SiteHeader } from "@/components/SideHeader";
 import AppRightSidebar from "@/components/nav/AppRightSidebar";
 import AppLeftSidebar from "@/components/nav/AppLeftSidebar";
-import { cn } from "@/lib/utils";
-import { auth } from "@clerk/nextjs/server";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -32,7 +30,7 @@ export default async function RootLayout({
             sizes="32x32"
           />
         </head>
-            <body className={inter.className}>
+        <body className={inter.className}>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
@@ -47,6 +45,7 @@ export default async function RootLayout({
 
               {/* Main Content */}
               {children}
+
               {/* Right Sidebar */}
               <AppRightSidebar />
             </div>
