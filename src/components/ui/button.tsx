@@ -21,12 +21,15 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         utils:
           "bg-transparent border-0 shadow-none hover:bg-gray-100/50 hover:transition-colors hover:duration-200 ",
+        alert: "bg-red-500 text-white shadow-xs hover:bg-red-600",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        sm: "h-8 rounded-md gap-1.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",
+        none: "h-8 rounded-md gap-1.5 p-0",
+        utils: "h-9 w-9 p-0 rounded-full",
       },
     },
     defaultVariants: {
