@@ -25,7 +25,6 @@ model User {
   updatedAt DateTime @updatedAt
   isDeleted Boolean  @default(false)
 
-  posts                 Post[]
   comments              Comment[]
   shares                Share[]
   sentMessages          Message[]      @relation("SentMessages")
@@ -35,90 +34,36 @@ model User {
   followers             Follow[]       @relation("following")
   following             Follow[]       @relation("follower")
   likes                 Like[]
-  tagsReceived          UserTag[]      @relation("TaggedUser")
-  tagsCreated           UserTag[]      @relation("TagCreator")
 
   @@index([clerkId])
   @@index([email])
   @@index([tagName])
 }
 
-model Post {
-  id        String   @id @default(uuid())
-  content   String?
-  images    String[] // 圖片 URLs
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // 關聯
-  authorId     String
-  author       User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  comments     Comment[] // 貼文的留言
-  shares       Share[]
-  likes        Like[]
-  Notification Notification[]
-
-  // 標記關聯
-  userTags UserTag[] @relation("PostTags") // 貼文中的用戶標記
-
-  @@index([authorId])
-}
-
 model Comment {
   id        String   @id @default(uuid())
   content   String
-  images    String[] // 留言的圖片 URLs
+  images    String[] // 圖片 URLs
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  isDeleted Boolean  @default(false) // 標記留言是否已刪除
+  isDeleted Boolean  @default(false) // 標記是否已刪除
+  isRoot    Boolean  @default(false) // 是否為頂層貼文（原 Post）
 
   // 關聯
-  postId   String
-  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  authorId String?
-  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  // 留言的子留言關係現在通過CommentClosure表來管理
+  // 留言的子留言關係通過 CommentClosure 表來管理
   ancestors   CommentClosure[] @relation("descendant")
   descendants CommentClosure[] @relation("ancestor")
 
-  // 讚數
+  // 互動
   likes        Like[]
+  shares       Share[]
   Notification Notification[]
 
-  // 標記關聯
-  userTags UserTag[] @relation("CommentTags") // 留言中的用戶標記
-
-  @@index([postId])
   @@index([authorId])
-}
-
-// 用戶標記模型
-model UserTag {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  position  Int?
-
-  // Tagged user relation
-  taggedUserId String
-  taggedUser   User   @relation("TaggedUser", fields: [taggedUserId], references: [id], onDelete: Cascade)
-
-  // Post relation (optional)
-  postId String?
-  post   Post?   @relation("PostTags", fields: [postId], references: [id], onDelete: Cascade)
-
-  // Comment relation (optional)
-  commentId String?
-  comment   Comment? @relation("CommentTags", fields: [commentId], references: [id], onDelete: Cascade)
-
-  // Creator relation
-  creatorId String
-  creator   User   @relation("TagCreator", fields: [creatorId], references: [id], onDelete: Cascade)
-
-  @@index([taggedUserId])
-  @@index([postId])
-  @@index([commentId])
-  @@index([creatorId])
+  @@index([isRoot]) // 用於快速查詢頂層貼文
 }
 
 model Share {
@@ -126,12 +71,12 @@ model Share {
   createdAt DateTime @default(now())
 
   // 關聯
-  postId String
-  post   Post   @relation(fields: [postId], references: [id])
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id])
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
 
-  @@index([postId])
+  @@index([commentId])
   @@index([userId])
 }
 
@@ -173,13 +118,11 @@ model Notification {
   read      Boolean          @default(false)
   createdAt DateTime         @default(now())
   commentId String?
-  postId    String?
   creatorId String
   // 關聯
   userId    String
   user      User             @relation("NotificationReceiver", fields: [userId], references: [id])
   creator   User             @relation("NotificationCreator", fields: [creatorId], references: [id])
-  post      Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
   comment   Comment?         @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -205,16 +148,12 @@ model Like {
   createdAt DateTime @default(now())
 
   // 關聯
-  postId    String?
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   commentId String?
   comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([postId, userId])
   @@unique([commentId, userId]) // 確保每個用戶對每個評論只能按讚一次
-  @@index([postId])
   @@index([commentId])
   @@index([userId])
 }

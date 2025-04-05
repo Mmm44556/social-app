@@ -22,6 +22,7 @@ export async function syncUser() {
       data: {
         clerkId: userId,
         email: user.emailAddresses[0].emailAddress,
+        tagName: user.emailAddresses[0].emailAddress?.split("@")?.[0] || "",
         username: `${user.firstName || ""} ${user.lastName || ""}`,
         imageUrl: user.imageUrl,
       },
@@ -43,7 +44,7 @@ export async function getUserByClerkId(clerkId: string) {
           select: {
             followers: true,
             following: true,
-            posts: true,
+            comments: true,
             likes: true,
           },
         },
@@ -60,12 +61,31 @@ export async function getUserByClerkId(clerkId: string) {
   }
 }
 
+export async function getUserFollowers(id: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      include: {
+        following: {
+          select: {
+            followingId: true,
+          },
+        },
+      },
+    });
+    return user;
+  } catch (error) {
+    console.error("Error getting user followers", error);
+    return null;
+  }
+}
+
 export async function getDbUserId() {
   const { userId: clerkId } = await auth();
-  if (!clerkId) throw new Error("User not found");
+  if (!clerkId) return null;
   try {
     const user = await getUserByClerkId(clerkId);
-    return user?.id;
+    return user?.id || null;
   } catch (error) {
     console.error("Error getting user by clerkId", error);
     return null;

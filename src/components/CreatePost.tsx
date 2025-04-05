@@ -10,7 +10,8 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { createPost } from "@/app/actions/post.action";
+import { createPost } from "@/app/actions/test";
+import CommentUtilsBar from "./CommentUtilsBar";
 const utilsItems = [
   {
     icon: <ImageIcon />,
@@ -26,7 +27,7 @@ export default function CreatePost() {
   const { user } = useUser();
 
   const [content, setContent] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState<string[]>([]);
   const [isPosting, setIsPosting] = useState(false);
   const [showImage, setShowImage] = useState(false);
   if (!user) return null;
@@ -37,12 +38,12 @@ export default function CreatePost() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       const result = await createPost({
         content,
-        imageUrl,
+        imagesUrl: imageUrl,
       });
       // 如果成功，則清空內容和圖片
       if (result.success) {
         setContent("");
-        setImageUrl("");
+        setImageUrl([]);
         setShowImage(false);
       }
     } catch (error) {
@@ -52,11 +53,11 @@ export default function CreatePost() {
     }
   };
   return (
-    <Card className="p-2 gap-0 rounded-lg ">
-      <CardContent className="grid auto-rows-max gap-1 h-full px-0 divide-y divide-gray-200">
+    <Card className="p-2 gap-0 rounded-lg min-h-32">
+      <CardContent className="grid gap-1 grow h-full px-0 divide-y divide-gray-200">
         <div className="flex justify-between items-center px-1">
           <div className="flex items-center gap-1 w-full">
-            <Avatar>
+            <Avatar className="h-10 w-10">
               <AvatarImage src={user.imageUrl} />
               <AvatarFallback>
                 {user?.firstName?.charAt(0)}
@@ -73,7 +74,7 @@ export default function CreatePost() {
 
             {showImage && (
               <div className="relative w-full h-40">
-                <Image src={imageUrl} alt="Uploaded" fill />
+                <Image src={imageUrl[0]} alt="Uploaded" fill />
               </div>
             )}
           </div>
@@ -91,15 +92,9 @@ export default function CreatePost() {
             </Button>
           </div>
         </div>
-        <div className="flex items-center justify-between gap-2 ">
-          <div>
-            {utilsItems.map((item, idx) => (
-              <Button variant="utils" className="rounded-full" key={idx}>
-                {item.icon}
-              </Button>
-            ))}
-          </div>
-        </div>
+
+        {/* Comment Utils Bar */}
+        <CommentUtilsBar />
       </CardContent>
     </Card>
   );

@@ -2,19 +2,29 @@
 import { startTransition, useOptimistic } from "react";
 import { Heart } from "lucide-react";
 import { toggleLike } from "@/app/actions/post.action";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { Post } from "@/types/post";
+import type { PostType } from "@/types/post";
 import { SignInButton } from "@clerk/nextjs";
+import { VariantProps } from "class-variance-authority";
 
-interface LikeButtonProps {
-  post: Post;
+interface LikeButtonProps
+  extends React.ComponentProps<"button">,
+    VariantProps<typeof buttonVariants> {
   dbUserId: string | null;
+  className?: string;
+  post: PostType;
 }
-export default function LikeButton({ post, dbUserId }: LikeButtonProps) {
+
+export default function LikeButton({
+  post,
+  dbUserId,
+  className,
+  ...props
+}: LikeButtonProps) {
   const [optimisticData, addOptimisticData] = useOptimistic(
     {
-      likesCount: post._count.likes,
+      likesCount: post.likeCount,
       hasLiked: post.likes.some((like) => like.userId === dbUserId),
     },
     (state, optimisticUpdate: { likesCount: number; hasLiked: boolean }) => ({
@@ -23,12 +33,18 @@ export default function LikeButton({ post, dbUserId }: LikeButtonProps) {
     })
   );
   const getLikeCount = () =>
-    optimisticData.likesCount > 0 ? optimisticData.likesCount : "Like";
-
+    optimisticData.likesCount > 0 ? optimisticData.likesCount : 0;
+  console.log(post);
   if (!dbUserId)
     return (
       <SignInButton mode="modal">
-        <Button variant="ghost" size="none">
+        <Button
+          variant="ghost"
+          size="none"
+          className={className}
+          onClick={(e) => e.stopPropagation()}
+          {...props}
+        >
           <Heart
             className={cn(
               "size-4",
@@ -58,14 +74,23 @@ export default function LikeButton({ post, dbUserId }: LikeButtonProps) {
       console.error(error);
       startTransition(() => {
         addOptimisticData({
-          likesCount: post._count.likes,
+          likesCount: post.likeCount,
           hasLiked: post.likes.some((like) => like.userId === dbUserId),
         });
       });
     }
   };
   return (
-    <Button variant="ghost" size="none" onClick={handleLike}>
+    <Button
+      variant="ghost"
+      size="none"
+      onClick={(e) => {
+        e.stopPropagation();
+        handleLike();
+      }}
+      className={className}
+      {...props}
+    >
       <Heart
         className={cn(
           "size-4",

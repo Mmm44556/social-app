@@ -13,11 +13,11 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 hover:bg-gray-200 hover:transition-colors hover:duration-200",
         secondary:
           "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 hover:bg-gray-200 hover:transition-colors hover:duration-200",
         link: "text-primary underline-offset-4 hover:underline",
         utils:
           "bg-transparent border-0 shadow-none hover:bg-gray-100/50 hover:transition-colors hover:duration-200 ",
@@ -28,7 +28,7 @@ const buttonVariants = cva(
         sm: "h-8 rounded-md gap-1.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",
-        none: "h-8 rounded-md gap-1.5 p-0",
+        none: "h-8 w-8 rounded-full gap-1 p-0",
         utils: "h-9 w-9 p-0 rounded-full",
       },
     },

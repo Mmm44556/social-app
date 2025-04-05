@@ -38,8 +38,8 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             {/* Header */}
-            <SiteHeader />
-            <div className="grid grid-cols-1 gap-4 md:auto-cols-fr grid-flow-col  container py-8">
+            {/* <SiteHeader /> */}
+            <div className="grid grid-cols-1 gap-4 md:auto-cols-fr grid-flow-col container py-6">
               {/* Left Sidebar */}
               <AppLeftSidebar />
 

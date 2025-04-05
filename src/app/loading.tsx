@@ -1,3 +1,3 @@
 export default function Loading() {
-  return null;
+  return <div className=" lg:col-span-9 md:col-span-9">Loading...</div>;
 }

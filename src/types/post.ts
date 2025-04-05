@@ -1,3 +1,3 @@
-import { getPosts } from "@/app/actions/post.action";
+import { getContent, getFeed } from "@/app/actions/test";
 
-export type Post = Awaited<ReturnType<typeof getPosts>>[number];
+export type PostType = Awaited<ReturnType<typeof getFeed>>["posts"][number];

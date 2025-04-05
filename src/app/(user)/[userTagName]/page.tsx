@@ -66,7 +66,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#1A202C] sticky top-0 z-50 lg:col-span-9 md:col-span-9">
+    <div className="bg-gray-50 dark:bg-[#1A202C] sticky top-0 z-50 ">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="sticky top-0 z-10 bg-white/80 dark:bg-[#1E293B]/80 backdrop-blur-sm p-2 border-b">
@@ -103,7 +103,7 @@ export default function ProfilePage() {
             </Avatar>
           </div>
 
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-end pt-4 sticky top-0 z-10">
             <Button
               variant={isFollowing ? "outline" : "default"}
               className={

@@ -39,6 +39,15 @@ export async function getPosts() {
             username: true,
             email: true,
             imageUrl: true,
+            bio: true,
+            tagName: true,
+            createdAt: true,
+            _count: {
+              select: {
+                followers: true,
+                following: true,
+              },
+            },
           },
         },
         comments: {
@@ -75,7 +84,68 @@ export async function getPosts() {
   }
 }
 
-export async function toggleLike(postId: string) {
+export async function getPost(postId: string) {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      include: {
+        author: {
+          select: {
+            username: true,
+            email: true,
+            imageUrl: true,
+            bio: true,
+            createdAt: true,
+            tagName: true,
+            _count: {
+              select: {
+                followers: true,
+                following: true,
+              },
+            },
+          },
+        },
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                username: true,
+                email: true,
+                imageUrl: true,
+                tagName: true,
+              },
+            },
+            _count: {
+              select: {
+                likes: true,
+              },
+            },
+          },
+          orderBy: { createdAt: "asc" },
+        },
+
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
+      },
+    });
+    return post;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to get post");
+  }
+}
+
+export async function toggleLike(commentId: string) {
   try {
     const userId = await getDbUserId();
     if (!userId) throw new Error("User not found");
@@ -83,25 +153,25 @@ export async function toggleLike(postId: string) {
     // check if like exists
     const existingLike = await prisma.like.findFirst({
       where: {
-        postId,
+        commentId,
         userId,
       },
     });
 
-    const post = await prisma.post.findUnique({
+    const comment = await prisma.comment.findUnique({
       where: {
-        id: postId,
+        id: commentId,
       },
     });
 
-    if (!post) throw new Error("Post not found");
+    if (!comment) throw new Error("Comment not found");
 
     if (existingLike) {
       // delete like
       await prisma.like.delete({
         where: {
-          postId_userId: {
-            postId,
+          commentId_userId: {
+            commentId,
             userId,
           },
         },
@@ -111,16 +181,16 @@ export async function toggleLike(postId: string) {
       await prisma.$transaction([
         prisma.like.create({
           data: {
-            postId,
+            commentId,
             userId,
           },
         }),
-        ...(post.authorId !== userId
+        ...(comment.authorId !== userId
           ? [
               prisma.notification.create({
                 data: {
-                  userId: post.authorId,
-                  postId,
+                  userId: comment.authorId,
+                  commentId,
                   type: "LIKE",
                   creatorId: userId,
                 },
@@ -145,13 +215,14 @@ export async function createComment({
 }: {
   postId: string;
   content: string;
-  imageUrl: string;
+  imageUrl: string[];
 }) {
   try {
     const userId = await getDbUserId();
     if (!userId) throw new Error("User not found");
-    if (!content && !imageUrl)
+    if (content.length === 0 && imageUrl.length === 0) {
       throw new Error("Content or imageUrl is required");
+    }
 
     const post = await prisma.post.findUnique({
       where: {
@@ -170,7 +241,7 @@ export async function createComment({
         data: {
           postId,
           content,
-          images: [imageUrl],
+          images: imageUrl,
           authorId: userId,
         },
       });

@@ -4,7 +4,8 @@ import AuthCard from "@/components/auth/Auth";
 import { currentUser } from "@clerk/nextjs/server";
 import UnAuth from "@/components/auth/unAuth";
 import { getUserByClerkId } from "@/app/actions/user.action";
-
+import Link from "next/link";
+import Brand from "@/components/Brand";
 export default async function AppLeftSidebar() {
   const user = await currentUser();
   if (!user) return <UnAuth />;
@@ -12,11 +13,12 @@ export default async function AppLeftSidebar() {
   if (!dbUser) return <UnAuth />;
 
   return (
-    <div className="hidden lg:block lg:col-span-4 ">
-      <div className="sticky top-20 space-y-6 ">
+    <aside className="hidden lg:block lg:col-span-4 ">
+      <div className="flex flex-col gap-6 sticky top-0">
+        <Brand />
         <AuthCard user={dbUser} />
         <NavBar user={dbUser} />
       </div>
-    </div>
+    </aside>
   );
 }

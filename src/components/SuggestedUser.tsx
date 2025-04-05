@@ -11,7 +11,6 @@ import FollowButton from "./FollowButton";
 
 export default async function SuggestedUser() {
   const suggestedUsers = await getSuggestedUsers();
-  console.log(suggestedUsers, "@");
   if (!suggestedUsers.length) return null;
 
   return (
@@ -32,7 +31,7 @@ export default async function SuggestedUser() {
                 {user._count.followers} followers
               </div>
             </div>
-            <FollowButton userId={user.id} />
+            <FollowButton postUserId={user.id} />
           </div>
         ))}
       </CardContent>

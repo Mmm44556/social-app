@@ -46,7 +46,7 @@ const navItems = [
   {
     title: "Profile",
     icon: User,
-    linkFn: (name: string) => `/profile/${name}`,
+    linkFn: (tag: string) => `/${tag}`,
   },
 ];
 
@@ -62,7 +62,7 @@ export default function NavBar({ user }: { user: DB_User }) {
               {navItems.map((item) => (
                 <li key={item.title}>
                   <Link
-                    href={item.linkFn(user.email)}
+                    href={item.linkFn(user.email.split("@")[0])}
                     className="relative flex h-12 items-center gap-4 rounded-md px-4 transition-colors duration-150 hover:bg-gray-200/50"
                   >
                     <item.icon className="h-6 w-6" />

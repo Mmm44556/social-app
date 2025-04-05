@@ -168,7 +168,7 @@ async function AppRightSidebar() {
   if (!userId) return <div className="col-span-3"></div>;
   return (
     <aside className="hidden lg:block lg:col-span-5 ">
-      <div className="space-y-6 sticky top-20 ">
+      <div className="sticky top-0">
         {/* Suggested Users */}
         <SuggestedUser />
 
