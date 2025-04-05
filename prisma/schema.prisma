@@ -15,29 +15,32 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  clerkId   String   @unique // Clerk 用戶 ID
-  email     String   @unique // 可選，如果你想在自己的數據庫也存儲
-  username  String   @unique // 用戶名稱
-  imageUrl  String? // Clerk 的頭像 URL
-  bio       String? // 個人簡介
+  clerkId   String   @unique
+  email     String   @unique
+  username  String   @unique
+  tagName   String   @unique
+  imageUrl  String?
+  bio       String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  isDeleted Boolean  @default(false) // 標記用戶是否已刪除
+  isDeleted Boolean  @default(false)
 
-  // 關聯
-  posts                 Post[] // 發布的貼文
-  comments              Comment[] // 發布的留言
-  shares                Share[] // 分享的貼文
+  posts                 Post[]
+  comments              Comment[]
+  shares                Share[]
   sentMessages          Message[]      @relation("SentMessages")
   receivedMessages      Message[]      @relation("ReceivedMessages")
-  receivedNotifications Notification[] @relation("NotificationReceiver") // 收到的通知
-  createdNotifications  Notification[] @relation("NotificationCreator") // 建立的通知
-  followers             Follow[]       @relation("following") // users who follow this user
-  following             Follow[]       @relation("follower") // users this user follows
-  likes                 Like[] // 按讚的貼文
+  receivedNotifications Notification[] @relation("NotificationReceiver")
+  createdNotifications  Notification[] @relation("NotificationCreator")
+  followers             Follow[]       @relation("following")
+  following             Follow[]       @relation("follower")
+  likes                 Like[]
+  tagsReceived          UserTag[]      @relation("TaggedUser")
+  tagsCreated           UserTag[]      @relation("TagCreator")
 
   @@index([clerkId])
   @@index([email])
+  @@index([tagName])
 }
 
 model Post {
@@ -54,6 +57,9 @@ model Post {
   shares       Share[]
   likes        Like[]
   Notification Notification[]
+
+  // 標記關聯
+  userTags UserTag[] @relation("PostTags") // 貼文中的用戶標記
 
   @@index([authorId])
 }
@@ -72,18 +78,47 @@ model Comment {
   authorId String?
   author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
-  // 父留言關聯（用於巢狀留言）
-  parentId String?
-  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies  Comment[] @relation("CommentReplies")
+  // 留言的子留言關係現在通過CommentClosure表來管理
+  ancestors   CommentClosure[] @relation("descendant")
+  descendants CommentClosure[] @relation("ancestor")
 
   // 讚數
   likes        Like[]
   Notification Notification[]
 
+  // 標記關聯
+  userTags UserTag[] @relation("CommentTags") // 留言中的用戶標記
+
   @@index([postId])
   @@index([authorId])
-  @@index([parentId])
+}
+
+// 用戶標記模型
+model UserTag {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  position  Int?
+
+  // Tagged user relation
+  taggedUserId String
+  taggedUser   User   @relation("TaggedUser", fields: [taggedUserId], references: [id], onDelete: Cascade)
+
+  // Post relation (optional)
+  postId String?
+  post   Post?   @relation("PostTags", fields: [postId], references: [id], onDelete: Cascade)
+
+  // Comment relation (optional)
+  commentId String?
+  comment   Comment? @relation("CommentTags", fields: [commentId], references: [id], onDelete: Cascade)
+
+  // Creator relation
+  creatorId String
+  creator   User   @relation("TagCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@index([taggedUserId])
+  @@index([postId])
+  @@index([commentId])
+  @@index([creatorId])
 }
 
 model Share {
@@ -98,6 +133,22 @@ model Share {
 
   @@index([postId])
   @@index([userId])
+}
+
+// 新增的Closure Table模型
+model CommentClosure {
+  id           String @id @default(uuid())
+  ancestorId   String
+  descendantId String
+  depth        Int // 表示兩個節點之間的距離，0表示自身
+
+  // 關聯
+  ancestor   Comment @relation("ancestor", fields: [ancestorId], references: [id], onDelete: Cascade)
+  descendant Comment @relation("descendant", fields: [descendantId], references: [id], onDelete: Cascade)
+
+  @@unique([ancestorId, descendantId]) // 確保每對祖先-後代關係只存在一次
+  @@index([ancestorId])
+  @@index([descendantId])
 }
 
 model Message {
@@ -118,7 +169,7 @@ model Message {
 
 model Notification {
   id        String           @id @default(uuid())
-  type      NotificationType // 'LIKE' | 'SHARE' | 'FOLLOW' | 'MESSAGE' | 'COMMENT'
+  type      NotificationType // 'LIKE' | 'SHARE' | 'FOLLOW' | 'MESSAGE' | 'COMMENT' | 'TAG'
   read      Boolean          @default(false)
   createdAt DateTime         @default(now())
   commentId String?
@@ -174,4 +225,5 @@ enum NotificationType {
   FOLLOW
   MESSAGE
   COMMENT
+  TAG // 新增標記通知類型
 }
