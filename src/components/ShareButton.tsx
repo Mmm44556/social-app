@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { LinkIcon, Redo2 } from "lucide-react";
-import type { PostType, ReplyType, ContentType } from "@/types/post";
+import type { PostType } from "@/types/post";
 
 interface ShareButtonProps {
   post: PostType;
@@ -21,7 +21,7 @@ export default function ShareButton({ post }: ShareButtonProps) {
           size="none"
           onClick={(e) => e.stopPropagation()}
         >
-          <Redo2 className="size-4" />
+          <Redo2 className="size-4.5" />
           <span className="text-sm">0</span>
         </Button>
       </DropdownMenuTrigger>

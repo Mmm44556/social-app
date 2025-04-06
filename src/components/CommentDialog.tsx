@@ -16,13 +16,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { PostType, ReplyType, ContentType } from "@/types/post";
+import type { PostType } from "@/types/post";
 import CommentUtilsBar from "@/components/CommentUtilsBar";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import Post from "./comment/PostCard";
-import { Icons } from "./ui/icons";
+import Post from "@/components/comment/PostCard";
+import { Icons } from "@/components/ui/icons";
 
-import { createReply } from "@/app/actions/test";
+import { createReply } from "@/app/actions/comment.action";
 interface CommentDialogProps {
   children?: React.ReactNode;
   className?: string;
@@ -46,7 +46,7 @@ export default function CommentDialog({ post, className }: CommentDialogProps) {
           className={className}
           onClick={(e) => e.stopPropagation()}
         >
-          <Icons.comment className="size-4" />
+          <Icons.comment className="size-4.5" />
           {post.replyCount}
         </Button>
       </SignInButton>
@@ -99,7 +99,7 @@ export default function CommentDialog({ post, className }: CommentDialogProps) {
             }}
             className={className}
           >
-            <Icons.comment className="size-4" />
+            <Icons.comment className="size-4.5" />
             {post.replyCount}
           </Button>
         </DialogTrigger>

@@ -7,7 +7,7 @@ import { ArrowLeft } from "lucide-react";
 export default function MainHeader() {
   const router = useRouter();
   return (
-    <div className="sticky top-0 z-10 bg-white/80 dark:bg-[#1E293B]/80 backdrop-blur-sm p-2 border-b">
+    <div className="sticky top-0 z-10 bg-white/80 dark:bg-[#1E293B]/80 backdrop-blur-sm p-2 ">
       <div className="flex items-center gap-6">
         <div>
           <Button

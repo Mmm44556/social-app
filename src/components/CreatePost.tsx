@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { createPost } from "@/app/actions/test";
+import { createPost } from "@/app/actions/comment.action";
 import CommentUtilsBar from "./CommentUtilsBar";
 const utilsItems = [
   {

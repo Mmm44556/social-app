@@ -21,6 +21,7 @@ textarea {
 @layer base {
   :root {
     --theme-color: #578fca;
+    --color-notification-blue: #1d9bf0;
     --theme-color-hover: #6a9ed2;
     --border: 214.3 31.8% 91.4%;
     --border-gray: #e2e7f0;
@@ -58,6 +59,7 @@ textarea {
   --animate-smaill-rotate: small-rotate 0.3s ease-out infinite alternate;
   --animate-spin-fly: spin-and-fly 1s ease-in-out infinite forwards;
   --color-background: var(--background);
+  --color-notification-blue: var(--color-notification-blue);
   --color-border-gray: var(--border-gray);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);

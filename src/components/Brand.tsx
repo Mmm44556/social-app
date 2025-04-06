@@ -7,7 +7,8 @@ export default function Brand() {
   const router = useRouter();
   return (
     <>
-      <SplitText
+      Nexus
+      {/* <SplitText
         onClick={() => router.push("/")}
         text="Nexus"
         className="hover:cursor-pointer brand-stroke-white tracking-wide text-black text-4xl dark:brand-stroke-black dark:text-white  gap-2 font-bold col-span-4 flex items-center justify-center"
@@ -16,7 +17,7 @@ export default function Brand() {
         animationTo={{ opacity: 1, transform: "translate3d(0,0,0)" }}
         threshold={0.2}
         rootMargin="-50px"
-      />
+      /> */}
     </>
   );
 }

@@ -1,5 +1,5 @@
 import CreatePost from "@/components/CreatePost";
-import { getFeed } from "@/app/actions/test";
+import { getFeed } from "@/app/actions/comment.action";
 import { Fragment } from "react";
 import PostCard from "@/components/comment/PostCard";
 import { getDbUserId } from "@/app/actions/user.action";

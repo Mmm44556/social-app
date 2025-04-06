@@ -6,6 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { SiteHeader } from "@/components/SideHeader";
 import AppRightSidebar from "@/components/nav/AppRightSidebar";
 import AppLeftSidebar from "@/components/nav/AppLeftSidebar";
+import QueryClientComponent from "@/components/QueryClient";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -44,7 +45,7 @@ export default async function RootLayout({
               <AppLeftSidebar />
 
               {/* Main Content */}
-              {children}
+              <QueryClientComponent>{children}</QueryClientComponent>
 
               {/* Right Sidebar */}
               <AppRightSidebar />

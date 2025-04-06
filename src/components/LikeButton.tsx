@@ -46,7 +46,7 @@ export default function LikeButton({
         >
           <Heart
             className={cn(
-              "size-4",
+              "size-4.5",
               optimisticData.hasLiked && "fill-red-500 text-red-500"
             )}
           />
@@ -92,7 +92,7 @@ export default function LikeButton({
     >
       <Heart
         className={cn(
-          "size-4",
+          "size-4.5",
           optimisticData.hasLiked && "fill-red-500 text-red-500"
         )}
       />
