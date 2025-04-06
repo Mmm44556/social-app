@@ -34,7 +34,6 @@ export default function LikeButton({
   );
   const getLikeCount = () =>
     optimisticData.likesCount > 0 ? optimisticData.likesCount : 0;
-  console.log(post);
   if (!dbUserId)
     return (
       <SignInButton mode="modal">

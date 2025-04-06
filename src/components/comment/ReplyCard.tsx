@@ -1,40 +1,33 @@
 "use client";
-import LikeButton from "./LikeButton";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AuthorHeader } from "./PostCard";
-import FollowButton from "./FollowButton";
-import { CalendarDays, User } from "lucide-react";
-import formatTimeOrDate from "@/utils/formatTimeOrDate";
-import EditButton from "./EditButton";
-import { HoverCardTrigger, HoverCardContent } from "./ui/hover-card";
-import { HoverCard } from "./ui/hover-card";
-import CommentDialog from "./CommentDialog";
-import ShareButton from "./ShareButton";
-import { format } from "date-fns";
 import { memo } from "react";
-import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import { CalendarDays, User } from "lucide-react";
+import { AuthorHeader } from "@/components/comment/PostCard";
+import LikeButton from "@/components/LikeButton";
+import FollowButton from "@/components/FollowButton";
+import CommentDialog from "@/components/CommentDialog";
+import ShareButton from "@/components/ShareButton";
+import EditButton from "@/components/EditButton";
+import { HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { HoverCard } from "@/components/ui/hover-card";
+import useNavigateToComment from "@/hooks/useNaivagteToComment";
+import formatTimeOrDate from "@/utils/formatTimeOrDate";
+import type { PostType } from "@/types/post";
+
 interface ReplyCardProps {
-  comment: any;
+  comment: PostType;
   dbUserId: string | null;
 }
 function ReplyCard({ comment, dbUserId }: ReplyCardProps) {
-  const router = useRouter();
-  // console.log(comment);
-  const handleCardClick = async (e: React.MouseEvent) => {
-    // // 如果有選取文字，不觸發跳轉
-    const selectedText = window.getSelection()?.toString();
-    if (selectedText) {
-      return;
-    }
-    router.push(`/${comment.author.tagName}/post/${comment.id}`);
-  };
+  const navigateToComment = useNavigateToComment();
 
   return (
     <>
       <HoverCard openDelay={250}>
         <div
           className="flex items-stretch gap-2 relative"
-          onClick={handleCardClick}
+          onClick={() => navigateToComment(comment.author.tagName, comment.id)}
         >
           <HoverCardTrigger asChild>
             <Avatar className="h-10 w-10">
@@ -124,6 +117,7 @@ function ReplyCard({ comment, dbUserId }: ReplyCardProps) {
             </div>
           </div>
 
+          {/* 如果自己是作者，則顯示編輯按鈕 */}
           {comment.authorId === dbUserId && <EditButton postId={comment.id} />}
         </div>
       </HoverCard>

@@ -132,7 +132,7 @@ export async function createPost({
 // 獲取內容 (貼文或留言)
 export async function getContent(id: string) {
   try {
-    // 獲取內容基本信息
+    // // 獲取內容基本信息
     const content = await prisma.comment.findUnique({
       where: { id },
       include: {
@@ -219,6 +219,12 @@ export async function getContent(id: string) {
             userId: true,
           },
         },
+        _count: {
+          select: {
+            likes: true,
+            descendants: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -250,9 +256,33 @@ export async function getContent(id: string) {
                 imageUrl: true,
                 tagName: true,
                 createdAt: true,
+                bio: true,
+                _count: {
+                  select: {
+                    followers: true,
+                    likes: true,
+                  },
+                },
+              },
+            },
+            descendants: {
+              where: {
+                depth: 1,
+              },
+            },
+            _count: {
+              select: {
+                likes: true,
+                descendants: true,
+              },
+            },
+            likes: {
+              select: {
+                userId: true,
               },
             },
           },
+
           orderBy: {
             createdAt: "desc",
           },
@@ -266,14 +296,85 @@ export async function getContent(id: string) {
       replies: repliesWithCounts,
       replyCount: replies.length,
       likeCount: content.likes.length,
-      ancestors,
+      ancestors: ancestors.map((ancestor) => ({
+        ...ancestor,
+        replyCount: ancestor.descendants.length,
+        likeCount: ancestor.likes.length,
+      })),
     };
   } catch (error) {
     console.error("Error getting content:", error);
     throw new Error(`Failed to get content: ${error.message}`);
   }
 }
+export async function findRootPostOptimized(
+  commentId: string
+): Promise<any | null> {
+  try {
+    // 直接查詢與該留言關聯的、標記為 isRoot 的祖先
+    // 在 Closure Table 中，這是一個高效查詢
+    const rootPost = await prisma.comment.findFirst({
+      where: {
+        isRoot: true,
+        descendants: {
+          some: {
+            descendantId: commentId,
+          },
+        },
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            imageUrl: true,
+            tagName: true,
+            bio: true,
+            createdAt: true,
+            likes: true,
+            _count: {
+              select: {
+                followers: true,
+                likes: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            descendants: true,
+          },
+        },
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
+        descendants: {
+          where: {
+            NOT: {
+              depth: 0,
+            },
+          },
+        },
+      },
+    });
 
+    return rootPost
+      ? {
+          ...rootPost,
+          likeCount: rootPost.likes.length,
+          replyCount: rootPost.descendants.length,
+          _count: rootPost._count,
+          descendants: rootPost.descendants,
+        }
+      : null;
+  } catch (error) {
+    console.error("Error finding root post:", error);
+    return null;
+  }
+}
 // 創建回覆
 export async function createReply({
   parentId,

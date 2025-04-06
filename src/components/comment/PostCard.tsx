@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { deletePost } from "@/app/actions/post.action";
 import { PostType } from "@/types/post";
 import CommentDialog from "@/components/CommentDialog";
-import LikeButton from "./LikeButton";
+import LikeButton from "../LikeButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,12 +20,12 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import DeleteDialog from "./DeleteDialog";
+import DeleteDialog from "../DeleteDialog";
 import { useRouter } from "next/navigation";
-import FollowButton from "./FollowButton";
+import FollowButton from "../FollowButton";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import ShareButton from "./ShareButton";
+import ShareButton from "../ShareButton";
 interface PostProps {
   post: PostType;
   dbUserId: string | null;

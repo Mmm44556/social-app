@@ -19,7 +19,7 @@ import {
 import type { PostType, ReplyType, ContentType } from "@/types/post";
 import CommentUtilsBar from "@/components/CommentUtilsBar";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import Post from "./PostCard";
+import Post from "./comment/PostCard";
 import { Icons } from "./ui/icons";
 
 import { createReply } from "@/app/actions/test";
