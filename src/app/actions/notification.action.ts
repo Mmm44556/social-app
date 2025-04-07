@@ -19,8 +19,8 @@ export async function getNotifications() {
         select: {
           id: true,
           content: true,
-          images: true,
           createdAt: true,
+          isRoot: true,
         },
       },
       creator: {
@@ -48,17 +48,21 @@ export async function getNotifications() {
 
 export async function readNotification(notificationIds: string[]) {
   const { userId } = await auth();
-  if (!userId) return;
-
-  await prisma.notification.updateMany({
-    where: {
-      id: {
-        in: notificationIds,
+  if (!userId) return { success: false };
+  try {
+    await prisma.notification.updateMany({
+      where: {
+        id: {
+          in: notificationIds,
+        },
       },
-    },
-    data: {
-      read: true,
-    },
-  });
-  return { success: true };
+      data: {
+        read: true,
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false };
+  }
 }

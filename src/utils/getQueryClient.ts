@@ -14,6 +14,7 @@ let queryClient: QueryClient | undefined = undefined;
 
 export const getQueryClient = () => {
   if (isServer) {
+    console.log("isServer");
     return createQueryClientOptions();
   }
   if (!queryClient) {

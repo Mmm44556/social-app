@@ -4,7 +4,6 @@ import AuthCard from "@/components/auth/Auth";
 import { currentUser } from "@clerk/nextjs/server";
 import UnAuth from "@/components/auth/unAuth";
 import { getUserByClerkId } from "@/app/actions/user.action";
-import Link from "next/link";
 import Brand from "@/components/Brand";
 export default async function AppLeftSidebar() {
   const user = await currentUser();

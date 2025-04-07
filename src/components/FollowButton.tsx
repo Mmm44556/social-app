@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -10,6 +9,7 @@ import {
 } from "@/app/actions/user.action";
 import { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 
 interface FollowButtonProps {
   postUserId: string;
@@ -24,31 +24,30 @@ export default function FollowButton({
   React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants>) {
   const clerkUser = useUser();
-  const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    async function fetchFollowers() {
+  const {
+    data: isFollowing,
+    refetch,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["isFollowing", postUserId, clerkUser?.user?.id],
+    queryFn: async () => {
       if (!clerkUser?.user?.id) return;
-      try {
-        // 取得當前用戶
-        const currentUser = await getUserByClerkId(clerkUser.user.id);
-        if (!currentUser) throw new Error("User not found");
-        if (currentUser.id === postUserId) return;
-        // 取得當前用戶的followers
-        const res = await getUserFollowers(currentUser.id);
-        // 將followers的id存入currentUserFollowers
-        const currentUserFollowers =
-          res?.following.map((follower) => follower.followingId) ?? [];
-        // 判斷當前用戶是否追蹤postUserId
-        setIsFollowing(currentUserFollowers.includes(postUserId));
-      } catch (error) {
-        console.error("Failed to fetch followers", error);
-      }
-    }
-    if (clerkUser?.user?.id) {
-      fetchFollowers();
-    }
-  }, [postUserId, clerkUser?.user?.id]);
+      // 取得當前用戶
+      const currentUser = await getUserByClerkId(clerkUser.user.id);
+      if (!currentUser) return null;
+      if (currentUser.id === postUserId) return null;
+      // 取得當前用戶的followers
+      const res = await getUserFollowers(currentUser.id);
+      // 將followers的id存入currentUserFollowers
+      const currentUserFollowers =
+        res?.following.map((follower) => follower.followingId) ?? [];
+      // 判斷當前用戶是否追蹤postUserId
+      return currentUserFollowers.includes(postUserId);
+    },
+    enabled: !!clerkUser?.user?.id,
+    staleTime: 30000,
+  });
 
   const handleFollow = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -56,13 +55,14 @@ export default function FollowButton({
 
     try {
       await toggleFollow(postUserId);
-      setIsFollowing((prev) => !prev);
+      refetch();
     } catch (error) {
       console.error("Failed to Follow", error);
     }
   };
 
-  return (
+  if (isFollowing === null) return null;
+  return isSuccess ? (
     <Button
       onClick={handleFollow}
       disabled={!clerkUser?.user?.id}
@@ -74,7 +74,11 @@ export default function FollowButton({
       variant={isFollowing ? "outline" : "default"}
       {...props}
     >
-      {isFollowing ? "Unfollow" : "Follow"}
+      {isFollowing === null
+        ? "Loading..."
+        : isFollowing
+        ? "Unfollow"
+        : "Follow"}
     </Button>
-  );
+  ) : null;
 }

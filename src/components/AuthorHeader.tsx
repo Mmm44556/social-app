@@ -26,13 +26,13 @@ interface AuthorHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 function Header({ className, author, ...props }: AuthorHeaderProps) {
   return (
-    <p
+    <div
       className={cn("hover:cursor-pointer hover:underline", className)}
       {...props}
     >
       <span className="font-semibold">{author.username}</span>
       <span className="text-muted-foreground">@{author.tagName}</span>
-    </p>
+    </div>
   );
 }
 export default function AuthorHeader({
@@ -61,7 +61,7 @@ export default function AuthorHeader({
                   <AvatarImage src={author.imageUrl ?? ""} />
                   <AvatarFallback>{author.username.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <p
+                <div
                   onClick={handleAuthorProfileClick}
                   className={cn(
                     "hover:cursor-pointer hover:underline",
@@ -73,7 +73,7 @@ export default function AuthorHeader({
                   <span className="text-muted-foreground">
                     @{author.tagName}
                   </span>
-                </p>
+                </div>
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-80">

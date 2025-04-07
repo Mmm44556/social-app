@@ -14,6 +14,24 @@ export async function syncUser() {
     // check if user exists in db
     const existingUser = await prisma.user.findUnique({
       where: { clerkId: userId },
+      include: {
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            comments: true,
+            likes: true,
+          },
+        },
+        receivedNotifications: {
+          where: {
+            read: false,
+          },
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
     if (existingUser) return existingUser;
@@ -26,6 +44,26 @@ export async function syncUser() {
         username: `${user.firstName || ""} ${user.lastName || ""}`,
         imageUrl: user.imageUrl,
       },
+      select: {
+        username: true,
+        tagName: true,
+        imageUrl: true,
+        email: true,
+        id: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            comments: true,
+            likes: true,
+          },
+        },
+        receivedNotifications: {
+          where: {
+            read: false,
+          },
+        },
+      },
     });
     revalidatePath("/home");
     return dbUser;
@@ -34,7 +72,7 @@ export async function syncUser() {
     return null;
   }
 }
-
+export type DB_User = Awaited<ReturnType<typeof getUserByClerkId>>;
 export async function getUserByClerkId(clerkId: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -46,6 +84,14 @@ export async function getUserByClerkId(clerkId: string) {
             following: true,
             comments: true,
             likes: true,
+          },
+        },
+        receivedNotifications: {
+          where: {
+            read: false,
+          },
+          select: {
+            id: true,
           },
         },
       },

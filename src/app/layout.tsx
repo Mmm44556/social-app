@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/SideHeader";
 import AppRightSidebar from "@/components/nav/AppRightSidebar";
 import AppLeftSidebar from "@/components/nav/AppLeftSidebar";
 import QueryClientComponent from "@/components/QueryClient";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -41,14 +42,18 @@ export default async function RootLayout({
             {/* Header */}
             {/* <SiteHeader /> */}
             <div className="grid grid-cols-1 gap-4 md:auto-cols-fr grid-flow-col container py-6">
-              {/* Left Sidebar */}
-              <AppLeftSidebar />
+              <QueryClientComponent>
+                {/* Left Sidebar */}
+                <AppLeftSidebar />
 
-              {/* Main Content */}
-              <QueryClientComponent>{children}</QueryClientComponent>
+                {/* Main Content */}
 
-              {/* Right Sidebar */}
-              <AppRightSidebar />
+                {children}
+                <ReactQueryDevtools />
+
+                {/* Right Sidebar */}
+                <AppRightSidebar />
+              </QueryClientComponent>
             </div>
           </ThemeProvider>
         </body>
