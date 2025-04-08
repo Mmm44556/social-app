@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarDays, EllipsisIcon, Pencil, Trash2, User } from "lucide-react";
+import { EllipsisIcon, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import formatTimeOrDate from "@/utils/formatTimeOrDate";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { deletePost } from "@/app/actions/post.action";
+import { deleteComment } from "@/app/actions/comment.action";
 import { PostType } from "@/types/post";
 import CommentDialog from "@/components/CommentDialog";
 import LikeButton from "@/components/LikeButton";
@@ -15,17 +14,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+
 import DeleteDialog from "@/components/DeleteDialog";
 import { useRouter } from "next/navigation";
-import FollowButton from "@/components/FollowButton";
-import { format } from "date-fns";
 import ShareButton from "@/components/ShareButton";
 import AuthorHeader from "@/components/AuthorHeader";
+import EditButton from "../EditButton";
 interface PostProps {
   post: PostType;
   dbUserId: string | null;
@@ -38,14 +32,14 @@ export default function PostCard({ post, dbUserId }: PostProps) {
     if (isDeleting) return;
     try {
       setIsDeleting(true);
-      await deletePost(post.id);
+      await deleteComment(post.id);
     } catch (error) {
       console.error(error);
     } finally {
       setIsDeleting(false);
     }
   };
-  const handleCardClick = async (e: React.MouseEvent) => {
+  const handleCardClick = async () => {
     // 如果有選取文字，不觸發跳轉
     const selectedText = window.getSelection()?.toString();
     if (selectedText) {
@@ -56,11 +50,8 @@ export default function PostCard({ post, dbUserId }: PostProps) {
     router.refresh();
   };
   return (
-    <Card
-      className="rounded-xl shadow-none border p-6 hover:bg-gray-50 hover:cursor-pointer hover:shadow-sm transition-colors duration-200"
-      onClick={handleCardClick}
-    >
-      <CardContent className="px-0 relative">
+    <Card className="rounded-xl shadow-none border p-6 hover:bg-gray-50 hover:cursor-pointer hover:shadow-sm transition-colors duration-200">
+      <CardContent className="px-0 relative" onClick={handleCardClick}>
         <div className="flex items-stretch gap-2">
           <div className="basis-full">
             {/* Hover Card */}
@@ -99,32 +90,7 @@ export default function PostCard({ post, dbUserId }: PostProps) {
             </div>
           </div>
         </div>
-        {post.authorId === dbUserId && (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              className="absolute right-0 top-0 cursor-pointer hover:bg-gray-200 rounded-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <EllipsisIcon className="size-5" />
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent className="[&_div]:hover:bg-gray-100 [&_div]:hover:cursor-pointer ">
-              <DropdownMenuItem>
-                Edit <Pencil />
-              </DropdownMenuItem>
-
-              <DeleteDialog onDelete={handleDelete}>
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                  }}
-                >
-                  Delete <Trash2 />
-                </DropdownMenuItem>
-              </DeleteDialog>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+        {post.authorId === dbUserId && <EditButton commentId={post.id} />}
       </CardContent>
     </Card>
   );

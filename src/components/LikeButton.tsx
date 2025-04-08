@@ -1,7 +1,7 @@
 "use client";
 import { startTransition, useOptimistic } from "react";
 import { Heart } from "lucide-react";
-import { toggleLike } from "@/app/actions/post.action";
+import { toggleLike } from "@/app/actions/comment.action";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { PostType } from "@/types/post";

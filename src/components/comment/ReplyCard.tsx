@@ -24,7 +24,9 @@ function ReplyCard({ comment, dbUserId, className }: ReplyCardProps) {
   const navigateToComment = useNavigateToComment();
   return (
     <article
-      onClick={() => navigateToComment(comment.author.tagName, comment.id)}
+      onClick={() => {
+        navigateToComment(comment.author.tagName, comment.id);
+      }}
       className={cn(
         "flex items-stretch gap-2 relative hover:bg-gray-50 hover:cursor-pointer",
         className

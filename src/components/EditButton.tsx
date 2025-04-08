@@ -8,16 +8,16 @@ import {
 import { EllipsisIcon, Pencil, Trash2 } from "lucide-react";
 import DeleteDialog from "@/components/DeleteDialog";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
-import { deletePost } from "@/app/actions/post.action";
+import { deleteComment } from "@/app/actions/comment.action";
 import { cn } from "@/lib/utils";
 interface EditButtonPros {
-  postId: string;
+  commentId: string;
   className?: string;
 }
-export default function EditButton({ postId, className }: EditButtonPros) {
+export default function EditButton({ commentId, className }: EditButtonPros) {
   const handleDelete = async () => {
     try {
-      await deletePost(postId);
+      await deleteComment(commentId);
     } catch (error) {
       console.error(error);
     }

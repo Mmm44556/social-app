@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -13,7 +11,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import { getProfileByTagName } from "@/app/actions/profile.action";
+import UnAuth from "@/components/auth/unAuth";
 // Mock user data
 const userData = {
   name: "John Doe",
@@ -57,14 +56,14 @@ const userData = {
   ],
 };
 
-export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState("posts");
-  const [isFollowing, setIsFollowing] = useState(false);
-
-  const handleFollow = () => {
-    setIsFollowing(!isFollowing);
-  };
-
+export default async function ProfilePage({
+  params,
+}: {
+  params: Promise<{ userTagName: string }>;
+}) {
+  const { userTagName } = await params;
+  const user = await getProfileByTagName(userTagName);
+  if (!user) return <UnAuth />;
   return (
     <div className="bg-gray-50 dark:bg-[#1A202C] sticky top-0 z-50 ">
       <div className="max-w-4xl mx-auto">
@@ -77,9 +76,9 @@ export default function ProfilePage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-xl font-bold">{userData.name}</h1>
+              <h1 className="text-xl font-bold">{user.username}</h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {userData.posts.length} posts
+                {user._count.comments} posts
               </p>
             </div>
           </div>
@@ -88,7 +87,7 @@ export default function ProfilePage() {
         {/* Banner */}
         <div className="h-48 md:h-64 bg-gray-200 dark:bg-gray-800 relative">
           <img
-            src={userData.banner || "/placeholder.svg"}
+            src={""}
             alt="Profile banner"
             className="w-full h-full object-cover"
           />
@@ -98,30 +97,18 @@ export default function ProfilePage() {
         <div className="relative px-4">
           <div className="absolute -top-16 left-4 border-4 border-white dark:border-[#1A202C] rounded-full">
             <Avatar className="h-32 w-32">
-              <AvatarImage src={userData.avatar} alt={userData.name} />
-              <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+              <AvatarImage src={user.imageUrl || ""} alt={user.username} />
+              <AvatarFallback>{user.username.charAt(0)}</AvatarFallback>
             </Avatar>
           </div>
 
           <div className="flex justify-end pt-4 sticky top-0 z-10">
-            <Button
-              variant={isFollowing ? "outline" : "default"}
-              className={
-                isFollowing
-                  ? "border-[#3098FF] text-[#3098FF]"
-                  : "bg-[#3098FF] hover:bg-[#2180d8]"
-              }
-              onClick={handleFollow}
-            >
-              {isFollowing ? "Following" : "Follow"}
-            </Button>
+            <Button variant={"default"}>{"Following"}</Button>
           </div>
 
           <div className="mt-16">
-            <h1 className="text-2xl font-bold">{userData.name}</h1>
-            <p className="text-gray-500 dark:text-gray-400">
-              @{userData.username}
-            </p>
+            <h1 className="text-2xl font-bold">{user.username}</h1>
+            <p className="text-gray-500 dark:text-gray-400">@{user.tagName}</p>
 
             <p className="mt-4">{userData.bio}</p>
 

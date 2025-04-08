@@ -401,6 +401,70 @@ export async function findRootPostOptimized(
     return null;
   }
 }
+
+export async function toggleLike(commentId: string) {
+  try {
+    const userId = await getDbUserId();
+    if (!userId) throw new Error("User not found");
+
+    // check if like exists
+    const existingLike = await prisma.like.findFirst({
+      where: {
+        commentId,
+        userId,
+      },
+    });
+
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+    });
+
+    if (!comment) throw new Error("Comment not found");
+
+    if (existingLike) {
+      // delete like
+      await prisma.like.delete({
+        where: {
+          commentId_userId: {
+            commentId,
+            userId,
+          },
+        },
+      });
+    } else {
+      // like and create notification (only if user is not the author of the post)
+      await prisma.$transaction([
+        prisma.like.create({
+          data: {
+            commentId,
+            userId,
+          },
+        }),
+        ...(comment.authorId !== userId
+          ? [
+              prisma.notification.create({
+                data: {
+                  userId: comment.authorId,
+                  commentId,
+                  type: "LIKE",
+                  creatorId: userId,
+                },
+              }),
+            ]
+          : []),
+      ]);
+    }
+
+    revalidatePath("/home");
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: "Failed to toggle like" };
+  }
+}
+
 // 創建回覆
 export async function createReply({
   parentId,
@@ -474,5 +538,35 @@ export async function createReply({
       success: false,
       error: `Failed to create reply`,
     };
+  }
+}
+
+export async function deleteComment(commentId: string) {
+  try {
+    const userId = await getDbUserId();
+
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+      select: {
+        authorId: true,
+      },
+    });
+
+    if (!comment) throw new Error("Comment not found");
+    if (comment.authorId !== userId) throw new Error("You are not the author");
+
+    await prisma.comment.delete({
+      where: {
+        id: commentId,
+      },
+    });
+
+    revalidatePath("/home");
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: "Failed to delete comment" };
   }
 }
