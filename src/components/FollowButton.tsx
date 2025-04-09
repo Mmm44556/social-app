@@ -1,5 +1,7 @@
 "use client";
 
+import { useDeferredValue } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -9,8 +11,7 @@ import {
 } from "@/app/actions/user.action";
 import { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-
+import { Icons } from "@/components/ui/icons";
 interface FollowButtonProps {
   postUserId: string;
   dbUserId?: string | null;
@@ -28,7 +29,7 @@ export default function FollowButton({
   const {
     data: isFollowing,
     refetch,
-    isSuccess,
+    isRefetching,
   } = useQuery({
     queryKey: ["isFollowing", postUserId, clerkUser?.user?.id],
     queryFn: async () => {
@@ -49,10 +50,13 @@ export default function FollowButton({
     staleTime: 30000,
   });
 
+  //代表是自身用戶
+  if (isFollowing === null) return null;
+
+  const deferredQuery = useDeferredValue(isFollowing ? "Unfollow" : "Follow");
   const handleFollow = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!clerkUser?.user?.id) return;
-
+    if (!clerkUser?.user?.id || isRefetching) return;
     try {
       await toggleFollow(postUserId);
       refetch();
@@ -61,24 +65,32 @@ export default function FollowButton({
     }
   };
 
-  if (isFollowing === null) return null;
-  return isSuccess ? (
+  return (
     <Button
       onClick={handleFollow}
       disabled={!clerkUser?.user?.id}
       className={cn(
         className,
-        "data-[state=false]:opacity-0 data-[state=true]:opacity-100 transition-opacity duration-100"
+        " transition-opacity duration-100 w-20 max-lg:min-w-18"
       )}
-      data-state={isFollowing === null ? false : true}
-      variant={isFollowing ? "outline" : "default"}
+      variant={
+        isRefetching
+          ? deferredQuery
+            ? "outline"
+            : "default"
+          : isFollowing
+          ? "outline"
+          : "default"
+      }
       {...props}
     >
-      {isFollowing === null
-        ? "Loading..."
-        : isFollowing
-        ? "Unfollow"
-        : "Follow"}
+      {isRefetching ? (
+        <Icons.loading className="h-4 w-4 animate-spin" />
+      ) : isFollowing ? (
+        "Unfollow"
+      ) : (
+        "Follow"
+      )}
     </Button>
-  ) : null;
+  );
 }
