@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -11,8 +11,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getProfileByTagName } from "@/app/actions/profile.action";
+import {
+  getProfileByTagName,
+  getCommentsByTagName,
+} from "@/app/actions/profile.action";
 import UnAuth from "@/components/auth/unAuth";
+import PostCard from "@/components/comment/PostCard";
+import FollowButton from "@/components/FollowButton";
+import { Replies } from "@/components/(profile)/replies";
 // Mock user data
 const userData = {
   name: "John Doe",
@@ -64,6 +70,7 @@ export default async function ProfilePage({
   const { userTagName } = await params;
   const user = await getProfileByTagName(userTagName);
   if (!user) return <UnAuth />;
+  const comments = await getCommentsByTagName(userTagName);
   return (
     <div className="bg-gray-50 dark:bg-[#1A202C] sticky top-0 z-50 ">
       <div className="max-w-4xl mx-auto">
@@ -86,15 +93,15 @@ export default async function ProfilePage({
 
         {/* Banner */}
         <div className="h-48 md:h-64 bg-gray-200 dark:bg-gray-800 relative">
-          <img
+          {/* <img
             src={""}
             alt="Profile banner"
             className="w-full h-full object-cover"
-          />
+          /> */}
         </div>
 
         {/* Profile Info */}
-        <div className="relative px-4">
+        <div className="relative">
           <div className="absolute -top-16 left-4 border-4 border-white dark:border-[#1A202C] rounded-full">
             <Avatar className="h-32 w-32">
               <AvatarImage src={user.imageUrl || ""} alt={user.username} />
@@ -102,36 +109,21 @@ export default async function ProfilePage({
             </Avatar>
           </div>
 
-          <div className="flex justify-end pt-4 sticky top-0 z-10">
-            <Button variant={"default"}>{"Following"}</Button>
+          <div className="flex justify-end pt-4 px-4 sticky top-0 z-10">
+            <FollowButton
+              dbUserId={user.id}
+              className="w-fit"
+              postUserId={user.id}
+            />
           </div>
 
-          <div className="mt-16">
+          <div className="mt-16 px-4">
             <h1 className="text-2xl font-bold">{user.username}</h1>
             <p className="text-gray-500 dark:text-gray-400">@{user.tagName}</p>
 
-            <p className="mt-4">{userData.bio}</p>
+            {user.bio && <p className="mt-4">{user.bio}</p>}
 
             <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 text-gray-500 dark:text-gray-400">
-              {userData.location && (
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  <span>{userData.location}</span>
-                </div>
-              )}
-              {userData.website && (
-                <div className="flex items-center gap-1">
-                  <Link2 className="h-4 w-4" />
-                  <a
-                    href={userData.website}
-                    className="text-[#3098FF] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {userData.website.replace(/^https?:\/\//, "")}
-                  </a>
-                </div>
-              )}
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 <span>Joined {userData.joinDate}</span>
@@ -140,13 +132,13 @@ export default async function ProfilePage({
 
             <div className="flex gap-4 mt-4">
               <Link href="#" className="hover:underline">
-                <span className="font-bold">{userData.following}</span>{" "}
+                <span className="font-bold px-1">{user._count.following}</span>
                 <span className="text-gray-500 dark:text-gray-400">
                   Following
                 </span>
               </Link>
               <Link href="#" className="hover:underline">
-                <span className="font-bold">{userData.followers}</span>{" "}
+                <span className="font-bold px-1">{user._count.followers}</span>
                 <span className="text-gray-500 dark:text-gray-400">
                   Followers
                 </span>
@@ -155,8 +147,8 @@ export default async function ProfilePage({
           </div>
 
           {/* Tabs */}
-          <Tabs defaultValue="posts" className="mt-6">
-            <TabsList className="w-full">
+          <Tabs defaultValue="posts" className="mt-6 [&_*]:!transition-all">
+            <TabsList className="w-full h-12 p-0 rounded-none border-gray-950 [&_button]:cursor-pointer [&_button]:py-0 shadow-[0_1px_0_#e5e7eb]">
               <TabsTrigger value="posts" className="flex-1">
                 Posts
               </TabsTrigger>
@@ -172,114 +164,19 @@ export default async function ProfilePage({
             </TabsList>
 
             <TabsContent value="posts" className="mt-4">
-              {userData.posts.map((post) => (
-                <div key={post.id} className="border-b p-4">
-                  <div className="flex gap-4">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={userData.avatar} alt={userData.name} />
-                      <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold">{userData.name}</span>
-                        <span className="text-gray-500 dark:text-gray-400">
-                          @{userData.username}
-                        </span>
-                        <span className="text-gray-500 dark:text-gray-400">
-                          ·
-                        </span>
-                        <span className="text-gray-500 dark:text-gray-400">
-                          {post.timestamp}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="ml-auto h-8 w-8"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      <p className="mt-2">{post.content}</p>
-                      <div className="flex gap-6 mt-4">
-                        <button className="flex items-center gap-2 text-gray-500 hover:text-[#3098FF]">
-                          <svg
-                            className="h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                            ></path>
-                          </svg>
-                          <span>{post.comments}</span>
-                        </button>
-                        <button className="flex items-center gap-2 text-gray-500 hover:text-green-500">
-                          <svg
-                            className="h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                            ></path>
-                          </svg>
-                          <span>{post.reposts}</span>
-                        </button>
-                        <button className="flex items-center gap-2 text-gray-500 hover:text-red-500">
-                          <svg
-                            className="h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                            ></path>
-                          </svg>
-                          <span>{post.likes}</span>
-                        </button>
-                        <button className="flex items-center gap-2 text-gray-500 hover:text-[#3098FF]">
-                          <svg
-                            className="h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                            ></path>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              {comments.map((comment) => (
+                <Fragment key={comment.id}>
+                  <PostCard
+                    comment={comment}
+                    dbUserId={user.id}
+                    className="bg-transparent border-0 border-b rounded-none hover:shadow-none p-5"
+                  />
+                </Fragment>
               ))}
             </TabsContent>
 
             <TabsContent value="replies" className="mt-4">
-              <div className="flex items-center justify-center p-12">
-                <div className="text-center">
-                  <h3 className="text-lg font-medium">No replies yet</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">
-                    When you reply to someone, it will show up here.
-                  </p>
-                </div>
-              </div>
+              <Replies />
             </TabsContent>
 
             <TabsContent value="media" className="mt-4">

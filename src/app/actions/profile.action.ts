@@ -30,20 +30,81 @@ export async function getProfileByTagName(tagName: string) {
   }
 }
 
-export async function getCommentsByTagName(tagName: string) {
+export async function getCommentsByTagName(
+  tagName: string,
+  limit = 20,
+  cursor?: string
+) {
+  const pagination = cursor
+    ? {
+        cursor: { id: cursor },
+        skip: 1,
+      }
+    : null;
   try {
-    const comments = await prisma.user.findMany({
+    const comments = await prisma.comment.findMany({
       where: {
-        tagName,
+        author: {
+          tagName,
+        },
+        isRoot: true,
       },
       include: {
-        comments: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+            imageUrl: true,
+            tagName: true,
+            bio: true,
+            createdAt: true,
+            _count: {
+              select: {
+                followers: true,
+                likes: true,
+              },
+            },
+          },
+        },
+
+        descendants: {
+          where: {
+            NOT: {
+              depth: 0,
+            },
+          },
+        },
+
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+          },
+        },
       },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: limit,
+      ...(pagination || {}),
     });
-    return comments;
+
+    const commentsWithCounts = comments.map((comment) => ({
+      ...comment,
+      replyCount: comment.descendants.length,
+      likeCount: comment.likes.length,
+    }));
+
+    console.log(commentsWithCounts);
+    return commentsWithCounts;
   } catch (error) {
     console.error("Error getting comments by tagName", error);
-    return null;
+    return [];
   }
 }
 
