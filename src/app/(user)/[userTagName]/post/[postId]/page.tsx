@@ -8,6 +8,7 @@ import MainHeader from "@/components/MainHeader";
 import RootCard from "@/components/comment/RootCard";
 import { cn } from "@/lib/utils";
 import { Fragment } from "react";
+import PostCard from "@/components/comment/PostCard";
 interface PostPageProps {
   params: Promise<{ userTagName: string; postId: string }>;
 }
@@ -37,7 +38,7 @@ export default async function PostPage({ params }: PostPageProps) {
             .filter((comment) => comment.isRoot === false)
             .map((comment) => (
               <div className="relative" key={comment.id}>
-                <ReplyCard comment={comment} dbUserId={dbUserId} />
+                <PostCard comment={comment} dbUserId={dbUserId} />
               </div>
             ))}
 

@@ -23,7 +23,11 @@ const utilsItems = [
     icon: <SmilePlusIcon />,
   },
 ];
-export default function CreatePost() {
+
+interface CreatePostProps {
+  className?: string;
+}
+export default function CreatePost({ className }: CreatePostProps) {
   const { user } = useUser();
 
   const [content, setContent] = useState("");
@@ -53,7 +57,7 @@ export default function CreatePost() {
     }
   };
   return (
-    <Card className="p-2 gap-0 rounded-lg min-h-32">
+    <Card className={cn(className, "p-2 gap-0 rounded-lg min-h-32")}>
       <CardContent className="grid gap-1 grow h-full px-0 divide-y divide-gray-200">
         <div className="flex justify-between items-center px-1">
           <div className="flex items-center gap-1 w-full">

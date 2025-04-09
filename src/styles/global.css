@@ -59,6 +59,7 @@ textarea {
   --animate-smaill-rotate: small-rotate 0.3s ease-out infinite alternate;
   --animate-spin-fly: spin-and-fly 1s ease-in-out infinite forwards;
   --color-background: var(--background);
+  --color-ocean-blue: #1d9bf0;
   --color-notification-blue: var(--color-notification-blue);
   --color-border-gray: var(--border-gray);
   --color-foreground: var(--foreground);

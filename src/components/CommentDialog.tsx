@@ -26,13 +26,16 @@ import { createReply } from "@/app/actions/comment.action";
 interface CommentDialogProps {
   children?: React.ReactNode;
   className?: string;
-  post: PostType;
+  comment: PostType;
 }
 
-export default function CommentDialog({ post, className }: CommentDialogProps) {
+export default function CommentDialog({
+  comment,
+  className,
+}: CommentDialogProps) {
   const { user } = useUser();
   const [open, setOpen] = useState(false);
-  const [comment, setComment] = useState("");
+  const [commentText, setCommentText] = useState("");
   const [isCommenting, setIsCommenting] = useState(false);
   const [hasComment, setHasComment] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,25 +49,25 @@ export default function CommentDialog({ post, className }: CommentDialogProps) {
           className={className}
           onClick={(e) => e.stopPropagation()}
         >
-          <Icons.comment className="size-4.5" />
-          {post.replyCount}
+          <Icons.comment className="size-5" />
+          {comment.replyCount}
         </Button>
       </SignInButton>
     );
   }
   const handleComment = async () => {
-    if (comment.trim().length === 0 || isCommenting) return;
+    if (commentText.trim().length === 0 || isCommenting) return;
 
     try {
       setIsCommenting(true);
       const newComment = await createReply({
-        parentId: post.id,
-        content: comment.trim(),
+        parentId: comment.id,
+        content: commentText.trim(),
         images: [],
       });
 
       if (newComment.success) {
-        setComment("");
+        setCommentText("");
         setIsCommenting(false);
         setOpen(false);
       }
@@ -77,11 +80,11 @@ export default function CommentDialog({ post, className }: CommentDialogProps) {
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      if (comment.trim().length > 0) {
+      if (commentText.trim().length > 0) {
         setHasComment(true);
       } else {
         setHasComment(false);
-        setComment("");
+        setCommentText("");
         setOpen(false);
       }
     }
@@ -99,8 +102,8 @@ export default function CommentDialog({ post, className }: CommentDialogProps) {
             }}
             className={className}
           >
-            <Icons.comment className="size-4.5" />
-            {post.replyCount}
+            <Icons.comment className="size-5" />
+            {comment.replyCount}
           </Button>
         </DialogTrigger>
         <DialogContent
@@ -114,7 +117,7 @@ export default function CommentDialog({ post, className }: CommentDialogProps) {
             <DialogDescription>Comment on the post</DialogDescription>
           </DialogHeader>
           {/* Post */}
-          <Post post={post} dbUserId={user.id} />
+          <Post comment={comment} dbUserId={user.id} />
 
           {/* Comment Input */}
           <div className="mt-4 flex gap-3 px-6">
@@ -135,8 +138,8 @@ export default function CommentDialog({ post, className }: CommentDialogProps) {
               <div className="rounded-md border bg-muted/40 focus-within:ring-1 focus-within:ring-ring">
                 <Textarea
                   placeholder="Write your comment..."
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
                   className="border-0 bg-transparent focus-visible:ring-0"
                 />
               </div>
@@ -152,7 +155,7 @@ export default function CommentDialog({ post, className }: CommentDialogProps) {
             </Button>
             <Button
               onClick={handleComment}
-              disabled={isCommenting || comment.trim().length === 0}
+              disabled={isCommenting || commentText.trim().length === 0}
               className="gap-2"
             >
               {isCommenting ? (
@@ -176,7 +179,7 @@ export default function CommentDialog({ post, className }: CommentDialogProps) {
         onDiscard={() => {
           setOpen(false);
           setHasComment(false);
-          setComment("");
+          setCommentText("");
         }}
       />
     </>

@@ -10,18 +10,26 @@ import DeleteDialog from "@/components/DeleteDialog";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import { deleteComment } from "@/app/actions/comment.action";
 import { cn } from "@/lib/utils";
+import type { PostType } from "@/types/post";
 interface EditButtonPros {
-  commentId: string;
+  comment: PostType;
+  authorId: string;
   className?: string;
 }
-export default function EditButton({ commentId, className }: EditButtonPros) {
+export default function EditButton({
+  comment,
+  authorId,
+  className,
+}: EditButtonPros) {
   const handleDelete = async () => {
     try {
-      await deleteComment(commentId);
+      await deleteComment(comment.id);
     } catch (error) {
       console.error(error);
     }
   };
+  if (comment.authorId !== authorId) return null;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger

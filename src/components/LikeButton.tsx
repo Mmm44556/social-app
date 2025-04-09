@@ -13,19 +13,19 @@ interface LikeButtonProps
     VariantProps<typeof buttonVariants> {
   dbUserId: string | null;
   className?: string;
-  post: PostType;
+  comment: PostType;
 }
 
 export default function LikeButton({
-  post,
+  comment,
   dbUserId,
   className,
   ...props
 }: LikeButtonProps) {
   const [optimisticData, addOptimisticData] = useOptimistic(
     {
-      likesCount: post.likeCount,
-      hasLiked: post.likes.some((like) => like.userId === dbUserId),
+      likesCount: comment.likeCount,
+      hasLiked: comment.likes.some((like) => like.userId === dbUserId),
     },
     (state, optimisticUpdate: { likesCount: number; hasLiked: boolean }) => ({
       ...state,
@@ -46,7 +46,7 @@ export default function LikeButton({
         >
           <Heart
             className={cn(
-              "size-4.5",
+              "size-5",
               optimisticData.hasLiked && "fill-red-500 text-red-500"
             )}
           />
@@ -68,13 +68,13 @@ export default function LikeButton({
         });
       });
 
-      await toggleLike(post.id);
+      await toggleLike(comment.id);
     } catch (error) {
       console.error(error);
       startTransition(() => {
         addOptimisticData({
-          likesCount: post.likeCount,
-          hasLiked: post.likes.some((like) => like.userId === dbUserId),
+          likesCount: comment.likeCount,
+          hasLiked: comment.likes.some((like) => like.userId === dbUserId),
         });
       });
     }
@@ -92,7 +92,7 @@ export default function LikeButton({
     >
       <Heart
         className={cn(
-          "size-4.5",
+          "size-5",
           optimisticData.hasLiked && "fill-red-500 text-red-500"
         )}
       />

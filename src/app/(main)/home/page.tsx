@@ -8,17 +8,22 @@ export default async function HomePage() {
   const { posts } = await getFeed();
   // 用來處理用戶按讚
   const dbUserId = await getDbUserId();
-  // if (!dbUserId) return null;
   return (
-    <>
+    <div className="space-y-6">
       <CreatePost />
 
       {/* Main Posts */}
-      {posts.map((post) => (
-        <Fragment key={post.id}>
-          <PostCard post={post} dbUserId={dbUserId} />
-        </Fragment>
-      ))}
-    </>
+      <div className="border-t">
+        {posts.map((post) => (
+          <Fragment key={post.id}>
+            <PostCard
+              comment={post}
+              dbUserId={dbUserId}
+              className="bg-transparent border-0 border-b rounded-none hover:shadow-none p-5"
+            />
+          </Fragment>
+        ))}
+      </div>
+    </div>
   );
 }

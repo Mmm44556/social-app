@@ -1,26 +1,24 @@
 "use client";
 import { memo } from "react";
-import { format } from "date-fns";
-import { CalendarDays, User } from "lucide-react";
 import AuthorHeader from "@/components/AuthorHeader";
-import LikeButton from "@/components/LikeButton";
-import FollowButton from "@/components/FollowButton";
-import CommentDialog from "@/components/CommentDialog";
-import ShareButton from "@/components/ShareButton";
 import EditButton from "@/components/EditButton";
-import { HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { HoverCard } from "@/components/ui/hover-card";
 import useNavigateToComment from "@/hooks/useNaivagteToComment";
 import formatTimeOrDate from "@/utils/formatTimeOrDate";
 import type { PostType } from "@/types/post";
 import { cn } from "@/lib/utils";
+import PostCard from "./PostCard";
 interface ReplyCardProps {
   comment: PostType;
   dbUserId: string | null;
   className?: string;
+  disableShowMore?: boolean;
 }
-function ReplyCard({ comment, dbUserId, className }: ReplyCardProps) {
+function ReplyCard({
+  comment,
+  dbUserId,
+  className,
+  disableShowMore = false,
+}: ReplyCardProps) {
   const navigateToComment = useNavigateToComment();
   return (
     <article
@@ -44,31 +42,17 @@ function ReplyCard({ comment, dbUserId, className }: ReplyCardProps) {
             · {formatTimeOrDate(comment.createdAt)}
           </span>
         </div>
-
         {/* Post Content */}
-        <p className="mt-1">{comment.content}</p>
-
-        {/* Post Images */}
-        {/* {flushEmptyImages.length > 0 && (
-                <div className="mt-3 flex gap-3">
-                  {flushEmptyImages.map((image) => (
-                    <div className="aspect-video rounded-lg bg-muted" />
-                  ))}
-                </div>
-              )} */}
-        <div className="mt-2 flex items-center gap-3">
-          {/* Like Button */}
-          <LikeButton post={comment} dbUserId={dbUserId} />
-
-          {/* Comment Button */}
-          <CommentDialog post={comment} />
-
-          {/* Share Button */}
-          <ShareButton post={comment} />
-        </div>
+        <PostCard.PostContent
+          content={comment.content}
+          images={comment.images}
+          disableShowMore={disableShowMore}
+        />
+        {/* Post Footer */}
+        <PostCard.PostFooter comment={comment} dbUserId={dbUserId} />
 
         {/* 如果自己是作者，則顯示編輯按鈕 */}
-        {comment.authorId === dbUserId && <EditButton postId={comment.id} />}
+        <EditButton comment={comment} authorId={comment.authorId} />
       </div>
     </article>
   );
