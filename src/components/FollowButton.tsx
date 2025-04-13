@@ -14,7 +14,6 @@ import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
 interface FollowButtonProps {
   postUserId: string;
-  dbUserId?: string | null;
   className?: string;
 }
 export default function FollowButton({
@@ -50,9 +49,6 @@ export default function FollowButton({
     staleTime: 30000,
   });
 
-  //代表是自身用戶
-  if (isFollowing === null) return null;
-
   const deferredQuery = useDeferredValue(isFollowing ? "Unfollow" : "Follow");
   const handleFollow = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -64,33 +60,36 @@ export default function FollowButton({
       console.error("Failed to Follow", error);
     }
   };
-
+  //代表是自身用戶
+  if (isFollowing === null) return null;
   return (
-    <Button
-      onClick={handleFollow}
-      disabled={!clerkUser?.user?.id}
-      className={cn(
-        className,
-        " transition-opacity duration-100 w-20 max-lg:min-w-18"
-      )}
-      variant={
-        isRefetching
-          ? deferredQuery
+    <>
+      <Button
+        onClick={handleFollow}
+        disabled={!clerkUser?.user?.id}
+        className={cn(
+          className,
+          " transition-opacity duration-100 w-20 max-lg:min-w-18"
+        )}
+        variant={
+          isRefetching
+            ? deferredQuery
+              ? "outline"
+              : "default"
+            : isFollowing
             ? "outline"
             : "default"
-          : isFollowing
-          ? "outline"
-          : "default"
-      }
-      {...props}
-    >
-      {isRefetching ? (
-        <Icons.loading className="h-4 w-4 animate-spin" />
-      ) : isFollowing ? (
-        "Unfollow"
-      ) : (
-        "Follow"
-      )}
-    </Button>
+        }
+        {...props}
+      >
+        {isRefetching ? (
+          <Icons.loading className="h-4 w-4 animate-spin" />
+        ) : isFollowing ? (
+          "Unfollow"
+        ) : (
+          "Follow"
+        )}
+      </Button>
+    </>
   );
 }

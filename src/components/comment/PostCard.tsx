@@ -20,6 +20,7 @@ interface PostProps {
   headerClassName?: string;
   contentClassName?: string;
   footerClassName?: string;
+  enableConnectedLine?: boolean;
 }
 
 function PostCard({
@@ -30,6 +31,7 @@ function PostCard({
   headerClassName,
   contentClassName,
   footerClassName,
+  enableConnectedLine = false,
 }: PostProps) {
   const router = useRouter();
 
@@ -51,20 +53,37 @@ function PostCard({
       )}
     >
       <CardContent className="px-0 relative" onClick={handleCardClick}>
-        <div className="flex items-stretch gap-2">
-          <div className={cn("basis-full", containerClassName)}>
-            {/* Hover Card */}
-            <div className={cn("flex items-center gap-2", headerClassName)}>
-              <AuthorHeader
-                author={comment.author}
-                className="flex items-center gap-2"
-              />
+        <div
+          className={cn(
+            "grid grid-cols-[40px_1fr] items-stretch gap-0",
+            containerClassName
+          )}
+        >
+          {/* Hover Card */}
+          <div
+            className={cn(
+              "flex items-center gap-2 col-span-2",
+              headerClassName
+            )}
+          >
+            <AuthorHeader
+              author={comment.author}
+              className="flex items-center gap-2"
+            />
 
-              <span className="text-sm text-muted-foreground">
-                · {formatTimeOrDate(comment.createdAt)}
-              </span>
+            <span className="text-sm text-muted-foreground">
+              · {formatTimeOrDate(comment.createdAt)}
+            </span>
+          </div>
+
+          {/* 連接線 */}
+          {enableConnectedLine && (
+            <div className="flex items-center justify-center">
+              <div className="w-[2px] h-full bg-gray-200"></div>
             </div>
+          )}
 
+          <div className={cn("py-2", enableConnectedLine ? "" : "col-start-2")}>
             {/* Post Content */}
 
             <PostContent
@@ -82,7 +101,7 @@ function PostCard({
           </div>
         </div>
 
-        <EditButton comment={comment} authorId={comment.authorId} />
+        <EditButton comment={comment} authorId={dbUserId ?? ""} />
       </CardContent>
     </Card>
   );
@@ -115,8 +134,9 @@ const PostContent = memo(
     };
 
     return (
-      <div className={cn("grid grid-cols-[40px_1fr] gap-2", contentClassName)}>
+      <div className={cn("flex gap-2", contentClassName)}>
         {/* Post Content */}
+
         <div className="col-start-2">
           <p
             className={cn(
@@ -164,9 +184,7 @@ interface PostFooterProps {
 const PostFooter = memo(
   ({ comment, dbUserId, footerClassName }: PostFooterProps) => {
     return (
-      <div
-        className={cn("grid grid-cols-[40px_1fr] mt-3 gap-2", footerClassName)}
-      >
+      <div className={cn("flex gap-2 mt-2", footerClassName)}>
         <div className="col-start-2 gap-3 flex items-center">
           {/* Like Button */}
           <LikeButton comment={comment} dbUserId={dbUserId} />

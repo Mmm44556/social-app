@@ -24,12 +24,13 @@ export default async function PostPage({ params }: PostPageProps) {
       {/* Header */}
       <MainHeader />
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-0 px-4">
         {/* 貼文 */}
         <RootCard
           post={rootPost}
           dbUserId={dbUserId}
           className={cn(post.content?.isRoot === false ? "border-b-0" : "")}
+          enableConnectedLine={Boolean(post.ancestors?.length)}
         />
 
         {/* 祖先留言(代表點進回覆的留言，所以才有祖先) */}
@@ -37,8 +38,14 @@ export default async function PostPage({ params }: PostPageProps) {
           post.ancestors
             .filter((comment) => comment.isRoot === false)
             .map((comment) => (
-              <div className="relative" key={comment.id}>
-                <PostCard comment={comment} dbUserId={dbUserId} />
+              <div className="relative " key={comment.id}>
+                <ReplyCard
+                  comment={comment}
+                  dbUserId={dbUserId}
+                  enableConnectedLine={
+                    post.content && post.content.isRoot === false
+                  }
+                />
               </div>
             ))}
 

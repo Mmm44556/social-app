@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { revalidatePath } from "next/cache";
 type Notifications = Awaited<ReturnType<typeof getNotifications>>;
 
 const notificationIcon = {
@@ -122,6 +123,7 @@ export default function NotificationsPage() {
                   if (!notification.read) {
                     markAsRead.mutate([notification.id]);
                   }
+
                   // if the notification is a comment, like, or share, push to the post
                   if (
                     ["COMMENT", "LIKE", "SHARE"].includes(notification.type)
@@ -200,6 +202,7 @@ const NotificationHeader = memo(
 );
 
 function useMarkAsRead() {
+  const router = useRouter();
   const clerkUser = useUser();
   const queryClient = useQueryClient();
   return useMutation({
@@ -214,6 +217,7 @@ function useMarkAsRead() {
       queryClient.invalidateQueries({
         queryKey: ["notifications", clerkUser?.user?.id],
       });
+      router.refresh();
     },
   });
 }
