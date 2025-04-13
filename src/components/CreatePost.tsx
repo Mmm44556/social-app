@@ -3,26 +3,14 @@
 import { useUser } from "@clerk/nextjs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ImageIcon, Send, SmilePlusIcon, Sparkles } from "lucide-react";
+import { Send } from "lucide-react";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { createPost } from "@/app/actions/comment.action";
 import CommentUtilsBar from "./CommentUtilsBar";
-const utilsItems = [
-  {
-    icon: <ImageIcon />,
-  },
-  {
-    icon: <Sparkles />,
-  },
-  {
-    icon: <SmilePlusIcon />,
-  },
-];
 
 interface CreatePostProps {
   className?: string;

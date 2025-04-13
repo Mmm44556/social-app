@@ -4,7 +4,6 @@ import {
   Bold,
   ImageIcon,
   Italic,
-  Link,
   SmilePlusIcon,
   Sparkles,
   Underline,

@@ -1,7 +1,3 @@
-import { getQueryClient } from "@/utils/getQueryClient";
-import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
-import { getMockNotifications } from "./test";
-
 export default async function NotificationsLayout({
   children,
 }: {

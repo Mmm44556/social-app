@@ -14,12 +14,14 @@ interface LikeButtonProps
   dbUserId: string | null;
   className?: string;
   comment: PostType;
+  onEvent?: (event: "like") => void;
 }
 
 export default function LikeButton({
   comment,
   dbUserId,
   className,
+  onEvent,
   ...props
 }: LikeButtonProps) {
   const [optimisticData, addOptimisticData] = useOptimistic(
@@ -60,15 +62,14 @@ export default function LikeButton({
     try {
       const newHasLiked = !optimisticData.hasLiked;
       const newLikesCount = optimisticData.likesCount + (newHasLiked ? 1 : -1);
-
       startTransition(() => {
         addOptimisticData({
           likesCount: newLikesCount,
           hasLiked: newHasLiked,
         });
       });
-
       await toggleLike(comment.id);
+      onEvent?.("like");
     } catch (error) {
       console.error(error);
       startTransition(() => {

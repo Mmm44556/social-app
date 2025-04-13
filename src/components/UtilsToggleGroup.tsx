@@ -1,8 +1,6 @@
-import { Bold, Italic, Sparkles, Underline } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "./ui/button";
-import Image from "next/image";
 import { Image as ImageIcon } from "lucide-react";
 export function UtilsToggleGroup() {
   return (

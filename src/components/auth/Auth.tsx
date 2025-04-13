@@ -7,9 +7,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@radix-ui/react-separator";
 import CountUpClient from "@/components/CountUpClient";
-import type { DB_User } from "@/types/user";
-
-export default async function Auth({ user }: { user: DB_User }) {
+export default async function Auth({ user }: { user: any }) {
   return (
     <Card className="p-0 pb-2 gap-0 rounded-2xl ">
       <CardHeader className="grid gap-0 px-0 justify-items-center  ">

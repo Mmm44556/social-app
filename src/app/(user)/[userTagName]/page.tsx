@@ -1,28 +1,18 @@
-import { Fragment, Suspense, useState } from "react";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Calendar,
-  Link2,
-  MapPin,
-  MoreHorizontal,
-} from "lucide-react";
+import { ArrowLeft, Calendar } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  getProfileByTagName,
-  getCommentsByTagName,
-} from "@/app/actions/profile.action";
+import { getProfileByTagName } from "@/app/actions/profile.action";
 import UnAuth from "@/components/auth/unAuth";
-import PostCard from "@/components/comment/PostCard";
 import FollowButton from "@/components/FollowButton";
-import { Replies } from "@/components/(profile)/replies";
 import { format } from "date-fns";
 import { currentUser } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/app/actions/user.action";
-import { PostType } from "@/types/post";
+import Comments from "@/components/profile/Comments";
+import Replies from "@/components/profile/Replies";
+
 export default async function ProfilePage({
   params,
 }: {
@@ -33,7 +23,6 @@ export default async function ProfilePage({
   const currentSystemUser = await getUserByClerkId(clerkUser?.id ?? "");
   const userProfile = await getProfileByTagName(userTagName);
   if (!userProfile) return <UnAuth />;
-  const comments = await getCommentsByTagName({ tagName: userTagName });
   return (
     <div className="bg-gray-50 dark:bg-[#1A202C] sticky top-0 z-50 ">
       <div className="max-w-4xl mx-auto">
@@ -135,15 +124,10 @@ export default async function ProfilePage({
             </TabsList>
 
             <TabsContent value="posts" className="mt-4">
-              {comments.map((comment) => (
-                <Fragment key={comment.id}>
-                  <PostCard
-                    comment={comment as unknown as PostType}
-                    dbUserId={currentSystemUser?.id ?? ""}
-                    className="bg-transparent border-0 border-b rounded-none hover:shadow-none p-5"
-                  />
-                </Fragment>
-              ))}
+              <Comments
+                tagName={userTagName}
+                dbUserId={currentSystemUser?.id ?? ""}
+              />
             </TabsContent>
 
             <TabsContent value="replies">

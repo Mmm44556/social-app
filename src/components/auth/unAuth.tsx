@@ -13,8 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Icons } from "@/components/ui/icons";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { SignUp, SignUpButton } from "@clerk/nextjs";
+import { SignUpButton } from "@clerk/nextjs";
 
 export default function UnAuth() {
   return (

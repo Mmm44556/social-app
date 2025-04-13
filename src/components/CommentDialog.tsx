@@ -27,11 +27,13 @@ interface CommentDialogProps {
   children?: React.ReactNode;
   className?: string;
   comment: PostType;
+  onEvent?: (event: "comment") => void;
 }
 
 export default function CommentDialog({
   comment,
   className,
+  onEvent,
 }: CommentDialogProps) {
   const { user } = useUser();
   const [open, setOpen] = useState(false);
@@ -57,7 +59,7 @@ export default function CommentDialog({
   }
   const handleComment = async () => {
     if (commentText.trim().length === 0 || isCommenting) return;
-
+    console.log(comment);
     try {
       setIsCommenting(true);
       const newComment = await createReply({
@@ -67,6 +69,7 @@ export default function CommentDialog({
       });
 
       if (newComment.success) {
+        onEvent?.("comment");
         setCommentText("");
         setIsCommenting(false);
         setOpen(false);
@@ -197,9 +200,10 @@ const CommentDiscardDialog = memo(
       <Dialog open={hasComment} onOpenChange={setHasComment}>
         <DialogContent className="sm:max-w-md" showClose={false}>
           <DialogHeader>
-            <DialogTitle>Discard Comment</DialogTitle>
+            <DialogTitle>Discard comment?</DialogTitle>
             <DialogDescription>
-              Are you sure you want to discard your comment?
+              Are you sure you want to discard your comment? This action cannot
+              be undone.
             </DialogDescription>
           </DialogHeader>
 
@@ -215,3 +219,5 @@ const CommentDiscardDialog = memo(
     );
   }
 );
+
+CommentDiscardDialog.displayName = "CommentDiscardDialog";

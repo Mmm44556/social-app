@@ -1,10 +1,6 @@
 "use client";
 
-import SplitText from "@/blocks/TextAnimations/SplitText/SplitText";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 export default function Brand() {
-  const router = useRouter();
   return (
     <>
       Nexus

@@ -19,7 +19,6 @@ import { Icons } from "@/components/ui/icons";
 import { formatDistanceToNow } from "date-fns";
 import AuthorHeader from "@/components/AuthorHeader";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -28,7 +27,6 @@ import {
 } from "@/components/ui/tooltip";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { revalidatePath } from "next/cache";
 type Notifications = Awaited<ReturnType<typeof getNotifications>>;
 
 const notificationIcon = {
@@ -91,7 +89,6 @@ const notificationIcon = {
 export default function NotificationsPage() {
   const router = useRouter();
   const clerkUser = useUser();
-  const queryClient = useQueryClient();
   const { data: notifications = [] } = useQuery<Notifications>({
     queryKey: ["notifications", clerkUser?.user?.id],
     queryFn: async () => getNotifications(),
@@ -153,9 +150,9 @@ export default function NotificationsPage() {
                       {formatDistanceToNow(notification.createdAt)}
                     </span>
                   </div>
-                  <div className="flex gap-2">
-                    <span className="w-10"></span>
-                    <span className="text-gray-400">
+                  <div className="grid grid-cols-[40px_1fr]">
+                    <span></span>
+                    <span className="text-gray-400 max-w-[75%]">
                       {notification.comment?.content}
                     </span>
                   </div>
@@ -200,6 +197,8 @@ const NotificationHeader = memo(
     );
   }
 );
+
+NotificationHeader.displayName = "NotificationHeader";
 
 function useMarkAsRead() {
   const router = useRouter();

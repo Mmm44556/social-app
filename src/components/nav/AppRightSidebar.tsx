@@ -1,167 +1,9 @@
-import { AvatarFallback } from "@/components/ui/avatar";
-import { AvatarImage } from "@/components/ui/avatar";
-import { Avatar } from "@/components/ui/avatar";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
 import SuggestedUser from "@/components/SuggestedUser";
-const year = new Date().getFullYear();
-
-// Mock data for trending categories
-const trendingCategories = [
-  {
-    id: "1",
-    name: "Technology",
-    icon: "💻",
-    posts: "12.5K",
-  },
-  {
-    id: "2",
-    name: "Travel",
-    icon: "✈️",
-    posts: "45.2K",
-  },
-  {
-    id: "3",
-    name: "Food",
-    icon: "🍕",
-    posts: "32.1K",
-  },
-  {
-    id: "4",
-    name: "Fitness",
-    icon: "💪",
-    posts: "67.8K",
-  },
-  {
-    id: "5",
-    name: "Gaming",
-    icon: "🎮",
-    posts: "78.3K",
-  },
-  {
-    id: "6",
-    name: "Fashion",
-    icon: "👗",
-    posts: "53.7K",
-  },
-  {
-    id: "7",
-    name: "Music",
-    icon: "🎵",
-    posts: "41.9K",
-  },
-  {
-    id: "8",
-    name: "Art",
-    icon: "🎨",
-    posts: "29.4K",
-  },
-  {
-    id: "9",
-    name: "Books",
-    icon: "📚",
-    posts: "18.6K",
-  },
-  {
-    id: "10",
-    name: "Movies",
-    icon: "🎬",
-    posts: "37.2K",
-  },
-  {
-    id: "11",
-    name: "Photography",
-    icon: "📷",
-    posts: "43.8K",
-  },
-  {
-    id: "12",
-    name: "Science",
-    icon: "🔬",
-    posts: "22.1K",
-  },
-  {
-    id: "13",
-    name: "Finance",
-    icon: "💰",
-    posts: "31.5K",
-  },
-  {
-    id: "14",
-    name: "Design",
-    icon: "✏️",
-    posts: "27.3K",
-  },
-  {
-    id: "15",
-    name: "Sports",
-    icon: "⚽",
-    posts: "59.2K",
-  },
-  {
-    id: "16",
-    name: "Pets",
-    icon: "🐾",
-    posts: "64.7K",
-  },
-  {
-    id: "17",
-    name: "Health",
-    icon: "🩺",
-    posts: "38.5K",
-  },
-  {
-    id: "18",
-    name: "Nature",
-    icon: "🌲",
-    posts: "25.9K",
-  },
-  {
-    id: "19",
-    name: "DIY",
-    icon: "🔨",
-    posts: "19.8K",
-  },
-  {
-    id: "20",
-    name: "Humor",
-    icon: "😂",
-    posts: "82.4K",
-  },
-  {
-    id: "21",
-    name: "Parenting",
-    icon: "👶",
-    posts: "28.7K",
-  },
-  {
-    id: "22",
-    name: "Education",
-    icon: "🎓",
-    posts: "15.3K",
-  },
-  {
-    id: "23",
-    name: "Sustainability",
-    icon: "♻️",
-    posts: "14.6K",
-  },
-  {
-    id: "24",
-    name: "Crypto",
-    icon: "🪙",
-    posts: "21.2K",
-  },
-];
 
 async function AppRightSidebar() {
   const { userId } = await auth();
@@ -175,7 +17,7 @@ async function AppRightSidebar() {
         {/* Trending Categories */}
         <Card className="mb-4 rounded-xl shadow-none border p-6">
           <CardHeader>
-            <h2 className="text-xl font-bold">What's news</h2>
+            <h2 className="text-xl font-bold">What&apos;s news</h2>
           </CardHeader>
           <CardContent className="flex gap-3 px-0">
             <div className="h-10 w-10 rounded-full bg-muted" />

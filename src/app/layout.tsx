@@ -3,7 +3,6 @@ import "@/styles/global.css";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ClerkProvider } from "@clerk/nextjs";
-import { SiteHeader } from "@/components/SideHeader";
 import AppRightSidebar from "@/components/nav/AppRightSidebar";
 import AppLeftSidebar from "@/components/nav/AppLeftSidebar";
 import QueryClientComponent from "@/components/QueryClient";
@@ -11,7 +10,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Ｎexus - Share Your World",
+  title: "Nexus - Share Your World",
   description:
     "A modern social platform for sharing content with your friends and family",
 };

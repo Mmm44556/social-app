@@ -334,9 +334,7 @@ export async function getContent(id: string, userTagName: string) {
     };
   }
 }
-export async function findRootPostOptimized(
-  commentId: string
-): Promise<any | null> {
+export async function findRootPostOptimized(commentId: string) {
   try {
     // 直接查詢與該留言關聯的、標記為 isRoot 的祖先
     // 在 Closure Table 中，這是一個高效查詢
@@ -456,8 +454,7 @@ export async function toggleLike(commentId: string) {
           : []),
       ]);
     }
-
-    revalidatePath("/home");
+    revalidatePath("/");
     return { success: true };
   } catch (error) {
     console.error(error);

@@ -8,7 +8,7 @@ import MainHeader from "@/components/MainHeader";
 import RootCard from "@/components/comment/RootCard";
 import { cn } from "@/lib/utils";
 import { Fragment } from "react";
-import PostCard from "@/components/comment/PostCard";
+import { PostType } from "@/types/post";
 interface PostPageProps {
   params: Promise<{ userTagName: string; postId: string }>;
 }
@@ -27,7 +27,7 @@ export default async function PostPage({ params }: PostPageProps) {
       <div className="flex flex-col gap-0 px-4">
         {/* 貼文 */}
         <RootCard
-          post={rootPost}
+          post={rootPost as PostType}
           dbUserId={dbUserId}
           className={cn(post.content?.isRoot === false ? "border-b-0" : "")}
           enableConnectedLine={Boolean(post.ancestors?.length)}

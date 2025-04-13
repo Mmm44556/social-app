@@ -11,8 +11,9 @@ import type { PostType } from "@/types/post";
 
 interface ShareButtonProps {
   comment: PostType;
+  onEvent?: (event: "share") => void;
 }
-export default function ShareButton({ comment }: ShareButtonProps) {
+export default function ShareButton({}: ShareButtonProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

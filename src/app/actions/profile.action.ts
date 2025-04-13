@@ -31,7 +31,7 @@ export async function getProfileByTagName(tagName: string) {
   }
 }
 
-type GetCommentsByTagNameProps = {
+export type GetCommentsByTagNameProps = {
   tagName: string;
   limit?: number;
   cursor?: string;
@@ -103,11 +103,10 @@ export async function getCommentsByTagName({
         },
         ...options.include,
       },
-      orderBy: [{ id: "desc" }],
+      orderBy: [{ createdAt: "desc" }],
       take: limit,
       ...(pagination || {}),
     });
-
     const commentsWithAncestors = isRoot
       ? comments
       : await Promise.all(
@@ -171,12 +170,12 @@ export async function getCommentsByTagName({
               .sort((a, b) => a.depth - b.depth)
               .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
-            const rootComment = validAncestors.find(
-              (ancestor) => ancestor.depth === 0
-            );
-            const parentComment = validAncestors.find(
-              (ancestor) => ancestor.depth === 1
-            );
+            // const rootComment = validAncestors.find(
+            //   (ancestor) => ancestor.depth === 0
+            // );
+            // const parentComment = validAncestors.find(
+            //   (ancestor) => ancestor.depth === 1
+            // );
 
             return {
               ...comment,
@@ -195,6 +194,7 @@ export async function getCommentsByTagName({
           comment.descendants.map(async (d) => {
             const reply = await prisma.comment.findUnique({
               where: { id: d.descendantId },
+
               include: {
                 author: {
                   select: {
@@ -253,7 +253,6 @@ export async function getCommentsByTagName({
         };
       })
     );
-
     return commentsWithReplies;
   } catch (error) {
     console.error("Error getting comments by tagName", error);

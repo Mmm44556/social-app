@@ -14,24 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { Eye, EyeOff, Lock, Mail, ArrowRight, Terminal } from "lucide-react";
+import { Lock, Mail, ArrowRight, Terminal } from "lucide-react";
 
 export default function SignUpPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log("Login attempt with:", { email, password });
-    }, 1500);
-  };
   return (
     <div className="container relative z-10 mx-auto flex max-w-screen-xl flex-1 items-center justify-center px-4 py-8">
       <div className="grid w-full gap-8 md:grid-cols-[1fr_500px] lg:gap-16">
@@ -140,8 +125,6 @@ export default function SignUpPage() {
                                 <Input
                                   id="password"
                                   placeholder="••••••••"
-                                  value={password}
-                                  onChange={(e) => setPassword(e.target.value)}
                                   className="border-gray-800 bg-gray-950/50 pl-10 pr-10 text-white placeholder:text-gray-500 focus-visible:ring-blue-600"
                                   required
                                 />

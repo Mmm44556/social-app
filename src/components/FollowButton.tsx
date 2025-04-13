@@ -26,7 +26,7 @@ export default function FollowButton({
   const clerkUser = useUser();
 
   const {
-    data: isFollowing,
+    data: isFollowing = null,
     refetch,
     isRefetching,
   } = useQuery({

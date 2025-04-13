@@ -21,6 +21,7 @@ interface PostProps {
   contentClassName?: string;
   footerClassName?: string;
   enableConnectedLine?: boolean;
+  onEvent?: (event: "like" | "comment" | "share") => void;
 }
 
 function PostCard({
@@ -32,6 +33,7 @@ function PostCard({
   contentClassName,
   footerClassName,
   enableConnectedLine = false,
+  onEvent,
 }: PostProps) {
   const router = useRouter();
 
@@ -97,6 +99,7 @@ function PostCard({
               comment={comment}
               dbUserId={dbUserId}
               footerClassName={footerClassName}
+              onEvent={onEvent}
             />
           </div>
         </div>
@@ -175,30 +178,35 @@ const PostContent = memo(
   }
 );
 
+PostContent.displayName = "PostContent";
+
 interface PostFooterProps {
   comment: PostType;
   dbUserId: string | null;
   footerClassName?: string;
+  onEvent?: (event: "like" | "comment" | "share") => void;
 }
 
 const PostFooter = memo(
-  ({ comment, dbUserId, footerClassName }: PostFooterProps) => {
+  ({ comment, dbUserId, footerClassName, onEvent }: PostFooterProps) => {
     return (
       <div className={cn("flex gap-2 mt-2", footerClassName)}>
         <div className="col-start-2 gap-3 flex items-center">
           {/* Like Button */}
-          <LikeButton comment={comment} dbUserId={dbUserId} />
+          <LikeButton comment={comment} dbUserId={dbUserId} onEvent={onEvent} />
 
           {/* Comment Button */}
-          <CommentDialog comment={comment} />
+          <CommentDialog comment={comment} onEvent={onEvent} />
 
           {/* Share Button */}
-          <ShareButton comment={comment} />
+          <ShareButton comment={comment} onEvent={onEvent} />
         </div>
       </div>
     );
   }
 );
+
+PostFooter.displayName = "PostFooter";
 
 PostCard.PostContent = PostContent;
 PostCard.PostFooter = PostFooter;
