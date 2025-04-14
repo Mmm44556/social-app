@@ -11,6 +11,7 @@ import EditButton from "@/components/EditButton";
 import type { PostType } from "@/types/post";
 import { cn } from "@/lib/utils";
 import { memo, useState } from "react";
+import ImagesCarousel from "@/components/ImagesCarousel";
 
 interface PostProps {
   comment: PostType;
@@ -36,11 +37,12 @@ function PostCard({
   onEvent,
 }: PostProps) {
   const router = useRouter();
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleCardClick = async () => {
     // 如果有選取文字，不觸發跳轉
     const selectedText = window.getSelection()?.toString();
-    if (selectedText) {
+    if (selectedText || isDragging) {
       return;
     }
 
@@ -54,7 +56,13 @@ function PostCard({
         className
       )}
     >
-      <CardContent className="px-0 relative" onClick={handleCardClick}>
+      <CardContent
+        className="px-0 relative"
+        onClick={handleCardClick}
+        onMouseDown={() => setIsDragging(false)}
+        onMouseUp={() => setIsDragging(false)}
+        onMouseMove={() => setIsDragging(true)}
+      >
         <div
           className={cn(
             "grid grid-cols-[40px_1fr] items-stretch gap-0",
@@ -93,6 +101,11 @@ function PostCard({
               content={comment.content}
               contentClassName={contentClassName}
             />
+
+            {/* Post Images */}
+            {comment.images.length > 0 && (
+              <ImagesCarousel images={comment.images} />
+            )}
 
             {/* Post Footer */}
             <PostFooter

@@ -11,6 +11,7 @@ import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import { deleteComment } from "@/app/actions/comment.action";
 import { cn } from "@/lib/utils";
 import type { PostType } from "@/types/post";
+import { del } from "@vercel/blob";
 interface EditButtonPros {
   comment: PostType;
   authorId: string;
@@ -24,6 +25,11 @@ export default function EditButton({
   const handleDelete = async () => {
     try {
       await deleteComment(comment.id);
+      if (comment.images.length > 0) {
+        await fetch(`/api/image?url=${comment.images.toString()}`, {
+          method: "DELETE",
+        });
+      }
     } catch (error) {
       console.error(error);
     }

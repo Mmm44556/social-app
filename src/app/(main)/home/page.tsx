@@ -8,6 +8,7 @@ export default async function HomePage() {
   const { posts } = await getFeed();
   // 用來處理用戶按讚
   const dbUserId = await getDbUserId();
+  console.log(posts, "posts");
   return (
     <div className="space-y-6">
       <CreatePost />

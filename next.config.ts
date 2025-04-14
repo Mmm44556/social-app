@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: [
+    "local-origin.dev",
+    "d1ff-111-246-161-176.ngrok-free.app",
+  ],
   async redirects() {
     return [
       // Basic redirect
@@ -17,7 +21,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "plus.unsplash.com",
+        hostname: "picsum.photos",
+      },
+      {
+        protocol: "https",
+        hostname: "25c3zyr60qssb40h.public.blob.vercel-storage.com",
       },
     ],
   },

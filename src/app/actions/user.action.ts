@@ -42,7 +42,7 @@ export async function syncUser() {
         email: user.emailAddresses[0].emailAddress,
         tagName: user.emailAddresses[0].emailAddress?.split("@")?.[0] || "",
         username: `${user.firstName || ""} ${user.lastName || ""}`,
-        imageUrl: user.imageUrl,
+        avatarUrl: user.imageUrl,
       },
       select: {
         username: true,

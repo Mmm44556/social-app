@@ -19,8 +19,9 @@ model User {
   email     String   @unique
   username  String   @unique
   tagName   String   @unique
-  imageUrl  String?
-  bio       String?
+  imageUrl  String?  @default("")
+  avatarUrl String?  @default("")
+  bio       String?  @default("")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isDeleted Boolean  @default(false)

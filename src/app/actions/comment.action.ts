@@ -21,7 +21,15 @@ export async function getFeed(limit = 20, cursor?: string) {
 
     const posts = await prisma.comment.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        content: true,
+        images: true,
+        createdAt: true,
+        updatedAt: true,
+        isDeleted: true,
+        isRoot: true,
+        authorId: true,
         author: {
           select: {
             id: true,
@@ -38,7 +46,6 @@ export async function getFeed(limit = 20, cursor?: string) {
             },
           },
         },
-
         descendants: {
           where: {
             NOT: {
@@ -46,7 +53,6 @@ export async function getFeed(limit = 20, cursor?: string) {
             },
           },
         },
-
         likes: {
           select: {
             userId: true,
@@ -58,7 +64,6 @@ export async function getFeed(limit = 20, cursor?: string) {
           },
         },
       },
-
       orderBy: {
         createdAt: "desc",
       },
@@ -91,46 +96,40 @@ export async function getFeed(limit = 20, cursor?: string) {
 }
 
 // 創建新貼文
-export async function createPost({
-  content,
-  imagesUrl,
-}: {
-  content: string;
-  imagesUrl: string[];
-}) {
+export async function createComment({ content }: { content: string }) {
   try {
     const userId = await getDbUserId();
     if (!userId) throw new Error("User not found");
     // 使用事務來確保貼文和閉包表一起創建
-    const post = await prisma.$transaction(async (tx) => {
+    const comment = await prisma.$transaction(async (tx) => {
       // 1. 創建新貼文
-      const newPost = await tx.comment.create({
+      const newComment = await tx.comment.create({
         data: {
           content,
-          images: imagesUrl,
           authorId: userId,
           isRoot: true, // 標記為頂層貼文
+          images: [], // 初始化空的圖片數組
         },
       });
 
       // 2. 創建指向自身的閉包表記錄 (深度 0)
       await tx.commentClosure.create({
         data: {
-          ancestorId: newPost.id,
-          descendantId: newPost.id,
+          ancestorId: newComment.id,
+          descendantId: newComment.id,
           depth: 0,
         },
       });
 
-      return newPost;
+      return newComment;
     });
     revalidatePath("/home");
-    return { success: true, post };
+    return { success: true, commentId: comment.id };
   } catch (error) {
-    console.error("Error creating post:", error);
+    console.error("Error creating comment:", error);
     return {
       success: false,
-      error: `Failed to create post`,
+      error: `Failed to create comment`,
     };
   }
 }
