@@ -11,7 +11,6 @@ import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import { deleteComment } from "@/app/actions/comment.action";
 import { cn } from "@/lib/utils";
 import type { PostType } from "@/types/post";
-import { del } from "@vercel/blob";
 interface EditButtonPros {
   comment: PostType;
   authorId: string;
@@ -24,12 +23,13 @@ export default function EditButton({
 }: EditButtonPros) {
   const handleDelete = async () => {
     try {
+      // 1. 刪除整個評論資料夾
+      fetch(`/api/image?folder=comments/${comment.id}`, {
+        method: "DELETE",
+      });
+
+      // 2. 刪除評論記錄
       await deleteComment(comment.id);
-      if (comment.images.length > 0) {
-        await fetch(`/api/image?url=${comment.images.toString()}`, {
-          method: "DELETE",
-        });
-      }
     } catch (error) {
       console.error(error);
     }

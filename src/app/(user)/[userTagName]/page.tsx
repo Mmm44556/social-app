@@ -64,8 +64,8 @@ export default async function ProfilePage({
             </Avatar>
           </div>
 
-          <div className="flex justify-end pt-4 px-4 sticky top-0 z-10">
-            <FollowButton className="w-fit" postUserId={userProfile.id} />
+          <div className="pt-4 px-4 sticky top-0 z-10 w-fit ml-auto">
+            <FollowButton postUserId={userProfile.id} />
           </div>
 
           <div className="mt-16 px-4">
@@ -104,11 +104,8 @@ export default async function ProfilePage({
           </div>
 
           {/* Tabs */}
-          <Tabs
-            defaultValue="posts"
-            className="mt-6 [&_*]:!transition-all gap-0"
-          >
-            <TabsList className="w-full h-12 p-0 rounded-none border-gray-950 [&_button]:cursor-pointer [&_button]:py-0 shadow-[0_1px_0_#e5e7eb]">
+          <Tabs defaultValue="posts" className="mt-6  gap-0">
+            <TabsList className="w-full h-12 p-0 rounded-none border-gray-950 [&_button]:cursor-pointer [&_button]:py-0 shadow-[0_1px_0_#e5e7eb] [&_*]:transition-all">
               <TabsTrigger value="posts" className="flex-1">
                 Posts
               </TabsTrigger>

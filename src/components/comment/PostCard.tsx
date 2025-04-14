@@ -39,10 +39,11 @@ function PostCard({
   const router = useRouter();
   const [isDragging, setIsDragging] = useState(false);
 
-  const handleCardClick = async () => {
+  const handleCardClick = async (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.target as HTMLElement;
     // 如果有選取文字，不觸發跳轉
     const selectedText = window.getSelection()?.toString();
-    if (selectedText || isDragging) {
+    if (selectedText || isDragging || target.tagName === "BUTTON") {
       return;
     }
 
@@ -57,7 +58,7 @@ function PostCard({
       )}
     >
       <CardContent
-        className="px-0 relative"
+        className="px-0 relative group"
         onClick={handleCardClick}
         onMouseDown={() => setIsDragging(false)}
         onMouseUp={() => setIsDragging(false)}
@@ -104,7 +105,12 @@ function PostCard({
 
             {/* Post Images */}
             {comment.images.length > 0 && (
-              <ImagesCarousel images={comment.images} />
+              <ImagesCarousel
+                images={comment.images.map((image) => ({
+                  url: image,
+                  file: undefined,
+                }))}
+              />
             )}
 
             {/* Post Footer */}

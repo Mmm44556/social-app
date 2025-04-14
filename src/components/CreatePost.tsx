@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Send, XIcon } from "lucide-react";
+import { Send } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { upload } from "@vercel/blob/client";
-import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -12,14 +11,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { createComment } from "@/app/actions/comment.action";
 import CommentUtilsBar from "./CommentUtilsBar";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+
 import { useRouter } from "next/navigation";
+import ImagesCarousel from "./ImagesCarousel";
 
 interface CreatePostProps {
   className?: string;
@@ -36,7 +30,6 @@ export default function CreatePost({ className }: CreatePostProps) {
     if (content.trim().length === 0 && !images.length) return;
     try {
       setIsPosting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       const result = await createComment({
         content,
       });
@@ -51,7 +44,7 @@ export default function CreatePost({ className }: CreatePostProps) {
               {
                 access: "public",
                 handleUploadUrl: "/api/image",
-                clientPayload: `comment/${result.commentId}`,
+                clientPayload: result.commentId,
               }
             );
             URL.revokeObjectURL(image.url);
@@ -121,43 +114,23 @@ export default function CreatePost({ className }: CreatePostProps) {
               <Send className="size-5 stroke-theme" />
             </Button>
           </div>
+
+          {/* Post Images */}
           {images.length > 0 && (
-            <div className="py-4 border-t border-gray-200">
-              <Carousel>
-                <CarouselContent>
-                  {images.map((image) => (
-                    <CarouselItem
-                      key={image.url}
-                      className="px-10 flex justify-center items-center "
-                    >
-                      <div className="relative">
-                        <Image
-                          src={image.url}
-                          alt={image.file.name}
-                          className="object-cover aspect-square"
-                          width={250}
-                          height={250}
-                        />
-                        <XIcon
-                          className="absolute top-1 right-1 size-7 bg-black/50 rounded-full stroke-white p-1 hover:bg-black/70 transition-all duration-300 cursor-pointer"
-                          onClick={() => {
-                            URL.revokeObjectURL(image.url);
-                            setImages((prev) => {
-                              const newImages = prev.filter(
-                                (i) => i.url !== image.url
-                              );
-                              return newImages;
-                            });
-                          }}
-                        />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-0 cursor-pointer" />
-                <CarouselNext className="right-0 cursor-pointer" />
-              </Carousel>
-            </div>
+            <ImagesCarousel
+              images={images}
+              onDelete={(image) => {
+                URL.revokeObjectURL(image.url);
+                setImages((prev) => {
+                  const newImages = prev.filter((i) => i.url !== image.url);
+                  return newImages;
+                });
+              }}
+              className="group"
+              itemClassName="justify-center"
+              previousButtonClassName="left-0"
+              nextButtonClassName="right-0"
+            />
           )}
         </div>
 

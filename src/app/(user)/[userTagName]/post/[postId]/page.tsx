@@ -29,7 +29,10 @@ export default async function PostPage({ params }: PostPageProps) {
         <RootCard
           post={rootPost as PostType}
           dbUserId={dbUserId}
-          className={cn(post.content?.isRoot === false ? "border-b-0" : "")}
+          className={cn(
+            "hover:bg-transparent",
+            post.content?.isRoot === false ? "border-b-0" : ""
+          )}
           enableConnectedLine={Boolean(post.ancestors?.length)}
         />
 
@@ -45,6 +48,7 @@ export default async function PostPage({ params }: PostPageProps) {
                   enableConnectedLine={
                     post.content && post.content.isRoot === false
                   }
+                  className="hover:bg-transparent"
                 />
               </div>
             ))}
@@ -52,7 +56,11 @@ export default async function PostPage({ params }: PostPageProps) {
         {/* 如果不是根貼文，則顯示當前選擇的回覆 */}
         {post.content && post.content.isRoot === false && (
           <div className="relative">
-            <RootCard post={post.content} dbUserId={dbUserId} />
+            <RootCard
+              post={post.content}
+              dbUserId={dbUserId}
+              className="hover:bg-transparent"
+            />
           </div>
         )}
       </div>
@@ -70,7 +78,7 @@ export default async function PostPage({ params }: PostPageProps) {
                 <ReplyCard
                   comment={comment}
                   dbUserId={dbUserId}
-                  className="py-4 border-t"
+                  className="py-4 border-t hover:bg-transparent"
                 />
               </Fragment>
             );

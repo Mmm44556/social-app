@@ -9,7 +9,7 @@ import {
   Underline,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { memo, useState } from "react";
+import { memo } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 const utilsItems = [
@@ -108,3 +108,4 @@ const UploadButton = memo(
     );
   }
 );
+UploadButton.displayName = "UploadButton";

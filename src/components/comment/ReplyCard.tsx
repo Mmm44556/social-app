@@ -1,5 +1,5 @@
 "use client";
-import { memo } from "react";
+import { memo, useState } from "react";
 import AuthorHeader from "@/components/AuthorHeader";
 import EditButton from "@/components/EditButton";
 import useNavigateToComment from "@/hooks/useNaivagteToComment";
@@ -7,6 +7,7 @@ import formatTimeOrDate from "@/utils/formatTimeOrDate";
 import type { PostType } from "@/types/post";
 import { cn } from "@/lib/utils";
 import PostCard from "./PostCard";
+import ImagesCarousel from "@/components/ImagesCarousel";
 interface ReplyCardProps {
   comment: PostType;
   dbUserId: string | null;
@@ -22,15 +23,21 @@ function ReplyCard({
   enableConnectedLine = false,
 }: ReplyCardProps) {
   const navigateToComment = useNavigateToComment();
+  const [isDragging, setIsDragging] = useState(false);
   return (
     <article
-      onClick={() => {
+      onClick={(e) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "BUTTON" || isDragging) return;
         navigateToComment(comment.author.tagName, comment.id);
       }}
       className={cn(
-        "flex items-stretch gap-2 grow relative hover:bg-gray-50 hover:cursor-pointer",
+        "group  flex items-stretch gap-2 grow relative hover:bg-gray-50 hover:cursor-pointer",
         className
       )}
+      onMouseDown={() => setIsDragging(false)}
+      onMouseUp={() => setIsDragging(false)}
+      onMouseMove={() => setIsDragging(true)}
     >
       <div className="basis-full relative">
         <div className="grid grid-cols-[40px_1fr] items-stretch gap-0 px-0">
@@ -60,11 +67,19 @@ function ReplyCard({
               images={comment.images}
               disableShowMore={disableShowMore}
             />
+            {/* Post Images */}
+            {comment.images.length > 0 && (
+              <ImagesCarousel
+                images={comment.images.map((image) => ({
+                  url: image,
+                  file: undefined,
+                }))}
+              />
+            )}
             {/* Post Footer */}
             <PostCard.PostFooter comment={comment} dbUserId={dbUserId} />
-
             {/* 如果自己是作者，則顯示編輯按鈕 */}
-            <EditButton comment={comment} authorId={comment.authorId} />
+            <EditButton comment={comment} authorId={dbUserId ?? ""} />
           </div>
         </div>
       </div>

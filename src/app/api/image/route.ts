@@ -1,9 +1,7 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
-import { del } from "@vercel/blob";
+import { del, list } from "@vercel/blob";
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import { getDbUserId } from "@/app/actions/user.action";
 export async function POST(request: Request): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
@@ -34,7 +32,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
         // 獲取上傳完成的通知
-
+        console.log(tokenPayload, "tokenPayload", blob, "@@");
         try {
           // console.log("blob upload completed", blob, tokenPayload);
           // 解析 token payload 中的用戶 ID
@@ -43,8 +41,8 @@ export async function POST(request: Request): Promise<NextResponse> {
           );
 
           // 上傳貼文圖片
-          if (clientPayload.startsWith("comment")) {
-            const commentId = clientPayload.split("/")[1];
+          if (blob.pathname.startsWith("comments")) {
+            const commentId = clientPayload;
             const commentImages = await prisma.comment.findUnique({
               where: { id: commentId },
               select: {
@@ -62,7 +60,7 @@ export async function POST(request: Request): Promise<NextResponse> {
             });
           }
           // 上傳背景照片
-          if (clientPayload.startsWith("profile")) {
+          if (blob.pathname.startsWith("profile")) {
             const userId = clientPayload.split("/")[1];
             await prisma.user.update({
               where: { id: userId },
@@ -70,19 +68,21 @@ export async function POST(request: Request): Promise<NextResponse> {
             });
           }
           // 上傳頭像
-          if (clientPayload.startsWith("avatar")) {
+          if (blob.pathname.startsWith("avatar")) {
             await prisma.user.update({
               where: { id: dbUserId },
               data: { avatarUrl: blob.url },
             });
           }
         } catch (error) {
+          console.log(error, "error");
           throw new Error("Could not update user");
         }
       },
     });
     return NextResponse.json(jsonResponse);
   } catch (error) {
+    console.log(error, "error");
     return NextResponse.json(
       { error: (error as Error).message },
       { status: 400 } // The webhook will retry 5 times waiting for a 200
@@ -93,13 +93,32 @@ export async function POST(request: Request): Promise<NextResponse> {
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const urlToDelete = searchParams.get("url") as string;
-  if (!urlToDelete) {
-    return NextResponse.json({ error: "No url to delete" }, { status: 400 });
+  const folderToDelete = searchParams.get("folder") as string;
+
+  if (!urlToDelete && !folderToDelete) {
+    return NextResponse.json(
+      { error: "No url or folder to delete" },
+      { status: 400 }
+    );
   }
+
   try {
+    if (folderToDelete) {
+      // 列出資料夾中的所有檔案
+      const { blobs } = await list({
+        prefix: folderToDelete,
+      });
+      // 刪除所有找到的檔案
+      await Promise.all(blobs.map((blob) => del(blob.url)));
+
+      return NextResponse.json({ status: 200 });
+    }
+
+    // 刪除單一檔案
     await del(urlToDelete);
     return NextResponse.json({ status: 200 });
   } catch (error) {
+    console.log(error, "error");
     return NextResponse.json(
       { error: "Failed to delete image" },
       { status: 500 }

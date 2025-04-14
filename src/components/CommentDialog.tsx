@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, memo } from "react";
+import { useState, memo, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,8 +21,9 @@ import CommentUtilsBar from "@/components/CommentUtilsBar";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import Post from "@/components/comment/PostCard";
 import { Icons } from "@/components/ui/icons";
-
+import { upload } from "@vercel/blob/client";
 import { createReply } from "@/app/actions/comment.action";
+import ImagesCarousel from "./ImagesCarousel";
 interface CommentDialogProps {
   children?: React.ReactNode;
   className?: string;
@@ -41,6 +42,8 @@ export default function CommentDialog({
   const [isCommenting, setIsCommenting] = useState(false);
   const [hasComment, setHasComment] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [images, setImages] = useState<Array<{ url: string; file: File }>>([]);
+  const inputFileRef = useRef<HTMLInputElement>(null);
   // 如果沒有登入，則顯示登入按鈕
   if (!user) {
     return (
@@ -58,21 +61,55 @@ export default function CommentDialog({
     );
   }
   const handleComment = async () => {
-    if (commentText.trim().length === 0 || isCommenting) return;
-    console.log(comment);
+    if ((commentText.trim().length === 0 && !images.length) || isCommenting)
+      return;
     try {
       setIsCommenting(true);
       const newComment = await createReply({
         parentId: comment.id,
         content: commentText.trim(),
-        images: [],
       });
 
       if (newComment.success) {
         onEvent?.("comment");
         setCommentText("");
-        setIsCommenting(false);
-        setOpen(false);
+
+        if (images.length > 0) {
+          // 先上傳圖片
+          const uploadResults = await Promise.allSettled(
+            images.map(async (image) => {
+              const uploadResult = await upload(
+                `comments/${comment.id}/${newComment.reply?.id}/${image.file.name}`,
+                image.file,
+                {
+                  access: "public",
+                  handleUploadUrl: "/api/image",
+                  clientPayload: newComment.reply?.id,
+                }
+              );
+              URL.revokeObjectURL(image.url);
+              return uploadResult;
+            })
+          );
+
+          // 檢查所有圖片是否都上傳成功
+          const allUploadsSuccessful = uploadResults.every(
+            (result) => result.status === "fulfilled"
+          );
+
+          if (allUploadsSuccessful) {
+            // 清空內容和圖片
+            setImages([]);
+            if (inputFileRef.current) {
+              inputFileRef.current.value = "";
+            }
+            setIsCommenting(false);
+            setOpen(false);
+          }
+        } else {
+          setIsCommenting(false);
+          setOpen(false);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -83,12 +120,18 @@ export default function CommentDialog({
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      if (commentText.trim().length > 0) {
+      if (commentText.trim().length > 0 || images.length > 0) {
         setHasComment(true);
       } else {
         setHasComment(false);
         setCommentText("");
         setOpen(false);
+        setImages((prev) => {
+          prev.forEach((image) => {
+            URL.revokeObjectURL(image.url);
+          });
+          return [];
+        });
       }
     }
   };
@@ -110,17 +153,18 @@ export default function CommentDialog({
           </Button>
         </DialogTrigger>
         <DialogContent
-          className="sm:max-w-[550px]"
+          className="sm:max-w-[550px] max-h-[90dvh] overflow-y-auto pt-0 gap-2"
           onClick={(e) => {
             e.stopPropagation();
           }}
+          showClose={false}
         >
-          <DialogHeader>
+          <DialogHeader className="sticky top-0 mt-5 p-1 bg-white z-50">
             <DialogTitle>Comment</DialogTitle>
             <DialogDescription>Comment on the post</DialogDescription>
           </DialogHeader>
           {/* Post */}
-          <Post comment={comment} dbUserId={user.id} />
+          <Post comment={comment} dbUserId={user.id} className="p-4" />
 
           {/* Comment Input */}
           <div className="mt-4 flex gap-3 px-6">
@@ -147,8 +191,28 @@ export default function CommentDialog({
                 />
               </div>
 
+              {images.length > 0 && (
+                <ImagesCarousel
+                  images={images}
+                  onDelete={(image) => {
+                    URL.revokeObjectURL(image.url);
+                    setImages((prev) => {
+                      const newImages = prev.filter((i) => i.url !== image.url);
+                      return newImages;
+                    });
+                  }}
+                  className="group"
+                  itemClassName="justify-center"
+                  previousButtonClassName="left-0"
+                  nextButtonClassName="right-0"
+                />
+              )}
+
               {/* Formatting toolbar */}
-              <CommentUtilsBar />
+              <CommentUtilsBar
+                setImages={setImages}
+                inputFileRef={inputFileRef}
+              />
             </div>
           </div>
 
@@ -158,7 +222,10 @@ export default function CommentDialog({
             </Button>
             <Button
               onClick={handleComment}
-              disabled={isCommenting || commentText.trim().length === 0}
+              disabled={
+                isCommenting ||
+                (commentText.trim().length === 0 && images.length === 0)
+              }
               className="gap-2"
             >
               {isCommenting ? (

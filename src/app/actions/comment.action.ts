@@ -465,11 +465,9 @@ export async function toggleLike(commentId: string) {
 export async function createReply({
   parentId,
   content,
-  images,
 }: {
   parentId: string;
   content: string;
-  images: string[];
 }) {
   try {
     const authorId = await getDbUserId();
@@ -489,7 +487,6 @@ export async function createReply({
       const newReply = await tx.comment.create({
         data: {
           content,
-          images,
           authorId,
           isRoot: false, // 標記為回覆
         },
