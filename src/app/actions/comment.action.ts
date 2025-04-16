@@ -534,7 +534,10 @@ export async function createReply({
   }
 }
 
-export async function deleteComment(commentId: string) {
+export async function deleteComment(
+  commentId: string,
+  pathToRevalidate: string = "/"
+) {
   try {
     const userId = await getDbUserId();
 
@@ -555,8 +558,8 @@ export async function deleteComment(commentId: string) {
         id: commentId,
       },
     });
+    revalidatePath(pathToRevalidate);
 
-    revalidatePath("/home");
     return { success: true };
   } catch (error) {
     console.error(error);

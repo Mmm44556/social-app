@@ -84,7 +84,7 @@ const UploadButton = memo(
             ref={inputFileRef}
             className="hidden"
             type="file"
-            accept="image/*"
+            // accept="image/*"
             multiple
             onChange={(e) => {
               const files = e.target.files;

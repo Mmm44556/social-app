@@ -7,7 +7,7 @@ import formatTimeOrDate from "@/utils/formatTimeOrDate";
 import type { PostType } from "@/types/post";
 import { cn } from "@/lib/utils";
 import PostCard from "./PostCard";
-import ImagesCarousel from "@/components/ImagesCarousel";
+import MediaCarousel from "@/components/MediaCarousel";
 interface ReplyCardProps {
   comment: PostType;
   dbUserId: string | null;
@@ -69,8 +69,8 @@ function ReplyCard({
             />
             {/* Post Images */}
             {comment.images.length > 0 && (
-              <ImagesCarousel
-                images={comment.images.map((image) => ({
+              <MediaCarousel
+                urls={comment.images.map((image) => ({
                   url: image,
                   file: undefined,
                 }))}

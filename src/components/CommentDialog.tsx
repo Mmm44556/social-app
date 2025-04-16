@@ -23,7 +23,8 @@ import Post from "@/components/comment/PostCard";
 import { Icons } from "@/components/ui/icons";
 import { upload } from "@vercel/blob/client";
 import { createReply } from "@/app/actions/comment.action";
-import ImagesCarousel from "./ImagesCarousel";
+import MediaCarousel from "./MediaCarousel";
+import { useRouter } from "next/navigation";
 interface CommentDialogProps {
   children?: React.ReactNode;
   className?: string;
@@ -36,13 +37,16 @@ export default function CommentDialog({
   className,
   onEvent,
 }: CommentDialogProps) {
+  const router = useRouter();
   const { user } = useUser();
   const [open, setOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [isCommenting, setIsCommenting] = useState(false);
   const [hasComment, setHasComment] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [images, setImages] = useState<Array<{ url: string; file: File }>>([]);
+  const [images, setImages] = useState<Array<{ url: string; file: File }> | []>(
+    []
+  );
   const inputFileRef = useRef<HTMLInputElement>(null);
   // 如果沒有登入，則顯示登入按鈕
   if (!user) {
@@ -115,6 +119,10 @@ export default function CommentDialog({
       console.error(error);
     } finally {
       setIsCommenting(false);
+      const timer = setTimeout(() => {
+        router.refresh();
+        clearTimeout(timer);
+      }, 1000);
     }
   };
 
@@ -135,6 +143,7 @@ export default function CommentDialog({
       }
     }
   };
+
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -164,7 +173,12 @@ export default function CommentDialog({
             <DialogDescription>Comment on the post</DialogDescription>
           </DialogHeader>
           {/* Post */}
-          <Post comment={comment} dbUserId={user.id} className="p-4" />
+          <Post
+            comment={comment}
+            dbUserId={user.id}
+            className="p-4"
+            showFooter={false}
+          />
 
           {/* Comment Input */}
           <div className="mt-4 flex gap-3 px-6">
@@ -192,8 +206,8 @@ export default function CommentDialog({
               </div>
 
               {images.length > 0 && (
-                <ImagesCarousel
-                  images={images}
+                <MediaCarousel
+                  urls={images}
                   onDelete={(image) => {
                     URL.revokeObjectURL(image.url);
                     setImages((prev) => {

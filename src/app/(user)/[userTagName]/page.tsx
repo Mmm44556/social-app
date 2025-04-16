@@ -1,6 +1,12 @@
 import Link from "next/link";
-import { ArrowLeft, Calendar } from "lucide-react";
-
+import {
+  ArrowLeft,
+  Calendar,
+  Grid,
+  Heart,
+  ImagePlay,
+  MessageCircle,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,7 +18,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/app/actions/user.action";
 import Comments from "@/components/profile/Comments";
 import Replies from "@/components/profile/Replies";
-
+import Media from "@/components/profile/Media";
+import Likes from "@/components/profile/Likes";
 export default async function ProfilePage({
   params,
 }: {
@@ -105,55 +112,47 @@ export default async function ProfilePage({
 
           {/* Tabs */}
           <Tabs defaultValue="posts" className="mt-6  gap-0">
-            <TabsList className="w-full h-12 p-0 rounded-none border-gray-950 [&_button]:cursor-pointer [&_button]:py-0 shadow-[0_1px_0_#e5e7eb] [&_*]:transition-all">
-              <TabsTrigger value="posts" className="flex-1">
-                Posts
+            <TabsList className="w-full h-12 p-0 rounded-none border-gray-950 [&_button]:cursor-pointer [&_button]:py-0 shadow-[0_1px_0_#e5e7eb] ">
+              <TabsTrigger value="posts" className="flex-1 ">
+                <Grid className="w-4 h-4" /> Posts
               </TabsTrigger>
               <TabsTrigger value="replies" className="flex-1">
+                <MessageCircle className="w-4 h-4" />
                 Replies
               </TabsTrigger>
               <TabsTrigger value="media" className="flex-1">
+                <ImagePlay className="w-4 h-4" />
                 Media
               </TabsTrigger>
               <TabsTrigger value="likes" className="flex-1">
+                <Heart className="w-4 h-4" />
                 Likes
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="posts" className="mt-4">
+            <TabsContent value="posts" className="min-h-[500px]">
               <Comments
                 tagName={userTagName}
                 dbUserId={currentSystemUser?.id ?? ""}
               />
             </TabsContent>
 
-            <TabsContent value="replies">
+            <TabsContent value="replies" className="min-h-[500px]">
               <Replies
                 tagName={userTagName}
                 dbUserId={currentSystemUser?.id ?? ""}
               />
             </TabsContent>
 
-            <TabsContent value="media" className="mt-4">
-              <div className="flex items-center justify-center p-12">
-                <div className="text-center">
-                  <h3 className="text-lg font-medium">No media yet</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">
-                    When you post photos or videos, they will show up here.
-                  </p>
-                </div>
-              </div>
+            <TabsContent value="media" className="min-h-[500px]">
+              <Media
+                tagName={userTagName}
+                dbUserId={currentSystemUser?.id ?? ""}
+              />
             </TabsContent>
 
-            <TabsContent value="likes" className="mt-4">
-              <div className="flex items-center justify-center p-12">
-                <div className="text-center">
-                  <h3 className="text-lg font-medium">No likes yet</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">
-                    Posts you like will show up here.
-                  </p>
-                </div>
-              </div>
+            <TabsContent value="likes" className="min-h-[500px]">
+              <Likes />
             </TabsContent>
           </Tabs>
         </div>

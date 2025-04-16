@@ -11,7 +11,7 @@ import EditButton from "@/components/EditButton";
 import type { PostType } from "@/types/post";
 import { cn } from "@/lib/utils";
 import { memo, useState } from "react";
-import ImagesCarousel from "@/components/ImagesCarousel";
+import MediaCarousel from "@/components/MediaCarousel";
 
 interface PostProps {
   comment: PostType;
@@ -22,7 +22,9 @@ interface PostProps {
   contentClassName?: string;
   footerClassName?: string;
   enableConnectedLine?: boolean;
-  onEvent?: (event: "like" | "comment" | "share") => void;
+  onEvent?: (event: "like" | "comment" | "share" | "delete") => void;
+  pathToRevalidate?: string;
+  showFooter?: boolean;
 }
 
 function PostCard({
@@ -35,6 +37,8 @@ function PostCard({
   footerClassName,
   enableConnectedLine = false,
   onEvent,
+  pathToRevalidate,
+  showFooter = true,
 }: PostProps) {
   const router = useRouter();
   const [isDragging, setIsDragging] = useState(false);
@@ -105,8 +109,8 @@ function PostCard({
 
             {/* Post Images */}
             {comment.images.length > 0 && (
-              <ImagesCarousel
-                images={comment.images.map((image) => ({
+              <MediaCarousel
+                urls={comment.images.map((image) => ({
                   url: image,
                   file: undefined,
                 }))}
@@ -119,11 +123,17 @@ function PostCard({
               dbUserId={dbUserId}
               footerClassName={footerClassName}
               onEvent={onEvent}
+              showFooter={showFooter}
             />
           </div>
         </div>
 
-        <EditButton comment={comment} authorId={dbUserId ?? ""} />
+        <EditButton
+          comment={comment}
+          authorId={dbUserId ?? ""}
+          pathToRevalidate={pathToRevalidate}
+          onEvent={onEvent}
+        />
       </CardContent>
     </Card>
   );
@@ -204,11 +214,18 @@ interface PostFooterProps {
   dbUserId: string | null;
   footerClassName?: string;
   onEvent?: (event: "like" | "comment" | "share") => void;
+  showFooter?: boolean;
 }
 
 const PostFooter = memo(
-  ({ comment, dbUserId, footerClassName, onEvent }: PostFooterProps) => {
-    return (
+  ({
+    comment,
+    dbUserId,
+    footerClassName,
+    onEvent,
+    showFooter = true,
+  }: PostFooterProps) => {
+    return showFooter ? (
       <div className={cn("flex gap-2 mt-2", footerClassName)}>
         <div className="col-start-2 gap-3 flex items-center">
           {/* Like Button */}
@@ -221,7 +238,7 @@ const PostFooter = memo(
           <ShareButton comment={comment} onEvent={onEvent} />
         </div>
       </div>
-    );
+    ) : null;
   }
 );
 

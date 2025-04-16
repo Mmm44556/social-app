@@ -290,6 +290,65 @@ export async function getSharedsByTagName(tagName: string) {
   }
 }
 
+export type GetMediaByTagNameProps = {
+  tagName: string;
+  limit?: number;
+  cursor?: string;
+};
+
+export async function getMediaByTagName({
+  tagName,
+  limit = 9,
+  cursor,
+}: GetMediaByTagNameProps) {
+  try {
+    const pagination = cursor
+      ? {
+          cursor: { id: cursor },
+          skip: 1,
+        }
+      : null;
+
+    const media = await prisma.comment.findMany({
+      where: {
+        author: { tagName },
+        images: {
+          isEmpty: false,
+        },
+      },
+      select: {
+        images: true,
+        id: true,
+        likes: true,
+        createdAt: true,
+        content: true,
+        author: {
+          select: {
+            tagName: true,
+            imageUrl: true,
+            username: true,
+            createdAt: true,
+            _count: {
+              select: {
+                followers: true,
+                likes: true,
+                comments: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: [{ createdAt: "desc" }],
+      take: limit,
+      ...(pagination || {}),
+    });
+    return media;
+  } catch (error) {
+    console.error("Error getting media by tagName", error);
+    return [];
+  }
+}
+
 export async function updateProfile(formData: FormData) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return null;

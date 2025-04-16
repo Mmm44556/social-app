@@ -15,21 +15,32 @@ interface EditButtonPros {
   comment: PostType;
   authorId: string;
   className?: string;
+  pathToRevalidate?: string;
+  onEvent?: (event: "delete") => void;
 }
 export default function EditButton({
   comment,
   authorId,
   className,
+  pathToRevalidate,
+  onEvent,
 }: EditButtonPros) {
   const handleDelete = async () => {
     try {
-      // 1. 刪除整個評論資料夾
-      fetch(`/api/image?folder=comments/${comment.id}`, {
-        method: "DELETE",
-      });
+      if (comment.isRoot) {
+        // 1. 刪除整個評論資料夾
+        await fetch(`/api/image?folder=comments/${comment.id}`, {
+          method: "DELETE",
+        });
+      } else {
+        await fetch(`/api/image?url=${comment.images.toString()}`, {
+          method: "DELETE",
+        });
+      }
 
       // 2. 刪除評論記錄
-      await deleteComment(comment.id);
+      await deleteComment(comment.id, pathToRevalidate);
+      onEvent?.("delete");
     } catch (error) {
       console.error(error);
     }

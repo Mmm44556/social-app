@@ -62,7 +62,7 @@ export default function Comments({ tagName, dbUserId }: CommentsProps) {
                   <PostCard
                     comment={comment as unknown as PostType}
                     dbUserId={dbUserId}
-                    className="bg-transparent border-0 border-b rounded-none hover:shadow-none p-5"
+                    className="bg-transparent border-0 border-b rounded-none hover:shadow-none p-4 py-3"
                     onEvent={() => refetch()}
                   />
                 </Fragment>

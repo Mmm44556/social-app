@@ -13,7 +13,7 @@ import { createComment } from "@/app/actions/comment.action";
 import CommentUtilsBar from "./CommentUtilsBar";
 
 import { useRouter } from "next/navigation";
-import ImagesCarousel from "./ImagesCarousel";
+import MediaCarousel from "./MediaCarousel";
 
 interface CreatePostProps {
   className?: string;
@@ -23,7 +23,9 @@ export default function CreatePost({ className }: CreatePostProps) {
   const router = useRouter();
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState("");
-  const [images, setImages] = useState<Array<{ url: string; file: File }>>([]);
+  const [images, setImages] = useState<Array<{ url: string; file: File }> | []>(
+    []
+  );
   const [isPosting, setIsPosting] = useState(false);
   if (!user) return null;
   const handleSubmit = async () => {
@@ -66,8 +68,8 @@ export default function CreatePost({ className }: CreatePostProps) {
           }
           const timer = setTimeout(() => {
             router.refresh();
+            clearTimeout(timer);
           }, 1000);
-          return () => clearTimeout(timer);
         } else {
           console.error("Some images failed to upload");
         }
@@ -117,8 +119,8 @@ export default function CreatePost({ className }: CreatePostProps) {
 
           {/* Post Images */}
           {images.length > 0 && (
-            <ImagesCarousel
-              images={images}
+            <MediaCarousel
+              urls={images}
               onDelete={(image) => {
                 URL.revokeObjectURL(image.url);
                 setImages((prev) => {

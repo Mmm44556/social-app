@@ -1,5 +1,5 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
-import { del, list } from "@vercel/blob";
+import { del, list, head } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getDbUserId } from "@/app/actions/user.action";
@@ -108,6 +108,7 @@ export async function DELETE(request: Request) {
       const { blobs } = await list({
         prefix: folderToDelete,
       });
+
       // 刪除所有找到的檔案
       await Promise.all(blobs.map((blob) => del(blob.url)));
 
@@ -115,7 +116,7 @@ export async function DELETE(request: Request) {
     }
 
     // 刪除單一檔案
-    await del(urlToDelete);
+    await del(urlToDelete.split(","));
     return NextResponse.json({ status: 200 });
   } catch (error) {
     console.log(error, "error");
@@ -124,4 +125,11 @@ export async function DELETE(request: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const url = searchParams.get("url") as string;
+  const metadata = await head(url);
+  return NextResponse.json(metadata);
 }

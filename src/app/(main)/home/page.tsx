@@ -21,6 +21,7 @@ export default async function HomePage() {
               comment={post}
               dbUserId={dbUserId}
               className="bg-transparent border-0 border-b rounded-none hover:shadow-none p-5"
+              pathToRevalidate="/home"
             />
           </Fragment>
         ))}
