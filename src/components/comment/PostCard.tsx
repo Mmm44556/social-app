@@ -70,24 +70,27 @@ function PostCard({
       >
         <div
           className={cn(
-            "grid grid-cols-[40px_1fr] items-stretch gap-0",
+            "grid grid-cols-[40px_1fr] items-stretch gap-0 max-sm:grid-cols-none max-sm:flex max-sm:flex-col",
             containerClassName
           )}
         >
           {/* Hover Card */}
           <div
             className={cn(
-              "flex items-center gap-2 col-span-2",
+              "flex items-center gap-1 col-span-2 max-xs:flex-wrap max-xs:items-start max-xs:gap-0",
               headerClassName
             )}
           >
             <AuthorHeader
               author={comment.author}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 "
             />
 
-            <span className="text-sm text-muted-foreground">
-              · {formatTimeOrDate(comment.createdAt)}
+            <span className="flex items-center gap-1 text-sm text-muted-foreground max-xs:pl-10 max-xs:flex-wrap">
+              <span>@{comment.author.tagName} </span>
+              <span className="before:content-['·'] before:mx-1 before:text-xl before:align-middle">
+                {formatTimeOrDate(comment.createdAt)}
+              </span>
             </span>
           </div>
 
@@ -98,7 +101,12 @@ function PostCard({
             </div>
           )}
 
-          <div className={cn("py-2", enableConnectedLine ? "" : "col-start-2")}>
+          <div
+            className={cn(
+              "max-sm:pl-10",
+              enableConnectedLine ? "" : "col-start-2"
+            )}
+          >
             {/* Post Content */}
 
             <PostContent

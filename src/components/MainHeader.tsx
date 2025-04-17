@@ -7,13 +7,13 @@ import { ArrowLeft } from "lucide-react";
 export default function MainHeader() {
   const router = useRouter();
   return (
-    <div className="sticky top-0 z-10 bg-white/80 dark:bg-[#1E293B]/80 backdrop-blur-sm p-2 ">
+    <div className="sticky top-0 z-10 bg-white/80 dark:bg-[#1E293B]/80 backdrop-blur-sm p-2 max-lg:relative">
       <div className="flex items-center gap-6">
         <div>
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full"
+            className="rounded-full max-lg:hidden"
             onClick={() => router.back()}
           >
             <ArrowLeft className="size-6" />

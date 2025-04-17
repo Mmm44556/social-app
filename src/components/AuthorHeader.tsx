@@ -49,7 +49,7 @@ export default function AuthorHeader({
   return (
     <HoverCard openDelay={250}>
       <div className="flex items-stretch gap-2 hover:bg-gray-50 hover:cursor-pointer">
-        <div className={cn("grow space-y-2", className)}>
+        <div className={cn("grow space-y-2p", className)}>
           {/* Hover Card */}
           <div className="flex items-center gap-2">
             <HoverCardTrigger asChild>
@@ -70,7 +70,7 @@ export default function AuthorHeader({
                   {...props}
                 >
                   <span className="font-semibold">{author.username}</span>
-                  <span className="text-muted-foreground">
+                  <span className="text-muted-foreground max-sm:hidden">
                     @{author.tagName}
                   </span>
                 </div>

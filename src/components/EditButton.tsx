@@ -51,7 +51,7 @@ export default function EditButton({
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          "absolute right-0 top-0 cursor-pointer hover:bg-gray-200 rounded-full",
+          "absolute right-0 top-0 cursor-pointer hover:bg-gray-200 rounded-full max-sm:translate-x-3",
           className
         )}
       >

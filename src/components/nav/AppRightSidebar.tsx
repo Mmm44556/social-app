@@ -1,27 +1,23 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { auth } from "@clerk/nextjs/server";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { Construction } from "lucide-react";
 import SuggestedUser from "@/components/SuggestedUser";
 
 async function AppRightSidebar() {
   const { userId } = await auth();
-  if (!userId) return <div className="col-span-3"></div>;
+  if (!userId) return null;
   return (
-    <aside className="hidden lg:block lg:col-span-5 ">
-      <div className="sticky top-0">
-        {/* Suggested Users */}
+    <aside className="col-span-2 max-lg:hidden">
+      <div className="sticky top-6">
         <SuggestedUser />
 
-        {/* Trending Categories */}
         <Card className="mb-4 rounded-xl shadow-none border p-6">
-          <CardHeader>
-            <h2 className="text-xl font-bold">What&apos;s news</h2>
+          <CardHeader className="p-0">
+            <h2 className="text-xl font-bold">Developing...</h2>
           </CardHeader>
           <CardContent className="flex gap-3 px-0">
-            <div className="h-10 w-10 rounded-full bg-muted" />
-            <div className="flex-1">
+            {/* <div className="flex-1">
               <div className="flex items-center gap-2">
                 <span className="font-semibold">User Name</span>
                 <span className="text-sm text-muted-foreground">@username</span>
@@ -45,10 +41,10 @@ async function AppRightSidebar() {
                   Share
                 </Button>
               </div>
-            </div>
+            </div> */}
+            <Construction className="size-10 m-auto" />
           </CardContent>
         </Card>
-        {/* Footer */}
         <div className="text-xs text-gray-500 dark:text-gray-400 space-y-2">
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             <Link href="#" className="hover:underline">

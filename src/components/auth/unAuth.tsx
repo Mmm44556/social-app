@@ -17,13 +17,13 @@ import { SignUpButton } from "@clerk/nextjs";
 
 export default function UnAuth() {
   return (
-    <div className="grid w-full px-4 col-span-5">
-      <div className="sticky top-20 h-fit">
+    <div className="grid px-4 col-span-2 max-lg:hidden">
+      <div className="relative">
         <SignIn.Root>
           <Clerk.Loading>
             {(isGlobalLoading) => (
               <>
-                <SignIn.Step name="start">
+                <SignIn.Step name="start" className="sticky top-16">
                   <Card className="w-full">
                     <CardHeader>
                       <CardTitle>Sign in to Nexus</CardTitle>

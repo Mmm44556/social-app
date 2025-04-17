@@ -7,6 +7,8 @@ import AppRightSidebar from "@/components/nav/AppRightSidebar";
 import AppLeftSidebar from "@/components/nav/AppLeftSidebar";
 import QueryClientComponent from "@/components/QueryClient";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { MobileNav } from "@/components/nav/MobileNav";
+import { MobileHeader } from "@/components/nav/MobileHeader";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -38,22 +40,24 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {/* Header */}
-            {/* <SiteHeader /> */}
-            <div className="grid grid-cols-1 gap-4 md:auto-cols-fr grid-flow-col container py-6">
-              <QueryClientComponent>
+            <QueryClientComponent>
+              {/* Header */}
+              <MobileHeader title="Nexus" />
+
+              {/* <SiteHeader /> */}
+              <div className="grid auto-cols-fr grid-flow-col gap-3 container py-6 max-sm:gap-0">
                 {/* Left Sidebar */}
                 <AppLeftSidebar />
 
                 {/* Main Content */}
-
                 {children}
-                <ReactQueryDevtools />
+                <MobileNav />
 
                 {/* Right Sidebar */}
                 <AppRightSidebar />
-              </QueryClientComponent>
-            </div>
+              </div>
+              <ReactQueryDevtools />
+            </QueryClientComponent>
           </ThemeProvider>
         </body>
       </html>
