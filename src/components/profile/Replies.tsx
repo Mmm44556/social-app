@@ -8,12 +8,9 @@ import { isEmpty } from "lodash-es";
 import { LoaderCircle } from "lucide-react";
 import useInfiniteScrollComments from "@/hooks/useInfiniteScrollComments";
 import NoData from "./NoData";
-interface RepliesProps {
-  tagName: string;
-  dbUserId: string | null;
-}
+import { TabComponentProps } from "@/app/(user)/[userTagName]/page";
 
-export default function Replies({ tagName, dbUserId }: RepliesProps) {
+export default function Replies({ tagName, dbUserId }: TabComponentProps) {
   const { ref, inView } = useInView();
 
   const {

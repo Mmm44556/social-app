@@ -30,6 +30,7 @@ export async function getNotifications() {
           username: true,
           imageUrl: true,
           createdAt: true,
+          avatarUrl: true,
           bio: true,
           _count: {
             select: {

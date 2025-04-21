@@ -7,22 +7,25 @@ import { upload } from "@vercel/blob/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { createComment } from "@/app/actions/comment.action";
 import CommentUtilsBar from "./CommentUtilsBar";
-
 import { useRouter } from "next/navigation";
 import MediaCarousel from "./MediaCarousel";
-
+import { EditorContent } from "@tiptap/react";
+import { useCreateEditor } from "@/hooks/useCreateEditor";
+import { DB_User } from "@/app/actions/user.action";
 interface CreatePostProps {
   className?: string;
+  dbUser: DB_User;
 }
-export default function CreatePost({ className }: CreatePostProps) {
+export default function CreatePost({ className, dbUser }: CreatePostProps) {
   const { user } = useUser();
   const router = useRouter();
+
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState("");
+  const editor = useCreateEditor(content, setContent);
   const [images, setImages] = useState<Array<{ url: string; file: File }> | []>(
     []
   );
@@ -36,7 +39,7 @@ export default function CreatePost({ className }: CreatePostProps) {
         content,
       });
 
-      if (result.success) {
+      if (result.success && images.length > 0) {
         // 先上傳圖片
         const uploadResults = await Promise.allSettled(
           images.map(async (image) => {
@@ -62,6 +65,7 @@ export default function CreatePost({ className }: CreatePostProps) {
         if (allUploadsSuccessful) {
           // 清空內容和圖片
           setContent("");
+          editor?.commands.clearContent(); // 清空編輯器內容
           setImages([]);
           if (inputFileRef.current) {
             inputFileRef.current.value = "";
@@ -73,6 +77,10 @@ export default function CreatePost({ className }: CreatePostProps) {
         } else {
           console.error("Some images failed to upload");
         }
+      } else {
+        setContent("");
+        editor?.commands.clearContent(); // 清空編輯器內容
+        router.refresh();
       }
     } catch (error) {
       console.error(error);
@@ -87,18 +95,19 @@ export default function CreatePost({ className }: CreatePostProps) {
         <div>
           <div className="flex grow items-center gap-1 w-full">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={user.imageUrl} />
+              <AvatarImage src={dbUser?.avatarUrl ?? ""} />
               <AvatarFallback>
                 {user?.firstName?.charAt(0)}
                 {user?.lastName?.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <Textarea
-              placeholder="Write a something..."
-              className="w-full grow rounded-none shadow-none placeholder:text-gray-400 h-full border-0 selection:bg-gray-300/50"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
+            <div className="flex-1">
+              <EditorContent
+                editor={editor}
+                className="border-0 shadow-none"
+                placeholder="Write something..."
+              />
+            </div>
 
             {/* Image Preview */}
             <Button
@@ -137,7 +146,11 @@ export default function CreatePost({ className }: CreatePostProps) {
         </div>
 
         {/* Comment Utils Bar */}
-        <CommentUtilsBar setImages={setImages} inputFileRef={inputFileRef} />
+        <CommentUtilsBar
+          setImages={setImages}
+          inputFileRef={inputFileRef}
+          editor={editor!}
+        />
       </CardContent>
     </Card>
   );

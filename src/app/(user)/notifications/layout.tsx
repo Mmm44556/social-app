@@ -3,7 +3,11 @@ export default async function NotificationsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="lg:col-span-9 md:col-span-9">{children}</div>;
+  return (
+    <div className="space-y-6 col-span-6 max-lg:col-span-5 max-lg:pt-10 max-lg:pb-16">
+      {children}
+    </div>
+  );
 }
 // export default function NotificationsLayout({
 //   children,

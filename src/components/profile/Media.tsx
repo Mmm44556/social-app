@@ -9,13 +9,9 @@ import useInfiniteScrollMedia from "@/hooks/useInfiniteScrollMedia";
 import NoData from "./NoData";
 import { mediaType } from "../MediaCarousel";
 import CommentDialog from "../CommentDialog";
+import { TabComponentProps } from "@/app/(user)/[userTagName]/page";
 
-interface MediaProps {
-  tagName: string;
-  dbUserId: string | null;
-}
-
-export default function Media({ tagName }: MediaProps) {
+export default function Media({ tagName }: TabComponentProps) {
   const { ref, inView } = useInView();
 
   const {

@@ -10,8 +10,9 @@ import AuthorHeader from "@/components/AuthorHeader";
 import EditButton from "@/components/EditButton";
 import type { PostType } from "@/types/post";
 import { cn } from "@/lib/utils";
-import { memo, useState } from "react";
+import { memo, useState, useMemo } from "react";
 import MediaCarousel from "@/components/MediaCarousel";
+import BioText from "../profile/BioText";
 
 interface PostProps {
   comment: PostType;
@@ -168,6 +169,13 @@ const PostContent = memo(
       : content.length > contentLimit;
     const flushEmptyImages = images.filter((image) => image !== "");
 
+    const truncatedContent = useMemo(() => {
+      if (disableShowMore || isExpanded) {
+        return content;
+      }
+      return truncateHtml(content, contentLimit);
+    }, [content, contentLimit, disableShowMore, isExpanded]);
+
     const toggleContent = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       setIsExpanded(!isExpanded);
@@ -184,13 +192,16 @@ const PostContent = memo(
               disableShowMore ? "" : ""
             )}
           >
-            {disableShowMore
-              ? content
-              : isExpanded
-              ? content
-              : `${content.slice(0, contentLimit)}${
-                  isContentLong ? "..." : ""
-                }`}
+            {disableShowMore ? (
+              <BioText text={content} />
+            ) : isExpanded ? (
+              <BioText text={content} />
+            ) : (
+              <>
+                <BioText text={truncatedContent} />
+                {isContentLong ? "..." : ""}
+              </>
+            )}
           </p>
           {isContentLong && !disableShowMore && (
             <button
@@ -249,6 +260,45 @@ const PostFooter = memo(
     ) : null;
   }
 );
+// 添加一個函數來安全地截斷 HTML 內容
+function truncateHtml(html: string, maxLength: number): string {
+  // 創建一個臨時的 DOM 元素來解析 HTML
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+
+  // 獲取純文本內容
+  const textContent = tempDiv.textContent || "";
+
+  // 如果純文本長度小於最大長度，直接返回原始 HTML
+  if (textContent.length <= maxLength) {
+    return html;
+  }
+
+  // 找到截斷點
+  let currentLength = 0;
+  let lastValidIndex = 0;
+  let inTag = false;
+
+  for (let i = 0; i < html.length; i++) {
+    if (html[i] === "<") {
+      inTag = true;
+    } else if (html[i] === ">") {
+      inTag = false;
+    } else if (!inTag && currentLength < maxLength) {
+      currentLength++;
+      lastValidIndex = i;
+    }
+  }
+
+  // 找到最後一個完整的標籤結束位置
+  let finalIndex = lastValidIndex;
+  while (finalIndex < html.length && html[finalIndex] !== ">") {
+    finalIndex++;
+  }
+
+  // 返回截斷後的 HTML
+  return html.substring(0, finalIndex + 1);
+}
 
 PostFooter.displayName = "PostFooter";
 

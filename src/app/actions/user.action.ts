@@ -14,7 +14,15 @@ export async function syncUser() {
     // check if user exists in db
     const existingUser = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: {
+      select: {
+        avatarUrl: true,
+        id: true,
+        username: true,
+        tagName: true,
+        email: true,
+        imageUrl: true,
+        bio: true,
+        createdAt: true,
         _count: {
           select: {
             followers: true,
@@ -48,6 +56,7 @@ export async function syncUser() {
         username: true,
         tagName: true,
         imageUrl: true,
+        avatarUrl: true,
         email: true,
         id: true,
         _count: {
@@ -77,6 +86,7 @@ export async function getUserByClerkId(clerkId: string) {
   try {
     const user = await prisma.user.findUnique({
       where: { clerkId },
+
       include: {
         _count: {
           select: {

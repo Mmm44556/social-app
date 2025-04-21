@@ -9,6 +9,7 @@ import QueryClientComponent from "@/components/QueryClient";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MobileNav } from "@/components/nav/MobileNav";
 import { MobileHeader } from "@/components/nav/MobileHeader";
+import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -59,6 +60,7 @@ export default async function RootLayout({
               <ReactQueryDevtools />
             </QueryClientComponent>
           </ThemeProvider>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

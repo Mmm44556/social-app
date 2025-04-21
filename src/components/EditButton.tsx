@@ -11,6 +11,7 @@ import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import { deleteComment } from "@/app/actions/comment.action";
 import { cn } from "@/lib/utils";
 import type { PostType } from "@/types/post";
+import { useRouter } from "next/navigation";
 interface EditButtonPros {
   comment: PostType;
   authorId: string;
@@ -25,6 +26,8 @@ export default function EditButton({
   pathToRevalidate,
   onEvent,
 }: EditButtonPros) {
+  const router = useRouter();
+
   const handleDelete = async () => {
     try {
       if (comment.isRoot) {

@@ -25,6 +25,8 @@ import { upload } from "@vercel/blob/client";
 import { createReply } from "@/app/actions/comment.action";
 import MediaCarousel from "./MediaCarousel";
 import { useRouter } from "next/navigation";
+import { useCreateEditor } from "@/hooks/useCreateEditor";
+import { EditorContent } from "@tiptap/react";
 interface CommentDialogProps {
   children?: React.ReactNode;
   className?: string;
@@ -41,6 +43,7 @@ export default function CommentDialog({
   const { user } = useUser();
   const [open, setOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const editor = useCreateEditor(commentText, setCommentText);
   const [isCommenting, setIsCommenting] = useState(false);
   const [hasComment, setHasComment] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -133,6 +136,7 @@ export default function CommentDialog({
       } else {
         setHasComment(false);
         setCommentText("");
+        editor?.commands.clearContent();
         setOpen(false);
         setImages((prev) => {
           prev.forEach((image) => {
@@ -197,11 +201,10 @@ export default function CommentDialog({
 
             <div className="flex-1 space-y-2">
               <div className="rounded-md border bg-muted/40 focus-within:ring-1 focus-within:ring-ring">
-                <Textarea
+                <EditorContent
+                  editor={editor}
+                  className="min-h-14 border-0 bg-transparent focus-visible:ring-0 px-2"
                   placeholder="Write your comment..."
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  className="border-0 bg-transparent focus-visible:ring-0"
                 />
               </div>
 
@@ -226,6 +229,7 @@ export default function CommentDialog({
               <CommentUtilsBar
                 setImages={setImages}
                 inputFileRef={inputFileRef}
+                editor={editor}
               />
             </div>
           </div>

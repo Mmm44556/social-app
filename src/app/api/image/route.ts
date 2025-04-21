@@ -32,14 +32,9 @@ export async function POST(request: Request): Promise<NextResponse> {
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
         // 獲取上傳完成的通知
-        console.log(tokenPayload, "tokenPayload", blob, "@@");
         try {
-          // console.log("blob upload completed", blob, tokenPayload);
           // 解析 token payload 中的用戶 ID
-          const { dbUserId, clientPayload } = JSON.parse(
-            tokenPayload as string
-          );
-
+          const { clientPayload } = JSON.parse(tokenPayload as string);
           // 上傳貼文圖片
           if (blob.pathname.startsWith("comments")) {
             const commentId = clientPayload;
@@ -69,8 +64,9 @@ export async function POST(request: Request): Promise<NextResponse> {
           }
           // 上傳頭像
           if (blob.pathname.startsWith("avatar")) {
+            const userId = clientPayload;
             await prisma.user.update({
-              where: { id: dbUserId },
+              where: { id: userId },
               data: { avatarUrl: blob.url },
             });
           }

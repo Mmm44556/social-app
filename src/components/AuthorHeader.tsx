@@ -10,6 +10,7 @@ import { CalendarDays, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import FollowButton from "@/components/FollowButton";
 import { format } from "date-fns";
+import BioText from "./profile/BioText";
 
 interface AuthorHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   author: {
@@ -22,6 +23,7 @@ interface AuthorHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
     };
     bio: string | null;
     createdAt: Date;
+    avatarUrl: string | null;
   };
 }
 function Header({ className, author, ...props }: AuthorHeaderProps) {
@@ -58,7 +60,7 @@ export default function AuthorHeader({
                 onClick={handleAuthorProfileClick}
               >
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={author.imageUrl ?? ""} />
+                  <AvatarImage src={author?.avatarUrl ?? ""} />
                   <AvatarFallback>{author.username.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div
@@ -79,7 +81,7 @@ export default function AuthorHeader({
             <HoverCardContent className="w-80">
               <div className="flex gap-2 items-center">
                 <Avatar className="h-8 w-8 self-start">
-                  <AvatarImage src={author.imageUrl ?? ""} />
+                  <AvatarImage src={author?.avatarUrl ?? ""} />
                   <AvatarFallback>{author.username.charAt(0)}</AvatarFallback>
                 </Avatar>
 
@@ -100,9 +102,9 @@ export default function AuthorHeader({
                     </span>
                   </div>
                   {author.bio && (
-                    <div className="flex items-center pt-2">
+                    <div className="flex items-center ">
                       <span className="text-xs text-muted-foreground">
-                        {author.bio}
+                        <BioText text={author.bio} />
                       </span>
                     </div>
                   )}

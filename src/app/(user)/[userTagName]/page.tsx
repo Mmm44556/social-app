@@ -20,11 +20,19 @@ import Comments from "@/components/profile/Comments";
 import Replies from "@/components/profile/Replies";
 import Media from "@/components/profile/Media";
 import Likes from "@/components/profile/Likes";
-export default async function ProfilePage({
-  params,
-}: {
+import ProfileEditDialog from "@/components/ProfileEditDialog";
+import BioText from "@/components/profile/BioText";
+
+export interface TabComponentProps {
+  tagName: string;
+  dbUserId: string | null;
+}
+
+interface ProfilePageProps {
   params: Promise<{ userTagName: string }>;
-}) {
+}
+
+export default async function ProfilePage({ params }: ProfilePageProps) {
   const { userTagName } = await params;
   const clerkUser = await currentUser();
   const currentSystemUser = await getUserByClerkId(clerkUser?.id ?? "");
@@ -68,15 +76,19 @@ export default async function ProfilePage({
           <div className="absolute -top-16 left-4 border-4 border-white dark:border-[#1A202C] rounded-full">
             <Avatar className="h-32 w-32 max-lg:h-24 max-lg:w-24 ">
               <AvatarImage
-                src={userProfile.imageUrl || ""}
+                src={userProfile.avatarUrl || ""}
+                className="object-cover"
                 alt={userProfile.username}
               />
               <AvatarFallback>{userProfile.username.charAt(0)}</AvatarFallback>
             </Avatar>
           </div>
 
-          <div className="pt-4 px-4 sticky top-0 z-10 w-fit ml-auto">
+          <div className="pt-4 px-4 sticky top-0 z-10 w-fit ml-auto flex items-center gap-2">
             <FollowButton postUserId={userProfile.id} />
+            {currentSystemUser?.id === userProfile.id && (
+              <ProfileEditDialog userProfile={userProfile} />
+            )}
           </div>
 
           <div className="mt-16 px-4">
@@ -85,7 +97,7 @@ export default async function ProfilePage({
               @{userProfile.tagName}
             </p>
 
-            {userProfile.bio && <p className="mt-4">{userProfile.bio}</p>}
+            {userProfile.bio && <BioText text={userProfile.bio} />}
 
             <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 text-gray-500 dark:text-gray-400">
               <div className="flex items-center gap-1">
@@ -156,7 +168,10 @@ export default async function ProfilePage({
             </TabsContent>
 
             <TabsContent value="likes" className="min-h-[500px]">
-              <Likes />
+              <Likes
+                tagName={userTagName}
+                dbUserId={currentSystemUser?.id ?? ""}
+              />
             </TabsContent>
           </Tabs>
         </div>

@@ -2,13 +2,14 @@ import CreatePost from "@/components/CreatePost";
 import { getFeed } from "@/app/actions/comment.action";
 import { Fragment } from "react";
 import PostCard from "@/components/comment/PostCard";
-import { getDbUserId } from "@/app/actions/user.action";
+import { getDbUserId, getUserByClerkId } from "@/app/actions/user.action";
 import { cn } from "@/lib/utils";
 
 export default async function HomePage() {
   const { posts } = await getFeed();
   // 用來處理用戶按讚
   const dbUserId = await getDbUserId();
+  const dbUser = await getUserByClerkId(dbUserId ?? "");
   return (
     <div
       className={cn(
@@ -16,7 +17,7 @@ export default async function HomePage() {
         dbUserId === null ? "col-span-5" : ""
       )}
     >
-      <CreatePost />
+      <CreatePost dbUser={dbUser} />
 
       {/* Main Posts */}
       <div className="border-t">

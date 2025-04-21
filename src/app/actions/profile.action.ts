@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
+
+export type Profile = Awaited<ReturnType<typeof getProfileByTagName>>;
 export async function getProfileByTagName(tagName: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -11,6 +13,7 @@ export async function getProfileByTagName(tagName: string) {
         username: true,
         tagName: true,
         imageUrl: true,
+        avatarUrl: true,
         email: true,
         id: true,
         bio: true,
@@ -65,6 +68,7 @@ export async function getCommentsByTagName({
             id: true,
             username: true,
             imageUrl: true,
+            avatarUrl: true,
             tagName: true,
             bio: true,
             createdAt: true,
@@ -121,6 +125,7 @@ export async function getCommentsByTagName({
                         id: true,
                         username: true,
                         imageUrl: true,
+                        avatarUrl: true,
                         tagName: true,
                         bio: true,
                         createdAt: true,
@@ -201,6 +206,7 @@ export async function getCommentsByTagName({
                     id: true,
                     username: true,
                     imageUrl: true,
+                    avatarUrl: true,
                     tagName: true,
                     bio: true,
                     createdAt: true,
@@ -262,16 +268,76 @@ export async function getCommentsByTagName({
 
 export async function getLikesByTagName(tagName: string) {
   try {
-    const likes = await prisma.user.findMany({
+    const user = await prisma.user.findUnique({
       where: { tagName },
       include: {
-        likes: true,
+        likes: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            comment: {
+              include: {
+                author: {
+                  select: {
+                    id: true,
+                    username: true,
+                    imageUrl: true,
+                    avatarUrl: true,
+                    tagName: true,
+                    bio: true,
+                    createdAt: true,
+                    _count: {
+                      select: {
+                        followers: true,
+                        likes: true,
+                      },
+                    },
+                  },
+                },
+                descendants: {
+                  where: {
+                    NOT: {
+                      depth: 0,
+                    },
+                  },
+                },
+                likes: {
+                  select: {
+                    userId: true,
+                  },
+                },
+                _count: {
+                  select: {
+                    likes: true,
+                    descendants: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
-    return likes;
+
+    if (!user) return [];
+
+    // Transform the data to match PostType
+    const transformedLikes = user.likes
+      .filter((like) => like.comment !== null)
+      .map((like) => {
+        const comment = like.comment!;
+        return {
+          ...comment,
+          replyCount: comment.descendants.length,
+          likeCount: comment.likes.length,
+        };
+      });
+
+    return transformedLikes;
   } catch (error) {
     console.error("Error getting likes by tagName", error);
-    return null;
+    return [];
   }
 }
 
@@ -327,6 +393,7 @@ export async function getMediaByTagName({
             tagName: true,
             imageUrl: true,
             username: true,
+            avatarUrl: true,
             createdAt: true,
             _count: {
               select: {
@@ -352,16 +419,15 @@ export async function getMediaByTagName({
 export async function updateProfile(formData: FormData) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return null;
-  const { username, tagName, bio, imageUrl } = Object.fromEntries(formData) as {
+  const { username, tagName, bio } = Object.fromEntries(formData) as {
     username: string;
     tagName: string;
     bio: string;
-    imageUrl: string;
   };
   try {
     const user = await prisma.user.update({
       where: { clerkId },
-      data: { username, tagName, bio, imageUrl },
+      data: { username, tagName, bio },
     });
     revalidatePath(`/${user.tagName}`);
     return user;
