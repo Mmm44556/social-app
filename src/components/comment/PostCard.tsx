@@ -117,7 +117,6 @@ function PostCard({
               images={comment.images}
               content={comment.content}
               contentClassName={contentClassName}
-              contentContainerClassName={contentContainerClassName}
             />
 
             {/* Post Images */}
@@ -157,7 +156,6 @@ interface PostContentProps {
   content: string;
   contentClassName?: string;
   disableShowMore?: boolean;
-  contentContainerClassName?: string;
 }
 
 const PostContent = memo(
@@ -166,7 +164,6 @@ const PostContent = memo(
     content,
     contentClassName,
     disableShowMore = false,
-    contentContainerClassName,
   }: PostContentProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const contentLimit = 100; // Set the character limit for content
