@@ -121,7 +121,7 @@ export default function ProfileEditDialog({
       } else {
         toast.error("Failed to update profile. Please try again.");
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to update profile. Please try again.");
     } finally {
       setIsLoading(false);

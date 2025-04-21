@@ -4,7 +4,6 @@ import type React from "react";
 import { useState, memo, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 import {
   Dialog,
@@ -166,7 +165,7 @@ export default function CommentDialog({
           </Button>
         </DialogTrigger>
         <DialogContent
-          className="sm:max-w-[550px] max-h-[90dvh] overflow-y-auto pt-0 gap-2"
+          className="sm:max-w-[550px] max-h-[85dvh] overflow-y-auto pt-0 gap-2 max-lg:mt-10 max-md:p-2"
           onClick={(e) => {
             e.stopPropagation();
           }}
@@ -180,8 +179,9 @@ export default function CommentDialog({
           <Post
             comment={comment}
             dbUserId={user.id}
-            className="p-4"
+            className="p-4 max-lg:m-2"
             showFooter={false}
+            contentContainerClassName="max-lg:p-2"
           />
 
           {/* Comment Input */}
@@ -268,6 +268,7 @@ export default function CommentDialog({
           setOpen(false);
           setHasComment(false);
           setCommentText("");
+          editor?.commands.clearContent();
         }}
       />
     </>

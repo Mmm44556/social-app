@@ -37,7 +37,10 @@ export function MobileHeader({
             <ChevronLeft className="h-5 w-5 text-gray-700 dark:text-gray-300" />
           </Button>
         )}
-        <h1 className="text-lg font-semibold truncate max-w-[200px]">
+        <h1
+          className="text-lg font-semibold truncate max-w-[200px]"
+          onClick={() => router.push("/home")}
+        >
           {title}
         </h1>
       </div>

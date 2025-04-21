@@ -39,7 +39,7 @@ export default function CommentUtilsBar({
   if (!editor) return null;
   return (
     <>
-      <div className="flex items-center justify-start px-1">
+      <div className="flex items-center justify-start px-1 max-md:flex-wrap">
         <UploadButton
           setImages={setImages}
           inputFileRef={inputFileRef}
@@ -91,7 +91,7 @@ export default function CommentUtilsBar({
 }
 
 const UploadButton = memo(
-  ({ setImages, inputFileRef, editor }: CommentUtilsBarProps) => {
+  ({ setImages, inputFileRef }: CommentUtilsBarProps) => {
     return (
       <Button variant="utils" className="rounded-full" size="utils" asChild>
         <Label>

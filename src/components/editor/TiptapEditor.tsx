@@ -19,14 +19,12 @@ interface TiptapEditorProps {
   content: string;
   onChange: (content: string) => void;
   className?: string;
-  placeholder?: string;
 }
 
 export default function TiptapEditor({
   content,
   onChange,
   className,
-  placeholder = "Write something...",
 }: TiptapEditorProps) {
   const editor = useEditor({
     extensions: [

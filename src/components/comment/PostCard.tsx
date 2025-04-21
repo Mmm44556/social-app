@@ -21,6 +21,7 @@ interface PostProps {
   containerClassName?: string;
   headerClassName?: string;
   contentClassName?: string;
+  contentContainerClassName?: string;
   footerClassName?: string;
   enableConnectedLine?: boolean;
   onEvent?: (event: "like" | "comment" | "share" | "delete") => void;
@@ -35,6 +36,7 @@ function PostCard({
   containerClassName,
   headerClassName,
   contentClassName,
+  contentContainerClassName,
   footerClassName,
   enableConnectedLine = false,
   onEvent,
@@ -87,7 +89,7 @@ function PostCard({
               className="flex items-center gap-2 "
             />
 
-            <span className="flex items-center gap-1 text-sm text-muted-foreground max-xs:pl-10 max-xs:flex-wrap">
+            <span className="flex items-center gap-1 text-sm text-muted-foreground max-md:pl-10 max-sm:p-2 max-xs:flex-wrap">
               <span>@{comment.author.tagName} </span>
               <span className="before:content-['·'] before:mx-1 before:text-xl before:align-middle">
                 {formatTimeOrDate(comment.createdAt)}
@@ -104,8 +106,9 @@ function PostCard({
 
           <div
             className={cn(
-              "max-sm:pl-10",
-              enableConnectedLine ? "" : "col-start-2"
+              "max-md:pl-10 max-md:p-2",
+              enableConnectedLine ? "" : "col-start-2",
+              contentContainerClassName
             )}
           >
             {/* Post Content */}
@@ -114,6 +117,7 @@ function PostCard({
               images={comment.images}
               content={comment.content}
               contentClassName={contentClassName}
+              contentContainerClassName={contentContainerClassName}
             />
 
             {/* Post Images */}
@@ -153,6 +157,7 @@ interface PostContentProps {
   content: string;
   contentClassName?: string;
   disableShowMore?: boolean;
+  contentContainerClassName?: string;
 }
 
 const PostContent = memo(
@@ -161,6 +166,7 @@ const PostContent = memo(
     content,
     contentClassName,
     disableShowMore = false,
+    contentContainerClassName,
   }: PostContentProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const contentLimit = 100; // Set the character limit for content
