@@ -12,6 +12,9 @@
   height: 0;
   pointer-events: none;
 }
+em-emoji-picker {
+  max-height: 14rem;
+}
 
 textarea {
   /* 基本設置 */

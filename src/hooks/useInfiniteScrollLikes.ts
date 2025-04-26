@@ -14,7 +14,7 @@ type UseInfiniteScrollLikesProps = {
 export default function useInfiniteScrollLikes({
   tagName,
   queryKey,
-  limit = 10,
+  limit = 5,
 }: UseInfiniteScrollLikesProps) {
   return useInfiniteQuery({
     queryKey: queryKey?.length ? queryKey : [tagName],

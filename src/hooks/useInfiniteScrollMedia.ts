@@ -20,7 +20,7 @@ export default function useInfiniteScrollMedia({
     queryFn: async ({ pageParam = undefined }) => {
       const media = await getMediaByTagName({
         tagName,
-        limit: 9,
+        limit: 5,
         cursor: pageParam as string,
       });
 

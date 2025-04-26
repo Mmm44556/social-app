@@ -19,7 +19,7 @@ export default function useInfiniteScrollComments({
         : [props.tagName],
     queryFn: async ({ pageParam = undefined }) => {
       const comments = await getCommentsByTagName({
-        limit: 4,
+        limit: 5,
         cursor: pageParam as string,
         isRoot: false,
         ...props,

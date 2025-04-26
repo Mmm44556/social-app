@@ -12,8 +12,8 @@ export default async function AppLeftSidebar() {
   if (!dbUser) return <UnAuth />;
 
   return (
-    <aside className="col-span-2 max-lg:hidden">
-      <div className="flex flex-col gap-6 sticky top-6 h-fit">
+    <aside className="col-span-2 max-lg:hidden ">
+      <div className="flex flex-col gap-6 sticky top-6 ">
         <Brand />
         <AuthCard user={dbUser} />
         <NavBar user={dbUser} />

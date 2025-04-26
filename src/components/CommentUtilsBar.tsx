@@ -21,6 +21,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
 const utilsItems = [
   {
@@ -34,12 +35,14 @@ interface CommentUtilsBarProps {
   >;
   inputFileRef: React.RefObject<HTMLInputElement | null>;
   editor: Editor | null;
+  popoverClassName?: string;
 }
 
 export default function CommentUtilsBar({
   setImages,
   inputFileRef,
   editor,
+  popoverClassName,
 }: CommentUtilsBarProps) {
   const { theme } = useTheme();
   if (!editor) return null;
@@ -62,13 +65,18 @@ export default function CommentUtilsBar({
           </Button>
         ))}
 
-        <Popover>
+        <Popover modal>
           <PopoverTrigger asChild>
             <Button variant="utils" size="utils" className="rounded-full">
               <SmilePlusIcon />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="bg-transparent border-none">
+          <PopoverContent
+            className={cn(
+              "bg-transparent border-none shadow-none",
+              popoverClassName
+            )}
+          >
             <Picker
               data={data}
               onEmojiSelect={(emoji: any) => {
@@ -76,7 +84,6 @@ export default function CommentUtilsBar({
               }}
               previewPosition="none"
               theme={theme}
-              className="overflow-y-auto"
             />
           </PopoverContent>
         </Popover>

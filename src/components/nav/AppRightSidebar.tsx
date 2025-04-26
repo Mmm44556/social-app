@@ -1,16 +1,27 @@
-import Link from "next/link";
+"use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { auth } from "@clerk/nextjs/server";
 import { Construction } from "lucide-react";
 import SuggestedUser from "@/components/SuggestedUser";
+import { useUser } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
-async function AppRightSidebar() {
-  const { userId } = await auth();
-  if (!userId) return null;
+function AppRightSidebar() {
+  const pathname = usePathname();
+  const { user } = useUser();
+
+  if (!user) return null;
+
   return (
-    <aside className="col-span-2 max-lg:hidden">
+    <aside
+      className={cn(
+        "col-span-2 max-lg:hidden",
+        pathname === "/messages" && "hidden"
+      )}
+    >
       <div className="sticky top-6">
-        <SuggestedUser />
+        {/* <SuggestedUser /> */}
 
         <Card className="mb-4 rounded-xl shadow-none border p-6">
           <CardHeader className="p-0">
@@ -47,34 +58,34 @@ async function AppRightSidebar() {
         </Card>
         <div className="text-xs text-gray-500 dark:text-gray-400 space-y-2">
           <div className="flex flex-wrap gap-x-4 gap-y-1">
-            <Link href="#" className="hover:underline">
+            <a href="#" className="hover:underline">
               About
-            </Link>
-            <Link href="#" className="hover:underline">
+            </a>
+            <a href="#" className="hover:underline">
               Help Center
-            </Link>
-            <Link href="#" className="hover:underline">
+            </a>
+            <a href="#" className="hover:underline">
               Terms of Service
-            </Link>
-            <Link href="#" className="hover:underline">
+            </a>
+            <a href="#" className="hover:underline">
               Privacy Policy
-            </Link>
-            <Link href="#" className="hover:underline">
+            </a>
+            <a href="#" className="hover:underline">
               Cookie Policy
-            </Link>
-            <Link href="#" className="hover:underline">
+            </a>
+            <a href="#" className="hover:underline">
               Accessibility
-            </Link>
+            </a>
           </div>
           <p>
             {new Date().getFullYear()} Created by{" "}
-            <Link
+            <a
               href="https://github.com/Mmm44556"
               target="_blank"
               className="hover:underline"
             >
               Mmm44556
-            </Link>
+            </a>
           </p>
         </div>
       </div>

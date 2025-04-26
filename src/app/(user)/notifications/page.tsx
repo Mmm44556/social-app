@@ -5,7 +5,11 @@ import {
   getNotifications,
   readNotification,
 } from "@/app/actions/notification.action";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   MessageSquare,
@@ -27,20 +31,28 @@ import {
 } from "@/components/ui/tooltip";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-type Notifications = Awaited<ReturnType<typeof getNotifications>>;
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
+import {
+  NotificationSkeleton,
+  SkeletonList,
+} from "@/components/CustomSkeletons";
+import BioText from "@/components/profile/BioText";
+type NotificationResponse = Awaited<ReturnType<typeof getNotifications>>;
+type Notification = NotificationResponse["notifications"][number];
 
 const notificationIcon = {
   MESSAGE: {
     icon: MessageSquare,
     color: "text-blue-500",
-    messageFn: (notification: Notifications[number]) => {
+    messageFn: (notification: Notification) => {
       return `${notification.creator.username} sent you a message`;
     },
   },
   LIKE: {
     icon: Heart,
     color: "text-red-500",
-    messageFn: (notification: Notifications[number]) => {
+    messageFn: (notification: Notification) => {
       if (notification.comment?.isRoot) {
         return `liked your post`;
       } else {
@@ -51,7 +63,7 @@ const notificationIcon = {
   SHARE: {
     icon: Share,
     color: "text-green-500",
-    messageFn: (notification: Notifications[number]) => {
+    messageFn: (notification: Notification) => {
       if (notification.comment?.isRoot) {
         return `shared your post`;
       } else {
@@ -69,19 +81,19 @@ const notificationIcon = {
   COMMENT: {
     icon: Icons.comment,
     color: "text-gray-500",
-    messageFn: (notification: Notifications[number]) => {
+    messageFn: (notification: Notification) => {
       if (notification.comment?.isRoot) {
         return `replied to your post`;
       } else {
         return `replied to your comment`;
       }
     },
-    TAG: {
-      icon: Tag,
-      color: "text-blue-500",
-      messageFn: () => {
-        return `tagged you in a post`;
-      },
+  },
+  TAG: {
+    icon: Tag,
+    color: "text-blue-500",
+    messageFn: () => {
+      return `tagged you in a post`;
     },
   },
 };
@@ -89,18 +101,36 @@ const notificationIcon = {
 export default function NotificationsPage() {
   const router = useRouter();
   const clerkUser = useUser();
-  const { data: notifications = [] } = useQuery<Notifications>({
-    queryKey: ["notifications", clerkUser?.user?.id],
-    queryFn: async () => getNotifications(),
-    placeholderData: [],
-    enabled: !!clerkUser?.user?.id,
-  });
+  const { ref, inView } = useInView();
   const markAsRead = useMarkAsRead();
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } =
+    useInfiniteQuery<NotificationResponse>({
+      queryKey: ["notifications", clerkUser?.user?.id],
+      queryFn: async ({ pageParam }) => {
+        const response = await getNotifications(
+          pageParam as string | undefined
+        );
+        return response;
+      },
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      initialPageParam: undefined,
+      enabled: !!clerkUser?.user?.id,
+    });
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const notifications = data?.pages.flatMap((page) => page.notifications) ?? [];
   return (
-    <ScrollArea className="max-h-[100dvh] overflow-y-auto  rounded-md border">
+    <ScrollArea className="max-h-[100dvh-10rem] overflow-y-auto rounded-md border">
       <NotificationHeader
         notificationsIds={notifications.map((notification) => notification.id)}
       />
+      {isPending && <SkeletonList length={5} type="notification" />}
       <div className="divide-y divide-gray-200">
         {notifications.map((notification, idx) => {
           const Icon =
@@ -111,17 +141,16 @@ export default function NotificationsPage() {
             <Fragment key={idx}>
               <div
                 className={cn(
-                  "text-sm flex gap-2 py-4 px-6 h-full cursor-pointer hover:bg-gray-50 ",
+                  "text-sm flex gap-2 py-4 px-6 h-full cursor-pointer hover:bg-gray-50",
                   notification.read
-                    ? "bg-transparent "
-                    : "hover:transition-colors hover:duration-200 "
+                    ? "bg-transparent"
+                    : "hover:transition-colors hover:duration-200"
                 )}
                 onClick={() => {
                   if (!notification.read) {
                     markAsRead.mutate([notification.id]);
                   }
 
-                  // if the notification is a comment, like, or share, push to the post
                   if (
                     ["COMMENT", "LIKE", "SHARE"].includes(notification.type)
                   ) {
@@ -129,7 +158,6 @@ export default function NotificationsPage() {
                       `/${notification.creator.tagName}/post/${notification.comment?.id}`
                     );
                   }
-                  // if the notification is a follow, push to the user's profile
                   if (notification.type === "FOLLOW") {
                     router.push(
                       `/${notification.creator.tagName}/post/${notification.comment?.id}`
@@ -139,21 +167,21 @@ export default function NotificationsPage() {
               >
                 <div className="flex flex-col gap-1 grow relative">
                   <div className="flex gap-2 justify-between items-center">
-                    <div className="flex gap-2 items-center ">
+                    <div className="flex gap-2 items-center">
                       <AuthorHeader author={notification.creator} />
                       <span className="text-muted-foreground">
                         {Icon.messageFn(notification)}
                       </span>
                     </div>
 
-                    <span className="text-gray-400 ">
+                    <span className="text-gray-400">
                       {formatDistanceToNow(notification.createdAt)}
                     </span>
                   </div>
                   <div className="grid grid-cols-[40px_1fr]">
                     <span></span>
                     <span className="text-gray-400 max-w-[75%]">
-                      {notification.comment?.content}
+                      <BioText text={notification.comment?.content ?? ""} />
                     </span>
                   </div>
                   {!notification.read && (
@@ -164,6 +192,8 @@ export default function NotificationsPage() {
             </Fragment>
           );
         })}
+        {isFetchingNextPage && <SkeletonList length={5} type="notification" />}
+        <div ref={ref} className="h-4 " />
       </div>
     </ScrollArea>
   );

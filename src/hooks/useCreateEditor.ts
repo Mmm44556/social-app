@@ -22,7 +22,8 @@ export function useCreateEditor(
 
     editorProps: {
       attributes: {
-        class: "prose prose-sm sm:prose mx-auto focus:outline-none [&_p]:m-0",
+        class:
+          "prose prose-sm sm:prose mx-auto focus:outline-none [&_p]:m-0 max-lg:mx-0",
       },
     },
     onUpdate: ({ editor }) => {

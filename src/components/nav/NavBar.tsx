@@ -98,7 +98,7 @@ export default function NavBar({ user }: { user: DB_User }) {
                       <span>Settings</span>
                     </a>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-64">
+                  <DropdownMenuContent className="w-72" side="top">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
 
                     <DropdownMenuSeparator />

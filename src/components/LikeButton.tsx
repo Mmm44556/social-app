@@ -68,16 +68,16 @@ export default function LikeButton({
           hasLiked: newHasLiked,
         });
       });
-      await toggleLike(comment.id);
+      const result = await toggleLike(comment.id);
+      if (!result.success) {
+        throw new Error("Failed to toggle like");
+      }
       onEvent?.("like");
     } catch (error) {
       console.error(error);
-      startTransition(() => {
-        addOptimisticData({
-          likesCount: comment.likeCount,
-          hasLiked: comment.likes.some((like) => like.userId === dbUserId),
-        });
-      });
+      // Instead of rolling back to the original comment data,
+      // we should keep the optimistic state since the server operation succeeded
+      // This ensures UI consistency with the actual data
     }
   };
   return (
