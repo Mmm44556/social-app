@@ -9,7 +9,7 @@ import { LoaderCircle } from "lucide-react";
 import useInfiniteScrollComments from "@/hooks/useInfiniteScrollComments";
 import NoData from "./NoData";
 import { TabComponentProps } from "@/app/(user)/[userTagName]/page";
-import { SkeletonList } from "../PostSkeleton";
+import { SkeletonList } from "../CustomSkeletons";
 export default function Replies({ tagName, dbUserId }: TabComponentProps) {
   const { ref, inView } = useInView();
 
@@ -18,7 +18,8 @@ export default function Replies({ tagName, dbUserId }: TabComponentProps) {
     error,
     status,
     isFetchingNextPage,
-    isFetching,
+    isFetched,
+    isLoading,
     fetchNextPage,
     hasNextPage,
     refetch,
@@ -32,9 +33,8 @@ export default function Replies({ tagName, dbUserId }: TabComponentProps) {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isFetching) return <SkeletonList length={5} />;
   if (status === "error") return <div>Error: {(error as Error).message}</div>;
-  if (isEmpty(data))
+  if (isEmpty(data) && isFetched)
     return (
       <NoData
         title="No replies yet"
@@ -43,10 +43,12 @@ export default function Replies({ tagName, dbUserId }: TabComponentProps) {
     );
   return (
     <div className="mt-2">
-      {data.pages.map((group, i) => {
+      {isLoading && <SkeletonList length={5} />}
+
+      {data?.pages?.map((group, i) => {
         return (
           <div key={i}>
-            {group.map((comment) => {
+            {group?.map((comment) => {
               return (
                 <div key={comment.id} className="py-2">
                   {comment.ancestors.map((ancestor, index) => (
@@ -73,11 +75,7 @@ export default function Replies({ tagName, dbUserId }: TabComponentProps) {
           </div>
         );
       })}
-      <div ref={ref} className="flex items-center justify-center p-4">
-        {isFetchingNextPage && (
-          <LoaderCircle className="w-6 h-6 animate-spin" />
-        )}
-      </div>
+      <div ref={ref}>{isFetchingNextPage && <SkeletonList length={5} />}</div>
     </div>
   );
 }

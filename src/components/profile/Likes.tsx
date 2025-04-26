@@ -7,7 +7,7 @@ import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import PostCard from "@/components/comment/PostCard";
 import { LoaderCircle } from "lucide-react";
-import { SkeletonList } from "../PostSkeleton";
+import { SkeletonList } from "../CustomSkeletons";
 
 export default function Likes({ tagName, dbUserId }: TabComponentProps) {
   const { ref, inView } = useInView();
@@ -16,11 +16,11 @@ export default function Likes({ tagName, dbUserId }: TabComponentProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isFetching,
+    isFetched,
+    isLoading,
     refetch,
   } = useInfiniteScrollLikes({
     tagName,
-    limit: 10,
     queryKey: ["likes", tagName],
   });
 
@@ -30,13 +30,9 @@ export default function Likes({ tagName, dbUserId }: TabComponentProps) {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isFetching) {
-    return <SkeletonList length={5} />;
-  }
-
   const allLikes = data?.pages.flatMap((page) => page) ?? [];
 
-  if (allLikes.length === 0) {
+  if (allLikes.length === 0 && isFetched) {
     return (
       <NoData
         title="No likes yet"
@@ -47,6 +43,8 @@ export default function Likes({ tagName, dbUserId }: TabComponentProps) {
 
   return (
     <div className="flex flex-col gap-4">
+      {isLoading && <SkeletonList length={5} />}
+
       {allLikes.map((post) => (
         <PostCard
           key={post.id}
@@ -56,11 +54,7 @@ export default function Likes({ tagName, dbUserId }: TabComponentProps) {
           onEvent={() => refetch()}
         />
       ))}
-      <div ref={ref} className="flex items-center justify-center p-4">
-        {isFetchingNextPage && (
-          <LoaderCircle className="w-6 h-6 animate-spin" />
-        )}
-      </div>
+      <div ref={ref}>{isFetchingNextPage && <SkeletonList length={5} />}</div>
     </div>
   );
 }

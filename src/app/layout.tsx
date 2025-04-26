@@ -1,5 +1,4 @@
 import type React from "react";
-
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -11,8 +10,9 @@ import { MobileNav } from "@/components/nav/MobileNav";
 import { MobileHeader } from "@/components/nav/MobileHeader";
 import { Toaster } from "@/components/ui/sonner";
 import "@/styles/global.css";
+import { Suspense } from "react";
 const inter = Inter({ subsets: ["latin"] });
-
+console.log(inter);
 export const metadata = {
   title: "Nexus - Share Your World",
   description:
@@ -26,7 +26,7 @@ export default async function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning className="h-dvh">
         <head>
           <link
             rel="icon"
@@ -35,7 +35,7 @@ export default async function RootLayout({
             sizes="32x32"
           />
         </head>
-        <body className={inter.className}>
+        <body className={inter.className + " h-full"}>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
@@ -47,7 +47,7 @@ export default async function RootLayout({
               <MobileHeader title="Nexus" />
 
               {/* <SiteHeader /> */}
-              <div className="grid auto-cols-fr grid-flow-col gap-3 container py-6 max-sm:gap-0">
+              <div className="h-full grid auto-cols-fr grid-flow-col gap-3 container max-sm:gap-0 max-lg:pt-10 max-lg:pb-16">
                 {/* Left Sidebar */}
                 <AppLeftSidebar />
 

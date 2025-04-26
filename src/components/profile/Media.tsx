@@ -10,7 +10,7 @@ import NoData from "./NoData";
 import { mediaType } from "../MediaCarousel";
 import CommentDialog from "../CommentDialog";
 import { TabComponentProps } from "@/app/(user)/[userTagName]/page";
-import { SkeletonList } from "../PostSkeleton";
+import { SkeletonList } from "../CustomSkeletons";
 
 export default function Media({ tagName }: TabComponentProps) {
   const { ref, inView } = useInView();
@@ -22,7 +22,8 @@ export default function Media({ tagName }: TabComponentProps) {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-    isFetching,
+    isFetched,
+    isLoading,
   } = useInfiniteScrollMedia({
     tagName,
     queryKey: ["media", tagName],
@@ -33,20 +34,8 @@ export default function Media({ tagName }: TabComponentProps) {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isFetching) {
-    return (
-      <div className="p-4">
-        <SkeletonList
-          type="media"
-          className="grid grid-cols-3 gap-1"
-          length={6}
-        />
-      </div>
-    );
-  }
-
   if (status === "error") return <div>Error: {(error as Error).message}</div>;
-  if (isEmpty(data))
+  if (isEmpty(data) && isFetched)
     return (
       <NoData
         title="No media yet"
@@ -55,6 +44,16 @@ export default function Media({ tagName }: TabComponentProps) {
     );
   return (
     <div className="p-4">
+      {isLoading && (
+        <div className="p-4">
+          <SkeletonList
+            type="media"
+            className="grid grid-cols-3 gap-1"
+            length={6}
+          />
+        </div>
+      )}
+
       <div className="grid grid-cols-3 gap-1">
         {data?.pages?.map((group, i) => (
           <div key={i} className="contents">
@@ -97,9 +96,15 @@ export default function Media({ tagName }: TabComponentProps) {
           </div>
         ))}
       </div>
-      <div ref={ref} className="flex items-center justify-center p-4">
+      <div ref={ref}>
         {isFetchingNextPage && (
-          <LoaderCircle className="w-6 h-6 animate-spin" />
+          <div className="p-4">
+            <SkeletonList
+              type="media"
+              className="grid grid-cols-3 gap-1"
+              length={6}
+            />
+          </div>
         )}
       </div>
     </div>

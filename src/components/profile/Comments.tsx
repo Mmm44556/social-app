@@ -9,7 +9,7 @@ import { LoaderCircle } from "lucide-react";
 import useInfiniteScrollComments from "@/hooks/useInfiniteScrollComments";
 import NoData from "./NoData";
 import { TabComponentProps } from "@/app/(user)/[userTagName]/page";
-import { SkeletonList } from "../PostSkeleton";
+import { SkeletonList } from "../CustomSkeletons";
 
 export default function Comments({ tagName, dbUserId }: TabComponentProps) {
   const { ref, inView } = useInView();
@@ -21,7 +21,8 @@ export default function Comments({ tagName, dbUserId }: TabComponentProps) {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-    isFetching,
+    isLoading,
+    isFetched,
     refetch,
   } = useInfiniteScrollComments({
     tagName,
@@ -36,8 +37,7 @@ export default function Comments({ tagName, dbUserId }: TabComponentProps) {
 
   if (status === "error") return <div>Error: {(error as Error).message}</div>;
 
-  if (isFetching) return <SkeletonList length={5} />;
-  if (isEmpty(data))
+  if (isEmpty(data) && isFetched)
     return (
       <NoData
         title="No posts yet"
@@ -47,10 +47,11 @@ export default function Comments({ tagName, dbUserId }: TabComponentProps) {
 
   return (
     <div>
-      {data?.pages.map((group, i) => {
+      {isLoading && <SkeletonList length={5} />}
+      {data?.pages?.map((group, i) => {
         return (
           <div key={i}>
-            {group.map((comment) => {
+            {group?.map((comment) => {
               return (
                 <Fragment key={comment.id}>
                   <PostCard
@@ -65,11 +66,7 @@ export default function Comments({ tagName, dbUserId }: TabComponentProps) {
           </div>
         );
       })}
-      <div ref={ref} className="flex items-center justify-center p-4">
-        {isFetchingNextPage && (
-          <LoaderCircle className="w-6 h-6 animate-spin" />
-        )}
-      </div>
+      <div ref={ref}>{isFetchingNextPage && <SkeletonList length={5} />}</div>
     </div>
   );
 }
