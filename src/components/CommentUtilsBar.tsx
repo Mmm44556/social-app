@@ -13,12 +13,15 @@ import { memo } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Editor } from "@tiptap/react";
-import EmojiPicker from "emoji-picker-react";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useTheme } from "next-themes";
+
 const utilsItems = [
   {
     icon: <Sparkles />,
@@ -38,6 +41,7 @@ export default function CommentUtilsBar({
   inputFileRef,
   editor,
 }: CommentUtilsBarProps) {
+  const { theme } = useTheme();
   if (!editor) return null;
   return (
     <>
@@ -64,17 +68,15 @@ export default function CommentUtilsBar({
               <SmilePlusIcon />
             </Button>
           </PopoverTrigger>
-          <PopoverContent>
-            <EmojiPicker
-              width={250}
-              lazyLoadEmojis
-              onEmojiClick={(emoji) => {
-                editor.chain().focus().insertContent(emoji.emoji).run();
+          <PopoverContent className="bg-transparent border-none">
+            <Picker
+              data={data}
+              onEmojiSelect={(emoji: any) => {
+                editor.chain().focus().insertContent(emoji.native).run();
               }}
-              skinTonesDisabled={true}
-              previewConfig={{
-                showPreview: false,
-              }}
+              previewPosition="none"
+              theme={theme}
+              className="overflow-y-auto"
             />
           </PopoverContent>
         </Popover>

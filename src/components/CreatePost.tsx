@@ -15,7 +15,6 @@ import MediaCarousel from "./MediaCarousel";
 import { EditorContent } from "@tiptap/react";
 import { useCreateEditor } from "@/hooks/useCreateEditor";
 import { DB_User } from "@/app/actions/user.action";
-
 interface CreatePostProps {
   className?: string;
   dbUser: DB_User;
@@ -27,6 +26,7 @@ export default function CreatePost({ className, dbUser }: CreatePostProps) {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState("");
   const editor = useCreateEditor(content, setContent);
+
   const [images, setImages] = useState<Array<{ url: string; file: File }> | []>(
     []
   );
@@ -91,7 +91,7 @@ export default function CreatePost({ className, dbUser }: CreatePostProps) {
   };
 
   return (
-    <Card className={cn(className, "p-2 gap-0 rounded-lg min-h-32s")}>
+    <Card className={cn(className, "p-2 gap-0 rounded-lg ")}>
       <CardContent className="grid gap-1 h-full px-0 divide-y divide-gray-200">
         <div>
           <div className="flex grow items-center gap-1 w-full pb-2">
@@ -102,12 +102,8 @@ export default function CreatePost({ className, dbUser }: CreatePostProps) {
                 {user?.lastName?.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1">
-              <EditorContent
-                editor={editor}
-                className="border-0 shadow-none"
-                placeholder="Write something..."
-              />
+            <div className="flex-1 relative">
+              <EditorContent editor={editor} className="border-0 shadow-none" />
             </div>
 
             {/* Image Preview */}

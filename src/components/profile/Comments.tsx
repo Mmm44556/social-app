@@ -9,6 +9,7 @@ import { LoaderCircle } from "lucide-react";
 import useInfiniteScrollComments from "@/hooks/useInfiniteScrollComments";
 import NoData from "./NoData";
 import { TabComponentProps } from "@/app/(user)/[userTagName]/page";
+import { SkeletonList } from "../PostSkeleton";
 
 export default function Comments({ tagName, dbUserId }: TabComponentProps) {
   const { ref, inView } = useInView();
@@ -20,6 +21,7 @@ export default function Comments({ tagName, dbUserId }: TabComponentProps) {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    isFetching,
     refetch,
   } = useInfiniteScrollComments({
     tagName,
@@ -32,14 +34,9 @@ export default function Comments({ tagName, dbUserId }: TabComponentProps) {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (status === "pending")
-    return (
-      <div className="flex items-center justify-center p-12">
-        <LoaderCircle className="w-6 h-6 animate-spin" />
-      </div>
-    );
-
   if (status === "error") return <div>Error: {(error as Error).message}</div>;
+
+  if (isFetching) return <SkeletonList length={5} />;
   if (isEmpty(data))
     return (
       <NoData

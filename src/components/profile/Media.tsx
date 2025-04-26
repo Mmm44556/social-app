@@ -10,6 +10,7 @@ import NoData from "./NoData";
 import { mediaType } from "../MediaCarousel";
 import CommentDialog from "../CommentDialog";
 import { TabComponentProps } from "@/app/(user)/[userTagName]/page";
+import { SkeletonList } from "../PostSkeleton";
 
 export default function Media({ tagName }: TabComponentProps) {
   const { ref, inView } = useInView();
@@ -21,6 +22,7 @@ export default function Media({ tagName }: TabComponentProps) {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    isFetching,
   } = useInfiniteScrollMedia({
     tagName,
     queryKey: ["media", tagName],
@@ -31,12 +33,17 @@ export default function Media({ tagName }: TabComponentProps) {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (status === "pending")
+  if (isFetching) {
     return (
-      <div className="flex items-center justify-center p-12">
-        <LoaderCircle className="w-6 h-6 animate-spin" />
+      <div className="p-4">
+        <SkeletonList
+          type="media"
+          className="grid grid-cols-3 gap-1"
+          length={6}
+        />
       </div>
     );
+  }
 
   if (status === "error") return <div>Error: {(error as Error).message}</div>;
   if (isEmpty(data))

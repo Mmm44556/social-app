@@ -98,8 +98,10 @@ function PostCard({
               className="flex items-center gap-2 "
             />
 
-            <span className="flex items-center gap-1 text-sm text-muted-foreground max-md:pl-10 max-sm:p-2 max-xs:flex-wrap">
-              <span>@{comment.author.tagName} </span>
+            <span className="flex items-center gap-1 text-sm text-muted-foreground max-sm:p-2 max-xs:flex-wrap">
+              <span className="hidden max-sm:block">
+                @{comment.author.tagName}
+              </span>
               <span className="before:content-['·'] before:mx-1 before:text-xl before:align-middle">
                 {formatTimeOrDate(comment.createdAt)}
               </span>
@@ -116,7 +118,7 @@ function PostCard({
           <div
             className={cn(
               "max-md:pl-10 max-md:p-2",
-              enableConnectedLine ? "" : "col-start-2",
+              enableConnectedLine ? "" : "col-start-2 px-2",
               contentContainerClassName
             )}
           >

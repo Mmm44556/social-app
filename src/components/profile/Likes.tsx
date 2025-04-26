@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import PostCard from "@/components/comment/PostCard";
 import { LoaderCircle } from "lucide-react";
+import { SkeletonList } from "../PostSkeleton";
 
 export default function Likes({ tagName, dbUserId }: TabComponentProps) {
   const { ref, inView } = useInView();
@@ -15,7 +16,7 @@ export default function Likes({ tagName, dbUserId }: TabComponentProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading,
+    isFetching,
     refetch,
   } = useInfiniteScrollLikes({
     tagName,
@@ -29,12 +30,8 @@ export default function Likes({ tagName, dbUserId }: TabComponentProps) {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-12">
-        <LoaderCircle className="w-6 h-6 animate-spin" />
-      </div>
-    );
+  if (isFetching) {
+    return <SkeletonList length={5} />;
   }
 
   const allLikes = data?.pages.flatMap((page) => page) ?? [];
