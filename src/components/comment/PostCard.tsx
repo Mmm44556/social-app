@@ -10,7 +10,7 @@ import AuthorHeader from "@/components/AuthorHeader";
 import EditButton from "@/components/EditButton";
 import type { PostType } from "@/types/post";
 import { cn } from "@/lib/utils";
-import { memo, useState, useMemo } from "react";
+import { memo, useState, useMemo, useEffect } from "react";
 import MediaCarousel from "@/components/MediaCarousel";
 import BioText from "../profile/BioText";
 
@@ -45,6 +45,15 @@ function PostCard({
 }: PostProps) {
   const router = useRouter();
   const [isDragging, setIsDragging] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
 
   const handleCardClick = async (e: React.MouseEvent<HTMLElement>) => {
     const target = e.target as HTMLElement;
@@ -60,7 +69,7 @@ function PostCard({
   return (
     <Card
       className={cn(
-        "rounded-xl shadow-none border p-6 hover:bg-gray-50 hover:cursor-pointer hover:shadow-sm transition-colors duration-200",
+        "rounded-xl shadow-none border p-6 hover:bg-gray-50 hover:cursor-pointer hover:shadow-sm transition-colors duration-200   dark:hover:bg-transparent",
         className
       )}
     >

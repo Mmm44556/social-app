@@ -1,5 +1,5 @@
 import type React from "react";
-import "@/styles/global.css";
+
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -10,6 +10,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MobileNav } from "@/components/nav/MobileNav";
 import { MobileHeader } from "@/components/nav/MobileHeader";
 import { Toaster } from "@/components/ui/sonner";
+import "@/styles/global.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {

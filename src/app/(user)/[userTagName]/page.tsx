@@ -39,10 +39,10 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const userProfile = await getProfileByTagName(userTagName);
   if (!userProfile) return <UnAuth />;
   return (
-    <div className="bg-gray-50 dark:bg-[#1A202C] sticky top-0 z-50 max-lg:relative">
+    <div className="bg-gray-50 dark:bg-black sticky top-0 z-50 max-lg:relative">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-white/80 dark:bg-[#1E293B]/80 backdrop-blur-sm p-2 border-b">
+        <div className="sticky top-0 z-10 bg-white/80 dark:bg-black backdrop-blur-sm p-2 border-b">
           <div className="flex items-center gap-6">
             <Link href="/">
               <Button
@@ -63,7 +63,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         </div>
 
         {/* Banner */}
-        <div className="h-48 md:h-64 bg-gray-200 dark:bg-gray-800 relative">
+        <div className="h-48 md:h-64 bg-gray-200 dark:bg-black relative">
           {/* <img
             src={""}
             alt="Profile banner"
@@ -73,7 +73,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
         {/* Profile Info */}
         <div className="relative">
-          <div className="absolute -top-16 left-4 border-4 border-white dark:border-[#1A202C] rounded-full">
+          <div className="absolute -top-16 left-4 border-4 border-white dark:border-black rounded-full">
             <Avatar className="h-32 w-32 max-lg:h-24 max-lg:w-24 ">
               <AvatarImage
                 src={userProfile.avatarUrl || ""}

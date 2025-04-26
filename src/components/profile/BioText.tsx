@@ -30,5 +30,5 @@ export default function BioText({ text }: BioTextProps) {
     });
   }, [text]);
 
-  return <div className="mt-4 whitespace-pre-wrap">{parsedText}</div>;
+  return <span className="mt-4 whitespace-pre-wrap">{parsedText}</span>;
 }

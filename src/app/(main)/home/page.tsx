@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import PostCard from "@/components/comment/PostCard";
 import { getDbUserId, getUserByClerkId } from "@/app/actions/user.action";
 import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
 
 export default async function HomePage() {
   const { posts } = await getFeed();

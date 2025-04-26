@@ -50,7 +50,7 @@ export default function AuthorHeader({
   };
   return (
     <HoverCard openDelay={250}>
-      <div className="flex items-stretch gap-2 hover:bg-gray-50 hover:cursor-pointer">
+      <div className="flex items-stretch gap-2 hover:bg-gray-50 hover:cursor-pointer dark:hover:bg-transparent">
         <div className={cn("grow space-y-2p", className)}>
           {/* Hover Card */}
           <div className="flex items-center gap-2">
@@ -78,7 +78,7 @@ export default function AuthorHeader({
                 </div>
               </div>
             </HoverCardTrigger>
-            <HoverCardContent className="w-80">
+            <HoverCardContent className="w-80 dark:bg-black">
               <div className="flex gap-2 items-center">
                 <Avatar className="h-8 w-8 self-start">
                   <AvatarImage src={author?.avatarUrl ?? ""} />

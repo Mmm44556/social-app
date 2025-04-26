@@ -13,13 +13,15 @@ import { memo } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Editor } from "@tiptap/react";
-
+import EmojiPicker from "emoji-picker-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 const utilsItems = [
   {
     icon: <Sparkles />,
-  },
-  {
-    icon: <SmilePlusIcon />,
   },
 ];
 
@@ -56,6 +58,26 @@ export default function CommentUtilsBar({
           </Button>
         ))}
 
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="utils" size="utils" className="rounded-full">
+              <SmilePlusIcon />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <EmojiPicker
+              width={250}
+              lazyLoadEmojis
+              onEmojiClick={(emoji) => {
+                editor.chain().focus().insertContent(emoji.emoji).run();
+              }}
+              skinTonesDisabled={true}
+              previewConfig={{
+                showPreview: false,
+              }}
+            />
+          </PopoverContent>
+        </Popover>
         <ToggleGroup type="multiple">
           <ToggleGroupItem
             value="bold"

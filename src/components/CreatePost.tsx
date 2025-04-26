@@ -15,6 +15,7 @@ import MediaCarousel from "./MediaCarousel";
 import { EditorContent } from "@tiptap/react";
 import { useCreateEditor } from "@/hooks/useCreateEditor";
 import { DB_User } from "@/app/actions/user.action";
+
 interface CreatePostProps {
   className?: string;
   dbUser: DB_User;
@@ -93,7 +94,7 @@ export default function CreatePost({ className, dbUser }: CreatePostProps) {
     <Card className={cn(className, "p-2 gap-0 rounded-lg min-h-32s")}>
       <CardContent className="grid gap-1 h-full px-0 divide-y divide-gray-200">
         <div>
-          <div className="flex grow items-center gap-1 w-full">
+          <div className="flex grow items-center gap-1 w-full pb-2">
             <Avatar className="h-10 w-10">
               <AvatarImage src={dbUser?.avatarUrl ?? ""} />
               <AvatarFallback>
