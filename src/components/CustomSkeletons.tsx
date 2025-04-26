@@ -58,7 +58,6 @@ export function SkeletonList({
   length = 8,
   type = "post",
   className,
-  children,
 }: PostSkeletonListProps) {
   return (
     <div className={cn("flex flex-col gap-4 ", className)}>

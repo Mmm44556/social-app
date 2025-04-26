@@ -1,13 +1,11 @@
 "use client";
 
 import CreatePost from "@/components/CreatePost";
-import { Fragment, useEffect, useState, Suspense } from "react";
+import { Fragment, useEffect, useState } from "react";
 import PostCard from "@/components/comment/PostCard";
 import { getDbUserId, getUserByClerkId } from "@/app/actions/user.action";
-import { cn } from "@/lib/utils";
 import { useInView } from "react-intersection-observer";
 import { useFeed } from "@/hooks/useFeed";
-import { Skeleton } from "@/components/ui/skeleton";
 import { SkeletonList } from "@/components/CustomSkeletons";
 
 export default function HomePage() {

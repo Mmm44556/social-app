@@ -6,7 +6,6 @@ import useInfiniteScrollLikes from "@/hooks/useInfiniteScrollLikes";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import PostCard from "@/components/comment/PostCard";
-import { LoaderCircle } from "lucide-react";
 import { SkeletonList } from "../CustomSkeletons";
 
 export default function Likes({ tagName, dbUserId }: TabComponentProps) {

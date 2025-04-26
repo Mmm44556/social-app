@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ChevronLeft,
-  Search,
-  Bell,
-  MoreVertical,
-  Settings,
-} from "lucide-react";
+import { ChevronLeft, Bell, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -14,8 +8,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SignOutButton, SignInButton } from "@clerk/nextjs";

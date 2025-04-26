@@ -1,11 +1,9 @@
 "use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Construction } from "lucide-react";
-import SuggestedUser from "@/components/SuggestedUser";
 import { useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
 
 function AppRightSidebar() {
   const pathname = usePathname();

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Home, Search, Heart, User, MessageSquare } from "lucide-react";
+import { Home, Search, User, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { currentUser } from "@clerk/nextjs/server";
 import { SignInButton } from "@clerk/nextjs";

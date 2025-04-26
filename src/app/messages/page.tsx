@@ -2,16 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
-import {
-  Search,
-  MoreVertical,
-  Send,
-  Phone,
-  Video,
-  User2,
-  Menu,
-  ArrowLeft,
-} from "lucide-react";
+import { Search, Send, Menu, ArrowLeft } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -193,7 +184,7 @@ const conversations = {
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5),
     },
   ],
-};
+} as any;
 
 export default function ChatPage() {
   const [selectedUser, setSelectedUser] = useState(users[0]);
@@ -223,7 +214,7 @@ export default function ChatPage() {
   }, [isMobile]);
 
   //   throw new Promise((resolve) => setTimeout(resolve, 2000));
-  const handleUserSelect = (user) => {
+  const handleUserSelect = (user: any) => {
     setSelectedUser(user);
     setChatMessages(conversations[user.id]);
 
@@ -233,7 +224,7 @@ export default function ChatPage() {
     }
   };
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!messageInput.trim()) return;
 
@@ -372,7 +363,7 @@ export default function ChatPage() {
           className="flex-1 p-2 md:p-4 bg-gray-50 max-h-[calc(100dvh-10rem)]"
         >
           <div className="space-y-4">
-            {chatMessages.map((message) => (
+            {chatMessages.map((message: any) => (
               <div
                 key={message.id}
                 className={`flex ${

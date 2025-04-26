@@ -33,10 +33,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
-import {
-  NotificationSkeleton,
-  SkeletonList,
-} from "@/components/CustomSkeletons";
+import { SkeletonList } from "@/components/CustomSkeletons";
 import BioText from "@/components/profile/BioText";
 type NotificationResponse = Awaited<ReturnType<typeof getNotifications>>;
 type Notification = NotificationResponse["notifications"][number];

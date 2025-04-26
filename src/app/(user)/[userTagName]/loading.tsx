@@ -1,9 +1,4 @@
-import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Calendar } from "lucide-react";
-import Link from "next/link";
 
 export default function Loading() {
   return (

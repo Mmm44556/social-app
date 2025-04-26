@@ -10,9 +10,7 @@ import { MobileNav } from "@/components/nav/MobileNav";
 import { MobileHeader } from "@/components/nav/MobileHeader";
 import { Toaster } from "@/components/ui/sonner";
 import "@/styles/global.css";
-import { Suspense } from "react";
 const inter = Inter({ subsets: ["latin"] });
-console.log(inter);
 export const metadata = {
   title: "Nexus - Share Your World",
   description:

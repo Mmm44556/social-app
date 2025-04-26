@@ -5,7 +5,6 @@ import PostCard from "@/components/comment/PostCard";
 import { PostType } from "@/types/post";
 import { cn } from "@/lib/utils";
 import { isEmpty } from "lodash-es";
-import { LoaderCircle } from "lucide-react";
 import useInfiniteScrollComments from "@/hooks/useInfiniteScrollComments";
 import NoData from "./NoData";
 import { TabComponentProps } from "@/app/(user)/[userTagName]/page";

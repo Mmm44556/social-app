@@ -4,7 +4,7 @@ import { PostType } from "@/types/post";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { isEmpty } from "lodash-es";
-import { LoaderCircle, Play } from "lucide-react";
+import { Play } from "lucide-react";
 import useInfiniteScrollMedia from "@/hooks/useInfiniteScrollMedia";
 import NoData from "./NoData";
 import { mediaType } from "../MediaCarousel";
