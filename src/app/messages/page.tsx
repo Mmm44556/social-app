@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 export default function SelectConversationPage() {
   return (
     <div className="flex basis-full h-full justify-center items-center max-lg:pt-5">
