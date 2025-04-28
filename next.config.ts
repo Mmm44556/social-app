@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         destination: "/",
         permanent: true,
       },
+      {
+        source: "/",
+        destination: "/home",
+        permanent: true,
+      },
     ];
   },
   // output: "standalone",
