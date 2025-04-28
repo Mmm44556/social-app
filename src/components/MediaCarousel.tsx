@@ -93,8 +93,8 @@ export default function MediaCarousel({
 export function mediaType({
   url,
   type,
-  width = 250,
-  height = 250,
+  width = 280,
+  height = 280,
   className,
 }: {
   url: string;
@@ -105,14 +105,16 @@ export function mediaType({
 }) {
   if (type.includes("image")) {
     return (
-      <Image
-        src={url}
-        alt={url}
-        priority
-        className={cn("object-cover aspect-square rounded-lg", className)}
-        width={width}
-        height={height}
-      />
+      <div className="relative">
+        <Image
+          src={url}
+          alt={url}
+          width={width}
+          height={height}
+          className={cn("object-cover rounded-lg", className)}
+          priority
+        />
+      </div>
     );
   } else if (type.includes("video")) {
     return (
@@ -124,10 +126,7 @@ export function mediaType({
         muted
         loop
         controls
-        className={cn(
-          "object-cover aspect-square rounded-lg h-full",
-          className
-        )}
+        className={cn("object-cover aspect-video rounded-lg h-full", className)}
       />
     );
   } else {

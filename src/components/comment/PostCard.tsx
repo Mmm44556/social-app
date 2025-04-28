@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import formatTimeOrDate from "@/utils/formatTimeOrDate";
+import formatTimeOrDate from "@/lib/utils/formatTimeOrDate";
 import CommentDialog from "@/components/CommentDialog";
 import LikeButton from "@/components/LikeButton";
 import ShareButton from "@/components/ShareButton";

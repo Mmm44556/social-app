@@ -18,8 +18,13 @@ import { DB_User } from "@/app/actions/user.action";
 interface CreatePostProps {
   className?: string;
   dbUser: DB_User;
+  onEvent?: (event: "like" | "comment" | "share" | "delete") => void;
 }
-export default function CreatePost({ className, dbUser }: CreatePostProps) {
+export default function CreatePost({
+  className,
+  dbUser,
+  onEvent,
+}: CreatePostProps) {
   const { user } = useUser();
   const router = useRouter();
 
@@ -73,6 +78,7 @@ export default function CreatePost({ className, dbUser }: CreatePostProps) {
           }
           const timer = setTimeout(() => {
             router.refresh();
+            onEvent?.("comment");
             clearTimeout(timer);
           }, 1000);
         } else {
@@ -81,6 +87,7 @@ export default function CreatePost({ className, dbUser }: CreatePostProps) {
       } else {
         setContent("");
         editor?.commands.clearContent(); // 清空編輯器內容
+        onEvent?.("comment");
         router.refresh();
       }
     } catch (error) {

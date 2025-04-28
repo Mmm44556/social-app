@@ -29,10 +29,12 @@ import { upload } from "@vercel/blob/client";
 import { useRouter } from "next/navigation";
 interface ProfileEditDialogProps {
   userProfile: Profile;
+  className?: string;
 }
 
 export default function ProfileEditDialog({
   userProfile,
+  className,
 }: ProfileEditDialogProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -131,7 +133,9 @@ export default function ProfileEditDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
+        <Button variant="outline" className={className}>
+          Edit Profile
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px] max-h-[85dvh] overflow-y-auto max-lg:mt-10">
         <DialogHeader>

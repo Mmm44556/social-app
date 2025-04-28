@@ -15,7 +15,7 @@ export default async function Auth({ user }: { user: DB_User }) {
         <div className="w-full h-[130px] rounded-2xl rounded-b-none object-cover  bg-[url('https://picsum.photos/id/237/200/300')] bg-cover bg-center" />
 
         <div className="w-full flex items-start gap-3 px-4">
-          <Avatar className=" ring-4 ring-white w-14 h-14 dark:ring-black   translate-y-[-35%]">
+          <Avatar className=" ring-4 ring-white w-14 h-14 dark:ring-black  translate-y-[-35%] bg-white">
             <AvatarImage
               src={user?.avatarUrl ?? ""}
               alt={user?.username ?? ""}
@@ -25,7 +25,7 @@ export default async function Auth({ user }: { user: DB_User }) {
           <p className="flex flex-col pt-1 text-md font-medium overflow-hidden text-ellipsis whitespace-nowrap ">
             <span>{user?.username}</span>
             <span className="text-xs text-gray-400 dark:text-white">
-              @{user?.email?.split("@")?.[0]}
+              @{user?.tagName || user?.username}
             </span>
           </p>
         </div>

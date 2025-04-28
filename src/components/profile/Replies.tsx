@@ -4,7 +4,7 @@ import { useInView } from "react-intersection-observer";
 import PostCard from "@/components/comment/PostCard";
 import { PostType } from "@/types/post";
 import { cn } from "@/lib/utils";
-import { isEmpty } from "lodash-es";
+import { flatten, isEmpty } from "lodash-es";
 import useInfiniteScrollComments from "@/hooks/useInfiniteScrollComments";
 import NoData from "./NoData";
 import { TabComponentProps } from "@/app/(user)/[userTagName]/page";
@@ -33,7 +33,8 @@ export default function Replies({ tagName, dbUserId }: TabComponentProps) {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (status === "error") return <div>Error: {(error as Error).message}</div>;
-  if (isEmpty(data) && isFetched)
+
+  if (isEmpty(flatten(data?.pages)) && isFetched)
     return (
       <NoData
         title="No replies yet"

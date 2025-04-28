@@ -4,7 +4,7 @@ import { Fragment, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import PostCard from "@/components/comment/PostCard";
 import { PostType } from "@/types/post";
-import { isEmpty } from "lodash-es";
+import { flatten, isEmpty } from "lodash-es";
 import useInfiniteScrollComments from "@/hooks/useInfiniteScrollComments";
 import NoData from "./NoData";
 import { TabComponentProps } from "@/app/(user)/[userTagName]/page";
@@ -36,7 +36,7 @@ export default function Comments({ tagName, dbUserId }: TabComponentProps) {
 
   if (status === "error") return <div>Error: {(error as Error).message}</div>;
 
-  if (isEmpty(data) && isFetched)
+  if (isEmpty(flatten(data?.pages)) && isFetched)
     return (
       <NoData
         title="No posts yet"

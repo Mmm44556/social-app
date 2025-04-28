@@ -3,7 +3,7 @@ import { memo, useState } from "react";
 import AuthorHeader from "@/components/AuthorHeader";
 import EditButton from "@/components/EditButton";
 import useNavigateToComment from "@/hooks/useNaivagteToComment";
-import formatTimeOrDate from "@/utils/formatTimeOrDate";
+import formatTimeOrDate from "@/lib/utils/formatTimeOrDate";
 import type { PostType } from "@/types/post";
 import { cn } from "@/lib/utils";
 import PostCard from "./PostCard";

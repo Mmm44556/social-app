@@ -4,7 +4,6 @@ import {
   getContent,
 } from "@/app/actions/comment.action";
 import ReplyCard from "@/components/comment/ReplyCard";
-import MainHeader from "@/components/MainHeader";
 import RootCard from "@/components/comment/RootCard";
 import { cn } from "@/lib/utils";
 import { Fragment } from "react";
@@ -21,9 +20,6 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!post) return null;
   return (
     <>
-      {/* Header */}
-      <MainHeader />
-
       <div className="flex flex-col gap-0 px-4">
         {/* 貼文 */}
         <RootCard

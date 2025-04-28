@@ -15,7 +15,9 @@
 em-emoji-picker {
   max-height: 14rem;
 }
-
+.ProseMirror {
+  @apply prose prose-sm sm:prose mx-auto focus:outline-none [&_p]:m-0 max-lg:mx-0;
+}
 textarea {
   /* 基本設置 */
 

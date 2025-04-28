@@ -8,14 +8,12 @@ import { cn } from "@/lib/utils";
 function AppRightSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
-
   if (!user) return null;
-
   return (
     <aside
       className={cn(
         "col-span-2 max-lg:hidden",
-        pathname === "/messages" && "hidden"
+        pathname.includes("/messages") && "hidden"
       )}
     >
       <div className="sticky top-6">

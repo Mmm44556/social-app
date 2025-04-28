@@ -35,6 +35,7 @@ import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import { SkeletonList } from "@/components/CustomSkeletons";
 import BioText from "@/components/profile/BioText";
+import HomeLayout from "@/app/home/layout";
 type NotificationResponse = Awaited<ReturnType<typeof getNotifications>>;
 type Notification = NotificationResponse["notifications"][number];
 
@@ -123,76 +124,83 @@ export default function NotificationsPage() {
 
   const notifications = data?.pages.flatMap((page) => page.notifications) ?? [];
   return (
-    <ScrollArea className="max-h-[100dvh-10rem] overflow-y-auto rounded-md border">
-      <NotificationHeader
-        notificationsIds={notifications.map((notification) => notification.id)}
-      />
-      {isPending && <SkeletonList length={5} type="notification" />}
-      <div className="divide-y divide-gray-200">
-        {notifications.map((notification, idx) => {
-          const Icon =
-            notificationIcon[
-              notification.type as keyof typeof notificationIcon
-            ];
-          return (
-            <Fragment key={idx}>
-              <div
-                className={cn(
-                  "text-sm flex gap-2 py-4 px-6 h-full cursor-pointer hover:bg-gray-50",
-                  notification.read
-                    ? "bg-transparent"
-                    : "hover:transition-colors hover:duration-200"
-                )}
-                onClick={() => {
-                  if (!notification.read) {
-                    markAsRead.mutate([notification.id]);
-                  }
+    <HomeLayout>
+      <ScrollArea className="max-h-[100dvh-10rem] overflow-y-auto rounded-md border">
+        <NotificationHeader
+          notificationsIds={notifications.map(
+            (notification) => notification.id
+          )}
+        />
+        {isPending && <SkeletonList length={5} type="notification" />}
+        <div className="divide-y divide-gray-200">
+          {notifications.map((notification, idx) => {
+            const Icon =
+              notificationIcon[
+                notification.type as keyof typeof notificationIcon
+              ];
+            return (
+              <Fragment key={idx}>
+                <div
+                  className={cn(
+                    "text-sm flex gap-2 py-4 px-6 h-full cursor-pointer hover:bg-gray-50",
+                    notification.read
+                      ? "bg-transparent"
+                      : "hover:transition-colors hover:duration-200"
+                  )}
+                  onClick={() => {
+                    if (!notification.read) {
+                      markAsRead.mutate([notification.id]);
+                    }
 
-                  if (
-                    ["COMMENT", "LIKE", "SHARE"].includes(notification.type)
-                  ) {
-                    router.push(
-                      `/${notification.creator.tagName}/post/${notification.comment?.id}`
-                    );
-                  }
-                  if (notification.type === "FOLLOW") {
-                    router.push(
-                      `/${notification.creator.tagName}/post/${notification.comment?.id}`
-                    );
-                  }
-                }}
-              >
-                <div className="flex flex-col gap-1 grow relative">
-                  <div className="flex gap-2 justify-between items-center">
-                    <div className="flex gap-2 items-center">
-                      <AuthorHeader author={notification.creator} />
-                      <span className="text-muted-foreground">
-                        {Icon.messageFn(notification)}
+                    if (
+                      ["COMMENT", "LIKE", "SHARE"].includes(notification.type)
+                    ) {
+                      router.push(
+                        `/${notification.creator.tagName}/post/${notification.comment?.id}`
+                      );
+                    }
+                    if (notification.type === "FOLLOW") {
+                      router.push(
+                        `/${notification.creator.tagName}/post/${notification.comment?.id}`
+                      );
+                    }
+                  }}
+                >
+                  <div className="flex flex-col gap-1 grow relative">
+                    <div className="flex gap-2 justify-between items-center">
+                      <div className="flex gap-2 items-center">
+                        <AuthorHeader author={notification.creator} />
+                        <span className="text-muted-foreground">
+                          {Icon.messageFn(notification)}
+                        </span>
+                      </div>
+
+                      <span className="text-gray-400">
+                        {formatDistanceToNow(notification.createdAt)}
                       </span>
                     </div>
-
-                    <span className="text-gray-400">
-                      {formatDistanceToNow(notification.createdAt)}
-                    </span>
+                    <div className="grid grid-cols-[40px_1fr]">
+                      <span></span>
+                      <span className="text-gray-400 max-w-[75%]">
+                        <BioText text={notification.comment?.content ?? ""} />
+                      </span>
+                    </div>
+                    {!notification.read && (
+                      <div className="bg-notification-blue w-2 h-2 absolute right-32 top-1/2 -translate-y-1/2 rounded-full" />
+                    )}
                   </div>
-                  <div className="grid grid-cols-[40px_1fr]">
-                    <span></span>
-                    <span className="text-gray-400 max-w-[75%]">
-                      <BioText text={notification.comment?.content ?? ""} />
-                    </span>
-                  </div>
-                  {!notification.read && (
-                    <div className="bg-notification-blue w-2 h-2 absolute right-32 top-1/2 -translate-y-1/2 rounded-full" />
-                  )}
                 </div>
-              </div>
-            </Fragment>
-          );
-        })}
-        {isFetchingNextPage && <SkeletonList length={5} type="notification" />}
-        <div ref={ref} className="h-4 " />
-      </div>
-    </ScrollArea>
+              </Fragment>
+            );
+          })}
+          <div ref={ref}>
+            {isFetchingNextPage && (
+              <SkeletonList length={5} type="notification" />
+            )}
+          </div>
+        </div>
+      </ScrollArea>
+    </HomeLayout>
   );
 }
 

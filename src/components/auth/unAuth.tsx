@@ -17,8 +17,8 @@ import { SignUpButton } from "@clerk/nextjs";
 
 export default function UnAuth() {
   return (
-    <div className="grid px-4 col-span-2 max-lg:hidden">
-      <div className="relative">
+    <div className="grid px-4 col-span-2 max-lg:hidden ">
+      <div className="relative ">
         <SignIn.Root>
           <Clerk.Loading>
             {(isGlobalLoading) => (
@@ -115,8 +115,8 @@ export default function UnAuth() {
                   </Card>
                 </SignIn.Step>
 
-                <SignIn.Step name="choose-strategy">
-                  <Card className="w-full sm:w-96">
+                <SignIn.Step name="choose-strategy" className="sticky top-16">
+                  <Card className="w-full sm:w-72">
                     <CardHeader>
                       <CardTitle>Use another method</CardTitle>
                       <CardDescription>
@@ -164,9 +164,9 @@ export default function UnAuth() {
                   </Card>
                 </SignIn.Step>
 
-                <SignIn.Step name="verifications">
+                <SignIn.Step name="verifications" className="sticky top-16">
                   <SignIn.Strategy name="password">
-                    <Card className="w-full sm:w-96">
+                    <Card className="w-full sm:w-72">
                       <CardHeader>
                         <CardTitle>Check your email</CardTitle>
                         <CardDescription>
@@ -213,7 +213,7 @@ export default function UnAuth() {
                   </SignIn.Strategy>
 
                   <SignIn.Strategy name="email_code">
-                    <Card className="w-full sm:w-96">
+                    <Card className="w-full sm:w-72">
                       <CardHeader>
                         <CardTitle>Check your email</CardTitle>
                         <CardDescription>

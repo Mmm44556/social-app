@@ -10,6 +10,7 @@ import { MobileNav } from "@/components/nav/MobileNav";
 import { MobileHeader } from "@/components/nav/MobileHeader";
 import { Toaster } from "@/components/ui/sonner";
 import "@/styles/global.css";
+import { ChatProvider } from "@/contexts/ChatContext";
 const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   title: "Nexus - Share Your World",
@@ -41,22 +42,24 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <QueryClientComponent>
-              {/* Header */}
-              <MobileHeader title="Nexus" />
+              <ChatProvider>
+                {/* Header */}
+                <MobileHeader title="Nexus" />
 
-              {/* <SiteHeader /> */}
-              <div className="h-full grid auto-cols-fr grid-flow-col gap-3 container max-sm:gap-0 max-lg:pt-10 max-lg:pb-16">
-                {/* Left Sidebar */}
-                <AppLeftSidebar />
+                {/* <SiteHeader /> */}
+                <div className="h-full grid auto-cols-fr grid-flow-col gap-3 container max-sm:gap-0 max-lg:pt-10 max-lg:pb-16">
+                  {/* Left Sidebar */}
+                  <AppLeftSidebar />
 
-                {/* Main Content */}
-                {children}
-                <MobileNav />
+                  {/* Main Content */}
+                  {children}
+                  <MobileNav />
 
-                {/* Right Sidebar */}
-                <AppRightSidebar />
-              </div>
-              <ReactQueryDevtools />
+                  {/* Right Sidebar */}
+                  <AppRightSidebar />
+                </div>
+                <ReactQueryDevtools />
+              </ChatProvider>
             </QueryClientComponent>
           </ThemeProvider>
           <Toaster />

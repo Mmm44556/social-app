@@ -9,14 +9,19 @@ export default async function AppLeftSidebar() {
   const user = await currentUser();
   if (!user) return <UnAuth />;
   const dbUser = await getUserByClerkId(user.id);
-  if (!dbUser) return <UnAuth />;
 
   return (
     <aside className="col-span-2 max-lg:hidden ">
       <div className="flex flex-col gap-6 sticky top-6 ">
         <Brand />
-        <AuthCard user={dbUser} />
-        <NavBar user={dbUser} />
+        {dbUser ? (
+          <>
+            <AuthCard user={dbUser} />
+            <NavBar user={dbUser} />
+          </>
+        ) : (
+          <UnAuth />
+        )}
       </div>
     </aside>
   );

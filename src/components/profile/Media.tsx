@@ -3,14 +3,14 @@
 import { PostType } from "@/types/post";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { isEmpty } from "lodash-es";
+import { flatten, isEmpty } from "lodash-es";
 import { Play } from "lucide-react";
 import useInfiniteScrollMedia from "@/hooks/useInfiniteScrollMedia";
-import NoData from "./NoData";
-import { mediaType } from "../MediaCarousel";
-import CommentDialog from "../CommentDialog";
+import NoData from "@/components/profile/NoData";
+import { mediaType } from "@/components/MediaCarousel";
+import CommentDialog from "@/components/CommentDialog";
 import { TabComponentProps } from "@/app/(user)/[userTagName]/page";
-import { SkeletonList } from "../CustomSkeletons";
+import { SkeletonList } from "@/components/CustomSkeletons";
 
 export default function Media({ tagName }: TabComponentProps) {
   const { ref, inView } = useInView();
@@ -35,7 +35,7 @@ export default function Media({ tagName }: TabComponentProps) {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (status === "error") return <div>Error: {(error as Error).message}</div>;
-  if (isEmpty(data) && isFetched)
+  if (isEmpty(flatten(data?.pages)) && isFetched)
     return (
       <NoData
         title="No media yet"
@@ -73,6 +73,7 @@ export default function Media({ tagName }: TabComponentProps) {
                         type: image.metadata?.contentType ?? "",
                         width: 300,
                         height: 350,
+                        className: "aspect-square",
                       })}
                       {image.metadata?.contentType?.includes("video") && (
                         <div className="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1">
