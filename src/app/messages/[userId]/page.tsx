@@ -110,7 +110,7 @@ export default function ChatPage() {
       });
       setNewMessage("");
     },
-    [newMessage, isConnected, sendMessage, currentUser, currentChatUser]
+    [newMessage, isConnected, sendMessage, currentUser, currentChatUser, params]
   );
 
   // Merge realtime messages with initial messages
