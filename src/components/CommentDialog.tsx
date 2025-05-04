@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import type { PostType } from "@/types/post";
 import CommentUtilsBar from "@/components/CommentUtilsBar";
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { SignInButton } from "@clerk/nextjs";
 import Post from "@/components/comment/PostCard";
 import { Icons } from "@/components/ui/icons";
 import { upload } from "@vercel/blob/client";
@@ -26,6 +26,7 @@ import MediaCarousel from "./MediaCarousel";
 import { useRouter } from "next/navigation";
 import { useCreateEditor } from "@/hooks/useCreateEditor";
 import { EditorContent } from "@tiptap/react";
+import { useGetDbUser } from "@/hooks/useGetDbUser";
 interface CommentDialogProps {
   children?: React.ReactNode;
   className?: string;
@@ -39,7 +40,7 @@ export default function CommentDialog({
   onEvent,
 }: CommentDialogProps) {
   const router = useRouter();
-  const { user } = useUser();
+  const { data: dbUser } = useGetDbUser();
   const [open, setOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
   const editor = useCreateEditor(commentText, setCommentText);
@@ -51,7 +52,7 @@ export default function CommentDialog({
   );
   const inputFileRef = useRef<HTMLInputElement>(null);
   // 如果沒有登入，則顯示登入按鈕
-  if (!user) {
+  if (!dbUser) {
     return (
       <SignInButton mode="modal">
         <Button
@@ -178,7 +179,7 @@ export default function CommentDialog({
           {/* Post */}
           <Post
             comment={comment}
-            dbUserId={user.id}
+            dbUserId={dbUser?.id}
             className="p-4 max-lg:m-2"
             showFooter={false}
             contentContainerClassName="max-lg:p-2"
@@ -188,14 +189,14 @@ export default function CommentDialog({
           <div className="mt-4 flex gap-3 px-6">
             <Avatar className="h-10 w-10">
               <AvatarImage
-                src={user.imageUrl ?? ""}
-                alt={user.username ?? ""}
+                src={dbUser?.avatarUrl ?? ""}
+                alt={dbUser?.username ?? ""}
                 onLoad={() => setIsLoading(false)}
                 data-state={isLoading ? "loading" : "idle"}
                 className="transition-all duration-300 hover:scale-110 data-[state=loading]:opacity-0 data-[state=idle]:opacity-100"
               />
               <AvatarFallback>
-                {user.username?.substring(0, 2).toUpperCase()}
+                {dbUser?.username?.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
 

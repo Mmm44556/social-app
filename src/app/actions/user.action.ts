@@ -383,7 +383,6 @@ export async function getChatMessages(otherUserId: string) {
     if (!currentUser) {
       throw new Error("User not found");
     }
-
     // Get messages between two users
     const messages = await prisma.message.findMany({
       where: {
@@ -398,7 +397,14 @@ export async function getChatMessages(otherUserId: string) {
           },
         ],
       },
-      include: {
+      select: {
+        images: true,
+        content: true,
+        createdAt: true,
+        id: true,
+        senderId: true,
+        receiverId: true,
+        updatedAt: true,
         sender: {
           select: {
             id: true,
@@ -414,6 +420,7 @@ export async function getChatMessages(otherUserId: string) {
           },
         },
       },
+
       orderBy: {
         createdAt: "asc",
       },
@@ -442,4 +449,67 @@ export async function getUserByUserId(userId: string) {
     console.error("[GET_USER_BY_USER_ID]", error);
     return null;
   }
+}
+
+export async function sendMessageToDb({
+  content,
+  receiverId,
+}: {
+  content: string;
+  receiverId: string;
+}) {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
+    throw new Error("Unauthorized");
+  }
+
+  // 過濾掉 <img src="blob:..."> 標籤
+  const filteredContent = content.replace(
+    /<img[^>]*src=["']blob:[^"']*["'][^>]*>/g,
+    ""
+  );
+
+  // 取得 sender 的資料庫 id
+  const sender = await prisma.user.findUnique({
+    where: { clerkId },
+    select: { id: true, username: true, avatarUrl: true },
+  });
+  if (!sender) {
+    throw new Error("Sender not found");
+  }
+
+  // 取得 receiver 的資料
+  const receiver = await prisma.user.findUnique({
+    where: { id: receiverId },
+    select: { id: true, username: true, avatarUrl: true },
+  });
+  if (!receiver) {
+    throw new Error("Receiver not found");
+  }
+
+  // 建立訊息
+  const message = await prisma.message.create({
+    data: {
+      content: filteredContent,
+      senderId: sender.id,
+      receiverId,
+    },
+    include: {
+      sender: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+        },
+      },
+      receiver: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+        },
+      },
+    },
+  });
+  return message;
 }

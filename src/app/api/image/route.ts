@@ -74,6 +74,23 @@ export async function POST(request: Request): Promise<NextResponse> {
               data: { avatarUrl: blob.url },
             });
           }
+
+          // 上傳訊息圖片
+          if (blob.pathname.startsWith("messages")) {
+            const messageId = clientPayload;
+            const messageImages = await prisma.message.findUnique({
+              where: { id: messageId },
+              select: { images: true },
+            });
+            if (!messageImages) {
+              console.log("message not found");
+              return;
+            }
+            await prisma.message.update({
+              where: { id: messageId },
+              data: { images: [...messageImages.images, blob.url] },
+            });
+          }
         } catch (error) {
           console.log(error, "error");
           throw new Error("Could not update user");

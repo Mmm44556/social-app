@@ -47,7 +47,7 @@ export default async function RootLayout({
                 <MobileHeader title="Nexus" />
 
                 {/* <SiteHeader /> */}
-                <div className="h-full grid auto-cols-fr grid-flow-col gap-3 container max-sm:gap-0 max-lg:pt-10 max-lg:pb-16">
+                <div className="h-full grid auto-cols-fr grid-flow-col gap-3 container max-sm:gap-0 max-lg:pt-10 max-lg:pb-16 max-xl:overflow-y-auto">
                   {/* Left Sidebar */}
                   <AppLeftSidebar />
 

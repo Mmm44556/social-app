@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter, usePathname } from "next/navigation";
@@ -12,6 +11,8 @@ import { useGetDbUserId } from "@/hooks/useGetDbUser";
 import { createClient } from "@/lib/supabase/client";
 import { useChat } from "@/contexts/ChatContext";
 import { formatDistanceToNow } from "date-fns";
+import { cn } from "@/lib/utils";
+import BioText from "@/components/profile/BioText";
 export interface User {
   id: string;
   username: string;
@@ -81,11 +82,12 @@ export default function UserList({ users }: UserListProps) {
       presenceChannel.unsubscribe();
     };
   }, [userId, supabase]);
+  console.log(latestMessages);
   return (
     <>
-      <div className="md:flex flex-col  bg-white border-r absolute md:relative z-10 h-full max-md:top-16 max-md:inset-0 max-md:h-fit max-md:border-b max-md:border-r-0">
-        <div className="p-4 border-b max-md:hidden">
-          <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col  bg-white border-r h-full max-xl:h-fit max-xl:border-b max-xl:border-r-0">
+        <div className="p-4 max-xl:hidden">
+          <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold">Chats</h1>
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="icon"></Button>
@@ -101,27 +103,21 @@ export default function UserList({ users }: UserListProps) {
               )}
             </div>
           </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search conversations"
-              className="pl-9 bg-gray-100"
-            />
-          </div>
         </div>
         <ScrollArea className="flex-1">
-          <div className="p-2 max-md:flex max-md:gap-1 ">
+          <div className="p-2 max-lg:flex max-lg:gap-1 ">
             {usersState.map((user) => {
               const latestMessage =
                 latestMessages[`chat:${[userId, user.id].sort().join(":")}`];
               return (
                 <div
                   key={user.id}
-                  className={`flex items-center p-3 md:rounded-lg cursor-pointer hover:bg-gray-100 ${
+                  className={cn(
+                    "flex items-center p-3 lg:rounded-lg cursor-pointer hover:bg-gray-100 max-lg:hover:rounded-full duration-200  ",
                     pathname === `/messages/${user.id}`
-                      ? "bg-gray-100  max-md:rounded-full"
+                      ? "bg-gray-100  max-lg:rounded-full"
                       : ""
-                  }`}
+                  )}
                   onClick={() => {
                     router.push(`/messages/${user.id}`);
                   }}
@@ -135,13 +131,21 @@ export default function UserList({ users }: UserListProps) {
                       <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
                     )}
                   </div>
-                  <div className="ml-3 flex-1 overflow-hidden max-md:hidden">
+                  <div className="ml-3 flex-1 overflow-hidden max-lg:hidden">
                     <div className="flex flex-col">
                       <h3 className="font-medium truncate">{user.username}</h3>
                       {latestMessage && (
                         <p className="flex items-center text-xs text-gray-500">
-                          <span className="max-w-[100px] inline-block truncate">
-                            {latestMessage?.content}
+                          <span className="max-w-[100px] inline-block ">
+                            <BioText
+                              text={latestMessage?.content}
+                              className="[&_p]:truncate  [&_p]:overflow-hidden  [&_p]:max-w-[100px]"
+                            />
+                            {latestMessage?.images.length > 0 && (
+                              <span className="text-xs text-gray-500">
+                                sent {latestMessage?.images.length} files
+                              </span>
+                            )}
                           </span>
                           <span className=" before:content-['·'] before:mx-1 before:text-xl before:align-middle ">
                             {latestMessage?.createdAt &&

@@ -36,6 +36,7 @@ interface CommentUtilsBarProps {
   inputFileRef: React.RefObject<HTMLInputElement | null>;
   editor: Editor | null;
   popoverClassName?: string;
+  enableImageInsert?: boolean;
 }
 
 export default function CommentUtilsBar({
@@ -43,6 +44,7 @@ export default function CommentUtilsBar({
   inputFileRef,
   editor,
   popoverClassName,
+  enableImageInsert,
 }: CommentUtilsBarProps) {
   const { theme } = useTheme();
   if (!editor) return null;
@@ -53,6 +55,7 @@ export default function CommentUtilsBar({
           setImages={setImages}
           inputFileRef={inputFileRef}
           editor={editor}
+          enableImageInsert={enableImageInsert}
         />
         {utilsItems.map((item, idx) => (
           <Button
@@ -122,7 +125,12 @@ export default function CommentUtilsBar({
 }
 
 const UploadButton = memo(
-  ({ setImages, inputFileRef }: CommentUtilsBarProps) => {
+  ({
+    setImages,
+    inputFileRef,
+    editor,
+    enableImageInsert = false,
+  }: CommentUtilsBarProps) => {
     return (
       <Button variant="utils" className="rounded-full" size="utils" asChild>
         <Label>
@@ -137,6 +145,9 @@ const UploadButton = memo(
               if (files) {
                 Array.from(files).forEach((file) => {
                   const blobUrl = URL.createObjectURL(file);
+                  if (enableImageInsert) {
+                    editor?.chain().focus().setImage({ src: blobUrl }).run();
+                  }
                   setImages((prev) => [
                     ...prev,
                     {

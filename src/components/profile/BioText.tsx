@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface BioTextProps {
   text: string;
+  className?: string;
 }
 
-export default function BioText({ text }: BioTextProps) {
+export default function BioText({ text, className }: BioTextProps) {
   const parsedText = useMemo(() => {
     // First, split by URLs to preserve URL detection
     const urlParts = text.split(/(https?:\/\/[^\s]+)/g);
@@ -30,5 +32,9 @@ export default function BioText({ text }: BioTextProps) {
     });
   }, [text]);
 
-  return <span className="mt-4 whitespace-pre-wrap">{parsedText}</span>;
+  return (
+    <span className={cn("mt-4 whitespace-pre-wrap", className)}>
+      {parsedText}
+    </span>
+  );
 }

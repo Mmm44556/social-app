@@ -48,7 +48,7 @@ export async function POST(req: Request) {
         },
       },
     });
-
+    console.log(message);
     return NextResponse.json(message);
   } catch (error) {
     console.error("[CHAT_POST]", error);

@@ -7,6 +7,7 @@ export function useChatScroll() {
     if (!containerRef.current) return;
 
     const container = containerRef.current;
+    if (!container) return;
     container.scrollTo({
       top: container.scrollHeight,
       behavior: "smooth",

@@ -110,7 +110,15 @@ export default function CreatePost({
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 relative">
-              <EditorContent editor={editor} className="border-0 shadow-none" />
+              <EditorContent
+                editor={editor}
+                className="border-0 shadow-none"
+                onKeyDown={(e) => {
+                  if (e.metaKey && e.key === "Enter") {
+                    handleSubmit();
+                  }
+                }}
+              />
             </div>
 
             {/* Image Preview */}
