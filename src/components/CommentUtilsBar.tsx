@@ -33,7 +33,7 @@ interface CommentUtilsBarProps {
   setImages: React.Dispatch<
     React.SetStateAction<Array<{ url: string; file: File }>>
   >;
-  inputFileRef: React.RefObject<HTMLInputElement | null>;
+  inputFileRef: React.RefObject<HTMLInputElement>;
   editor: Editor | null;
   popoverClassName?: string;
   enableImageInsert?: boolean;
