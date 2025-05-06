@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -9,7 +11,7 @@ import { Separator } from "@radix-ui/react-separator";
 import CountUpClient from "@/components/CountUpClient";
 import { DB_User } from "@/app/actions/user.action";
 import Image from "next/image";
-export default async function Auth({ user }: { user: DB_User }) {
+export default function Auth({ user }: { user: DB_User }) {
   return (
     <Card className="p-0 pb-2 gap-0 rounded-2xl ">
       <CardHeader className="grid gap-0 px-0 justify-items-center  ">
