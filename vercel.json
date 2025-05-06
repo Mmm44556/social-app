@@ -1,6 +1,6 @@
 {
   "buildCommand": "prisma generate && next build",
-  "installCommand": "npm install --legacy-peer-deps",
+  "installCommand": "npm install --force",
   "framework": "nextjs",
   "regions": ["sfo1"],
   "builds": [
