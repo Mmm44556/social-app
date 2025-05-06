@@ -11,6 +11,7 @@ import { MobileHeader } from "@/components/nav/MobileHeader";
 import { Toaster } from "@/components/ui/sonner";
 import "@/styles/global.css";
 import { ChatProvider } from "@/contexts/ChatContext";
+import { getDbUser } from "@/app/actions/user.action";
 const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   title: "Nexus - Share Your World",
@@ -23,6 +24,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const dbUser = await getDbUser();
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning className="h-dvh">
@@ -56,7 +58,7 @@ export default async function RootLayout({
                   <MobileNav />
 
                   {/* Right Sidebar */}
-                  <AppRightSidebar />
+                  <AppRightSidebar dbUser={dbUser} />
                 </div>
                 <ReactQueryDevtools />
               </ChatProvider>

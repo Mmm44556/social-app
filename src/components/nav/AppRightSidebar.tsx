@@ -1,19 +1,21 @@
-"use client";
+// "use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Construction } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
-import { usePathname } from "next/navigation";
+// import { useUser } from "@clerk/nextjs";
+// import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { DB_User } from "@/app/actions/user.action";
 
-function AppRightSidebar() {
-  const pathname = usePathname();
-  const { user } = useUser();
-  if (!user) return null;
+async function AppRightSidebar({ dbUser }: { dbUser: DB_User }) {
+  if (!dbUser) return null;
+  // const pathname = usePathname();
+  // const { user } = useUser();
+  // if (!user) return null;
   return (
     <aside
       className={cn(
-        "col-span-2 max-lg:hidden",
-        pathname.includes("/messages") && "hidden"
+        "col-span-2 max-lg:hidden"
+        // pathname.includes("/messages") && "hidden"
       )}
     >
       <div className="sticky top-6">

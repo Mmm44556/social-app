@@ -8,12 +8,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@radix-ui/react-separator";
 import CountUpClient from "@/components/CountUpClient";
 import { DB_User } from "@/app/actions/user.action";
+import Image from "next/image";
 export default async function Auth({ user }: { user: DB_User }) {
   return (
     <Card className="p-0 pb-2 gap-0 rounded-2xl ">
       <CardHeader className="grid gap-0 px-0 justify-items-center  ">
-        <div className="w-full h-[130px] rounded-2xl rounded-b-none object-cover  bg-[url('https://picsum.photos/id/237/200/300')] bg-cover bg-center" />
-
+        {user?.imageUrl ? (
+          <div className="w-full h-[130px] rounded-2xl rounded-b-none  bg-gray-200 dark:bg-black">
+            <Image
+              src={user?.imageUrl}
+              alt={user?.username ?? ""}
+              className="object-cover !relative object-center"
+              fill
+            />
+          </div>
+        ) : (
+          <div className="w-full h-[130px] rounded-2xl rounded-b-none object-cover bg-gray-200 dark:bg-black" />
+        )}
         <div className="w-full flex items-start gap-3 px-4">
           <Avatar className=" ring-4 ring-white w-14 h-14 dark:ring-black  translate-y-[-35%] bg-white">
             <AvatarImage

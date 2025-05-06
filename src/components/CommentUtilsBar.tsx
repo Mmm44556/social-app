@@ -70,7 +70,11 @@ export default function CommentUtilsBar({
 
         <Popover modal>
           <PopoverTrigger asChild>
-            <Button variant="utils" size="utils" className="rounded-full">
+            <Button
+              variant="utils"
+              size="utils"
+              className="rounded-full max-lg:hidden"
+            >
               <SmilePlusIcon />
             </Button>
           </PopoverTrigger>

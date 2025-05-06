@@ -166,9 +166,9 @@ export default function ProfileEditDialog({
                 </Avatar>
                 <label
                   htmlFor="avatar-upload"
-                  className="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
+                  className="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:opacity-90"
                 >
-                  <Camera className="h-4 w-4" />
+                  <Camera className="h-4 w-4 " />
                   <span className="sr-only">Upload avatar</span>
                 </label>
                 <input

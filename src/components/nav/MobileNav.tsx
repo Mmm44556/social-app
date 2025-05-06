@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Home, Search, User, MessageSquare } from "lucide-react";
+import { Home, User, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { currentUser } from "@clerk/nextjs/server";
 import { SignInButton } from "@clerk/nextjs";
@@ -21,17 +21,6 @@ export async function MobileNav({ className }: MobileNavProps) {
         <Link href="/home" className="flex flex-col items-center">
           <Home className="h-6 w-6 text-gray-400" />
         </Link>
-
-        {/* Search */}
-        {dbUser ? (
-          <Link href="/search" className="flex flex-col items-center">
-            <Search className="h-6 w-6 text-gray-400" />
-          </Link>
-        ) : (
-          <SignInButton mode="modal">
-            <Search className="h-6 w-6 text-gray-400" />
-          </SignInButton>
-        )}
 
         {/* Messages */}
         {dbUser ? (

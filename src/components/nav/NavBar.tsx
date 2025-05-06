@@ -1,12 +1,6 @@
+"use client";
 import Link from "next/link";
-import {
-  Home,
-  MessageSquare,
-  Search,
-  Bell,
-  User,
-  Settings,
-} from "lucide-react";
+import { Home, MessageSquare, Bell, User, Settings } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
@@ -19,17 +13,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@clerk/nextjs";
 import type { DB_User } from "@/app/actions/user.action";
+
 const navItems = [
   {
     title: "Home",
     icon: Home,
     linkFn: () => `/home`,
     isActive: true,
-  },
-  {
-    title: "Explore",
-    icon: Search,
-    linkFn: () => `/explore`,
   },
 ];
 
@@ -98,12 +88,18 @@ export default function NavBar({ user }: { user: DB_User }) {
                       <span>Settings</span>
                     </a>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-72" side="top">
+                  <DropdownMenuContent
+                    className="w-72 dark:bg-gray-800 "
+                    side="top"
+                  >
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
 
                     <DropdownMenuSeparator />
 
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem
+                      asChild
+                      className="cursor-pointer w-full justify-start"
+                    >
                       <SignOutButton>
                         <Button variant="ghost">Log out</Button>
                       </SignOutButton>

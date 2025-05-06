@@ -23,6 +23,8 @@ import Likes from "@/components/profile/Likes";
 import ProfileEditDialog from "@/components/ProfileEditDialog";
 import BioText from "@/components/profile/BioText";
 import HomeLayout from "@/app/home/layout";
+import ImageCropper from "@/components/ImageCropper";
+import Image from "next/image";
 export interface TabComponentProps {
   tagName: string;
   dbUserId: string | null;
@@ -64,12 +66,16 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           </div>
 
           {/* Banner */}
-          <div className="h-48 md:h-64 bg-gray-200 dark:bg-black relative">
-            {/* <img
-            src={""}
-            alt="Profile banner"
-            className="w-full h-full object-cover"
-          /> */}
+          <div className="h-48 md:h-64 bg-gray-200 dark:bg-black relative ">
+            {userProfile.imageUrl && (
+              <Image
+                src={userProfile.imageUrl}
+                alt={userProfile.username}
+                fill
+                className="object-contain"
+              />
+            )}
+            <ImageCropper />
           </div>
 
           {/* Profile Info */}
@@ -87,7 +93,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               </Avatar>
             </div>
 
-            <div className="pt-4 px-4 sticky top-0 z-10 w-fit ml-auto flex items-center gap-2">
+            <div className="pt-4 px-4 sticky top-0 z-10 w-fit ml-auto flex items-center gap-2 max-lg:relative">
               <FollowButton postUserId={userProfile.id} />
               {currentSystemUser?.id === userProfile.id && (
                 <ProfileEditDialog userProfile={userProfile} />

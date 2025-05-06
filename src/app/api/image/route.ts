@@ -3,6 +3,7 @@ import { del, list, head } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getDbUserId } from "@/app/actions/user.action";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -60,7 +61,7 @@ export async function POST(request: Request): Promise<NextResponse> {
           }
           // 上傳背景照片
           if (blob.pathname.startsWith("profile")) {
-            const userId = clientPayload.split("/")[1];
+            const userId = clientPayload.split("/")[1] || clientPayload;
             await prisma.user.update({
               where: { id: userId },
               data: { imageUrl: blob.url },
@@ -97,6 +98,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         }
       },
     });
+    revalidatePath("/");
     return NextResponse.json(jsonResponse);
   } catch (error) {
     console.log(error, "error");
