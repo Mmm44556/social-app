@@ -75,7 +75,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 className="object-contain"
               />
             )}
-            <ImageCropper />
+            {currentSystemUser?.id === userProfile.id && <ImageCropper />}
           </div>
 
           {/* Profile Info */}

@@ -10,7 +10,7 @@ import {
   getUserByUserId,
   type Message,
 } from "@/app/actions/user.action";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useGetDbUser } from "@/hooks/useGetDbUser";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
@@ -26,6 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 type User = Awaited<ReturnType<typeof getUserByUserId>>;
 
 export default function ChatPage() {
+  const navigator = useRouter();
   const { data: currentUser } = useGetDbUser();
   const params = useParams() as { userId: string };
   const [showSidebar, setShowSidebar] = useState(true);
@@ -143,14 +144,19 @@ export default function ChatPage() {
               <Menu className="h-5 w-5" />
             </Button>
           )}
-          <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-2 group cursor-pointer"
+            onClick={() => navigator.push(`/${currentChatUser?.tagName}`)}
+          >
             <Avatar>
               <AvatarImage src={currentChatUser?.avatarUrl || ""} />
               <AvatarFallback>
                 {currentChatUser?.username.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <h2 className="font-medium">{currentChatUser?.username}</h2>
+            <h2 className="font-medium group-hover:underline">
+              {currentChatUser?.username}
+            </h2>
           </div>
         </div>
       </div>

@@ -111,7 +111,7 @@ export function mediaType({
           alt={url}
           width={width}
           height={height}
-          className={cn("object-cover rounded-lg", className)}
+          className={cn("object-cover rounded-lg w-auto h-auto", className)}
           priority
         />
       </div>

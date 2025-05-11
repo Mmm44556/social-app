@@ -16,12 +16,13 @@ export default function Auth({ user }: { user: DB_User }) {
     <Card className="p-0 pb-2 gap-0 rounded-2xl ">
       <CardHeader className="grid gap-0 px-0 justify-items-center  ">
         {user?.imageUrl ? (
-          <div className="w-full h-[130px] rounded-2xl rounded-b-none  bg-gray-200 dark:bg-black">
+          <div className="w-full h-[130px] relative rounded-2xl rounded-b-none  bg-gray-200 dark:bg-black">
             <Image
               src={user?.imageUrl}
               alt={user?.username ?? ""}
-              className="object-cover !relative object-center"
+              className="object-cover  object-center"
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
         ) : (

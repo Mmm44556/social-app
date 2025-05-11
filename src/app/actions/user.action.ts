@@ -192,7 +192,11 @@ export async function getSuggestedUsers() {
       select: {
         id: true,
         username: true,
+        avatarUrl: true,
+        tagName: true,
         imageUrl: true,
+        bio: true,
+        createdAt: true,
         _count: {
           select: {
             followers: true,
@@ -335,11 +339,10 @@ export async function getUsersForMessages() {
         });
       }
     });
-
     // Add message users
     messageUsers.forEach((message) => {
       // Add sender if not current user and not deleted
-      if (message.sender.id !== currentUser.id && !message.sender.isDeleted) {
+      if (message.sender.id !== currentUser.id) {
         userMap.set(message.sender.id, {
           id: message.sender.id,
           username: message.sender.username,
@@ -442,6 +445,7 @@ export async function getUserByUserId(userId: string) {
         id: true,
         username: true,
         avatarUrl: true,
+        tagName: true,
       },
     });
     return user;

@@ -1,45 +1,54 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { getSuggestedUsers } from "@/app/actions/user.action";
-import FollowButton from "./FollowButton";
+import AuthorHeader from "./AuthorHeader";
+import Advertisement from "./Advertisement";
+import community from "@/app/public/community.png";
+import subscription from "@/app/public/subscription.png";
 
 export default async function SuggestedUser() {
   const suggestedUsers = await getSuggestedUsers();
-  if (!suggestedUsers.length) return null;
 
   return (
     <Card className="border-0 shadow-sm bg-white dark:bg-black dark:border dark:border-white">
-      <CardHeader>
-        <h2 className="text-xl font-bold">People you may know</h2>
-      </CardHeader>
+      {suggestedUsers.length ? (
+        <CardHeader className="px-2 text-center">
+          <h2 className="text-xl font-bold">People you may know</h2>
+        </CardHeader>
+      ) : null}
       <CardContent className="space-y-4 [&_button]:cursor-pointer">
-        {suggestedUsers.map((user) => (
-          <div key={user.id} className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={user.imageUrl || ""} alt={user.username} />
-              <AvatarFallback>{user.username.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="font-medium truncate">{user.username}</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                {user._count.followers} followers
+        {suggestedUsers.length > 0
+          ? suggestedUsers.map((user) => (
+              <div key={user.id} className="flex items-center gap-3">
+                <AuthorHeader
+                  author={{
+                    username: user.username,
+                    tagName: user.tagName,
+                    imageUrl: user.imageUrl,
+                    id: user.id,
+                    _count: {
+                      followers: user._count.followers,
+                    },
+                    bio: user.bio,
+                    createdAt: user.createdAt,
+                    avatarUrl: user.avatarUrl,
+                  }}
+                />
               </div>
-            </div>
-            <FollowButton postUserId={user.id} />
-          </div>
-        ))}
+            ))
+          : null}
+        <Advertisement
+          ads={[
+            {
+              adUrl: community.src,
+            },
+            {
+              adUrl: subscription.src,
+            },
+          ]}
+          cta="Subscribe Now"
+          subscription={"https://github.com/Mmm44556"}
+        />
       </CardContent>
-      <CardFooter>
-        <Link href="#" className="text-theme hover:underline">
-          View all suggestions
-        </Link>
-      </CardFooter>
     </Card>
   );
 }
