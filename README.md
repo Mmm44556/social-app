@@ -1,10 +1,14 @@
 # Social Web Application
 
+## 專案介紹
+
 社群網站應用，實現了基於社群的功能，以及優化的使用者體驗。
+
+Demo : [Nexus](https://social-ds6okaq6h-aas-projects-04d108a8.vercel.app/home)
 
 ### 前端技術
 
-- **Next.js 15.2.3** (React 19)
+- **Next.js 15.2.3** (React 18)
 - **TailwindCSS**
 - **Shadcn UI**
 - **Framer Motion**
@@ -23,7 +27,7 @@
 
 - **Supabase**
 
-## 已完成功能
+## 實作功能
 
 ### 1. 貼文系統
 
@@ -55,80 +59,7 @@
 - 離線訊息處理
 - 訊息發送狀態追蹤
 
-## 開發中功能 🚧
-
-以下功能正在積極開發中：
-
-### 3. 分享功能
-
-- 貼文分享機制
-- 分享統計和追蹤
-- 跨平台分享支援
-
-### 4. 即時通知系統
-
-採用 WebSocket 實現即時推送：
+### 6. 通知系統
 
 - 多類型通知支援（按讚、追蹤等）
 - 已讀狀態同步
-
-## 技術實現重點
-
-### 資料庫優化
-
-1. Closure Table 實現
-
-```sql
--- 高效能的樹狀查詢結構
-CREATE TABLE comment_closure (
-    ancestor_id   UUID,
-    descendant_id UUID,
-    depth         INT,
-    PRIMARY KEY (ancestor_id, descendant_id)
-);
-```
-
-2. 效能優化措施
-
-- 交易完整性保證
-- 軟刪除機制
-
-## 本地開發
-
-### 環境需求
-
-- Node.js >= 18
-- PostgreSQL >= 14
-- npm >= 9
-
-### 快速開始
-
-1. 安裝依賴
-
-```bash
-npm install
-```
-
-2. 環境設置
-
-```bash
-# .env
-DATABASE_URL="postgresql://..."
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-```
-
-3. 啟動開發環境
-
-```bash
-npm run dev
-```
-
-### 開發工具
-
-```bash
-# Prisma 相關命令
-npm run prisma:generate    # 生成 Prisma Client
-npm run prisma:migrate     # 執行資料庫遷移
-npm run prisma:studio     # 啟動 Prisma Studio
-```
